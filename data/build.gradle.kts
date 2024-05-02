@@ -1,6 +1,11 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id ("dagger.hilt.android.plugin")
+    id("kotlin-parcelize")
+    kotlin("kapt")
+    id("org.jetbrains.kotlin.plugin.serialization")
+
 }
 
 android {
@@ -40,6 +45,25 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
     implementation(project(":domain"))
+
+    // Retrofit
+    implementation(libs.retrofit)
+
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+
+    // Kakao Login
+    implementation(libs.v2.user)
+
+    // Timber
+    implementation(libs.timber)
+
+    // Datastore
+    implementation(libs.androidx.datastore.preferences)
+
 }
