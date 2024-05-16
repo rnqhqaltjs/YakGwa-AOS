@@ -12,5 +12,5 @@ interface AuthService {
     suspend fun postLogin(
         @Header("Authorization") header: String,
         @Body requestAuthDto: RequestAuthDto
-    ): ResponseAuthDto
+    ): BaseResponse<ResponseAuthDto>
 }
