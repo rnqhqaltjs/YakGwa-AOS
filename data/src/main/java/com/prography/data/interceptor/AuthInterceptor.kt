@@ -29,22 +29,22 @@ class AuthInterceptor @Inject constructor(
             401 -> {
                 response.close()
                 val refreshTokenRequest = originalRequest.newBuilder().get()
-                    .url("${BASE_URL}api/v1/auth/reissue")
+                    .url("http://43.202.47.80:8081/api/v1/auth/reissue")
                     .addHeader(AUTHORIZATION, runBlocking {localStorage.refreshToken.first() })
                     .build()
                 val refreshTokenResponse = chain.proceed(refreshTokenRequest)
 
                 if (refreshTokenResponse.isSuccessful) {
                     val responseRefresh =
-                        json.decodeFromString<ResponseReissueDto>(
+                        json.decodeFromString<BaseResponse<ResponseReissueDto>>(
                             refreshTokenResponse.body?.string()
                                 ?: throw IllegalStateException("\"refreshTokenResponse is null $refreshTokenResponse\"")
                         )
 
                     with(localStorage) {
                         CoroutineScope(Dispatchers.IO).launch {
-                            saveAccessToken(BEARER + responseRefresh.result.tokenSet.accessToken)
-                            saveRefreshToken(BEARER + responseRefresh.result.tokenSet.refreshToken)
+                            saveAccessToken(BEARER + responseRefresh.data.result.tokenSet.accessToken)
+                            saveRefreshToken(BEARER + responseRefresh.data.result.tokenSet.refreshToken)
                         }
                     }
 
@@ -72,6 +72,5 @@ class AuthInterceptor @Inject constructor(
     companion object {
         const val AUTHORIZATION = "Authorization"
         const val BEARER = "Bearer "
-        const val BASE_URL = "http://43.202.47.80:8081/"
     }
 }

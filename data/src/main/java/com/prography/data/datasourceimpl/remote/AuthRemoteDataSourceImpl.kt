@@ -12,7 +12,6 @@ class AuthRemoteDataSourceImpl @Inject constructor(
     override suspend fun login(
         kakaoAccessToken: String,
         requestAuthDto: RequestAuthDto
-    ): ResponseAuthDto {
-        return authService.postLogin(kakaoAccessToken, requestAuthDto)
-    }
+    ): ResponseAuthDto =
+        authService.postLogin(kakaoAccessToken, requestAuthDto).data
 }
