@@ -1,5 +1,3 @@
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -7,10 +5,6 @@ plugins {
     kotlin("kapt")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
-}
-
-val properties = Properties().apply {
-    load(project.rootProject.file("local.properties").inputStream())
 }
 
 android {
@@ -25,13 +19,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField(
-            "String",
-            "KAKAO_NATIVE_APP_KEY",
-            properties["kakao.native.app.key"].toString()
-        )
-
-        manifestPlaceholders["KAKAO_NATIVE_APP_KEY_MANIFEST"] = properties["kakao.native.app.key.manifest"].toString()
     }
 
     buildTypes {
@@ -72,6 +59,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -94,9 +82,16 @@ dependencies {
     // Serialization
     implementation(libs.kotlinx.serialization.json)
 
-    // Kakao Login
+    // Kakao
     implementation(libs.v2.user)
+    implementation(libs.v2.share)
 
     // Timber
     implementation(libs.timber)
+
+    // Datastore
+    implementation(libs.androidx.datastore.preferences)
+
+    // Splash
+    implementation(libs.androidx.core.splashscreen)
 }
