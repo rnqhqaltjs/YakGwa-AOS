@@ -2,8 +2,8 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id ("dagger.hilt.android.plugin")
-    id("kotlin-parcelize")
     kotlin("kapt")
+    id("kotlin-parcelize")
     id("org.jetbrains.kotlin.plugin.serialization")
 
 }
