@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/neutral_200"
+        tools:context=".ui.createPromise.CreatePromiseFragment">
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/navigate_up_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/ic_navigate_up"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/create_promise_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:src="@drawable/img_create_promise_title"
+                    app:layout_constraintBottom_toBottomOf="@+id/navigate_up_btn"
+                    app:layout_constraintStart_toEndOf="@+id/navigate_up_btn"
+                    app:layout_constraintTop_toTopOf="@+id/navigate_up_btn" />
+
+                <TextView
+                    android:id="@+id/tv_promise_information"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="16dp"
+                    android:text="잡으려는 약속에 대해 알려주세요"
+                    android:textColor="@color/neutral_700"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="@+id/navigate_up_btn"
+                    app:layout_constraintTop_toBottomOf="@+id/navigate_up_btn" />
+
+                <TextView
+                    android:id="@+id/tv_promise_what_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp"
+                    android:text="약속의 이름이 무엇인가요?"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_promise_information"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_promise_information" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_within_20"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="20dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_promise_what_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_promise_what_name">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <EditText
+                            android:id="@+id/et_within_20_msg"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="14dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginBottom="14dp"
+                            android:background="@android:color/transparent"
+                            android:ems="10"
+                            android:hint="20자 이내로 입력해주세요"
+                            android:inputType="text"
+                            android:maxLength="20"
+                            android:textColorHint="@color/neutral_500"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_within_20"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_within_20"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:text="0/20"
+                            android:textColor="@color/neutral_600"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/tv_promise_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginTop="23dp"
+                    android:text="약속에 대해 설명해주세요"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cv_within_20" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cd_within_80"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="20dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_promise_description"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_promise_description">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <EditText
+                            android:id="@+id/et_within_80_msg"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="14dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginBottom="14dp"
+                            android:background="@android:color/transparent"
+                            android:ems="10"
+                            android:hint="80자 이내로 입력해주세요"
+                            android:inputType="textMultiLine"
+                            android:maxLength="80"
+                            android:scrollHorizontally="false"
+                            android:textColorHint="@color/neutral_500"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_within_80"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginBottom="10dp"
+                            android:text="0/80"
+                            android:textColor="@color/neutral_600"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/tv_what_tema"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginTop="23dp"
+                    android:text="어떤 테마의 약속인가요?"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cd_within_80" />
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_tema"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/tv_what_tema"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_what_tema" />
+
+                <TextView
+                    android:id="@+id/tv_where_meet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp"
+                    android:text="어디에서 모이나요?"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="@+id/rv_tema"
+                    app:layout_constraintTop_toBottomOf="@+id/rv_tema" />
+
+                <CheckBox
+                    android:id="@+id/cb_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:background="@null"
+                    android:button="@null"
+                    android:drawableEnd="@drawable/selector_checkbox_state"
+                    android:drawablePadding="8dp"
+                    android:text="이미 장소를 정했어요"
+                    android:textColor="@color/neutral_700"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_where_meet"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_where_meet" />
+
+                <TextView
+                    android:id="@+id/tv_max_three"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="최대 3개 선택 가능"
+                    android:textColor="@color/neutral_600"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_where_meet"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_where_meet" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_search_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="20dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_max_three"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_max_three">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <EditText
+                            android:id="@+id/et_search_location"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="14dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginBottom="14dp"
+                            android:background="@android:color/transparent"
+                            android:ems="10"
+                            android:hint="지역/지하철역을 검색해주세요"
+                            android:inputType="text"
+                            android:maxLength="20"
+                            android:textColorHint="@color/neutral_500"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/iv_search_location"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/iv_search_location"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:textColor="@color/neutral_600"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/ic_search" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_location"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cv_search_location" />
+
+                <TextView
+                    android:id="@+id/tv_when_meet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp"
+                    android:text="언제부터 언제 사이에 모이나요?"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="@+id/rv_location"
+                    app:layout_constraintTop_toBottomOf="@+id/rv_location" />
+
+                <CheckBox
+                    android:id="@+id/cb_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:background="@null"
+                    android:button="@null"
+                    android:drawableEnd="@drawable/selector_checkbox_state"
+                    android:drawablePadding="8dp"
+                    android:text="이미 시간을 정했어요"
+                    android:textColor="@color/neutral_700"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_when_meet"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_when_meet" />
+
+                <TextView
+                    android:id="@+id/tv_max_two_weeks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="최대 2주까지 선택 가능"
+                    android:textColor="@color/neutral_600"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_when_meet"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_when_meet" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_promise_range"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="20dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_max_two_weeks"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_max_two_weeks">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <EditText
+                            android:id="@+id/et_promise_range"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="14dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginBottom="14dp"
+                            android:background="@android:color/transparent"
+                            android:ems="10"
+                            android:hint="약속을 잡을 범위를 정해주세요"
+                            android:inputType="text"
+                            android:maxLength="20"
+                            android:textColorHint="@color/neutral_500"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/iv_calendar"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/iv_calendar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:textColor="@color/neutral_600"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/ic_calendar" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_time_range"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="102dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/cv_promise_range"
+                    app:layout_constraintTop_toBottomOf="@+id/cv_promise_range">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <EditText
+                            android:id="@+id/et_time_range"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="14dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginBottom="14dp"
+                            android:background="@android:color/transparent"
+                            android:ems="10"
+                            android:hint="시간 범위를 정해주세요"
+                            android:inputType="text"
+                            android:maxLength="20"
+                            android:textColorHint="@color/neutral_500"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/iv_time"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/iv_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:textColor="@color/neutral_600"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/ic_clock" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/btn_create_promise"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:scaleType="fitXY"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/img_create_promise" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

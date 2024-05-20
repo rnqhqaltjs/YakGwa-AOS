@@ -2,7 +2,7 @@ package com.prography.yakgwa.ui
 
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -32,11 +32,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         binding.navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-//            if () {
-//                binding.navView.visibility = View.GONE
-//            } else {
-//                binding.navView.visibility = View.VISIBLE
-//            }
+            if (destination.id == R.id.createPromiseFragment || destination.id == R.id.invitationLeaderFragment) {
+                binding.navView.visibility = View.GONE
+                window.statusBarColor = ContextCompat.getColor(this, R.color.neutral_200)
+            } else {
+                binding.navView.visibility = View.VISIBLE
+                window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+            }
         }
     }
 
