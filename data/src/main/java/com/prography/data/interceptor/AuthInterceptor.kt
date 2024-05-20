@@ -22,7 +22,8 @@ class AuthInterceptor @Inject constructor(
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
-        val authRequest = originalRequest.newBuilder().addHeader("token", runBlocking { localStorage.accessToken.first() } ).build()
+        val authRequest = originalRequest.newBuilder()
+            .addHeader("token", runBlocking { localStorage.accessToken.first() }).build()
         val response = chain.proceed(authRequest)
 
         when (response.code) {
@@ -30,13 +31,13 @@ class AuthInterceptor @Inject constructor(
                 response.close()
                 val refreshTokenRequest = originalRequest.newBuilder().get()
                     .url("${BASE_URL}api/v1/auth/reissue")
-                    .addHeader(AUTHORIZATION, runBlocking {localStorage.refreshToken.first() })
+                    .addHeader(AUTHORIZATION, runBlocking { localStorage.refreshToken.first() })
                     .build()
                 val refreshTokenResponse = chain.proceed(refreshTokenRequest)
 
                 if (refreshTokenResponse.isSuccessful) {
                     val responseRefresh =
-                        json.decodeFromString<ResponseReissueDto>(
+                        json.decodeFromString<BaseResponse<ResponseReissueDto>>(
                             refreshTokenResponse.body?.string()
                                 ?: throw IllegalStateException("\"refreshTokenResponse is null $refreshTokenResponse\"")
                         )

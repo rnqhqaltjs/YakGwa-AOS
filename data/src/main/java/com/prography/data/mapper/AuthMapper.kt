@@ -14,7 +14,11 @@ object AuthMapper {
 
     fun mapperToAuthResponseEntity(responseAuthDto: ResponseAuthDto): AuthResponseEntity {
         return responseAuthDto.run {
-            AuthResponseEntity(this.result.tokenSet.accessToken, this.result.tokenSet.refreshToken, this.result.isNew)
+            AuthResponseEntity(
+                this.tokenSet.accessToken,
+                this.tokenSet.refreshToken,
+                this.isNew
+            )
         }
     }
 }

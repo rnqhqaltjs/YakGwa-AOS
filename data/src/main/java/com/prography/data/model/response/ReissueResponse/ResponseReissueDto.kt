@@ -1,19 +1,10 @@
 package com.prography.data.model.response.ReissueResponse
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-import com.google.gson.annotations.SerializedName
-import com.prography.data.model.response.AuthResponse.Result
-import com.prography.data.model.response.AuthResponse.TokenSet
-
+@Serializable
 data class ResponseReissueDto(
-    @SerializedName("code")
-    val code: String,
-    @SerializedName("message")
-    val message: String,
-    @SerializedName("result")
-    val result: Result,
-    @SerializedName("status")
-    val status: Int,
-    @SerializedName("time")
-    val time: String
+    @SerialName("tokenSet")
+    val tokenSet: TokenSet
 )

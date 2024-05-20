@@ -15,10 +15,19 @@ class AuthRepositoryImpl @Inject constructor(
         kakaoAccessToken: String,
         authRequestEntity: AuthRequestEntity
     ): Result<AuthResponseEntity> {
-        val response = authRemoteDataSource.login(kakaoAccessToken, AuthMapper.mapperToRequestAuthDto(authRequestEntity))
+        val response = authRemoteDataSource.login(
+            kakaoAccessToken,
+            AuthMapper.mapperToRequestAuthDto(authRequestEntity)
+        )
 
         return runCatching {
-            AuthMapper.mapperToAuthResponseEntity(response)
+            AuthMapper.mapperToAuthResponseEntity(response.result)
+        }
+    }
+
+    override suspend fun logout(accessToken: String): Result<Unit> {
+        return runCatching {
+            authRemoteDataSource.logout(accessToken).result
         }
     }
 }

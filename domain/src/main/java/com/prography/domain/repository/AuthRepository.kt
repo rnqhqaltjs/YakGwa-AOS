@@ -8,4 +8,6 @@ interface AuthRepository {
         kakaoAccessToken: String,
         authRequestEntity: AuthRequestEntity
     ): Result<AuthResponseEntity>
+
+    suspend fun logout(accessToken: String): Result<Unit>
 }
