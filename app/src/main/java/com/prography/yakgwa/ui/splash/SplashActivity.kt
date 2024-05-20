@@ -2,19 +2,16 @@ package com.prography.yakgwa.ui.splash
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDeepLinkBuilder
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.ActivitySplashBinding
 import com.prography.yakgwa.ui.MainActivity
 import com.prography.yakgwa.ui.login.LoginActivity
-import com.prography.yakgwa.ui.login.LoginViewModel
 import com.prography.yakgwa.util.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -30,7 +27,35 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
         installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        loadSplashScreen()
+        processIntent(intent)
+    }
+
+    private fun processIntent(intent: Intent?) {
+        if (Intent.ACTION_VIEW == intent?.action) {
+            handleDeepLink(intent.data)
+        } else {
+            loadSplashScreen()
+        }
+    }
+
+    private fun handleDeepLink(uri: Uri?) {
+        if (uri != null) {
+            val inviteId = uri.getQueryParameter("inviteId")
+            lifecycleScope.launch {
+                delay(SPLASH_SCREEN_DELAY_TIME)
+                if (viewModel.isLogin()) {
+                    val pendingIntent = NavDeepLinkBuilder(this@SplashActivity)
+                        .setComponentName(MainActivity::class.java)
+                        .setGraph(R.navigation.main_navigation)
+                        .setDestination(R.id.invitationLeaderFragment)
+                        .createPendingIntent()
+
+                    pendingIntent.send()
+                } else {
+                    navigateToLogin()
+                }
+            }
+        }
     }
 
     private fun loadSplashScreen() {
