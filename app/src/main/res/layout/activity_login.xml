@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/yakgwa_title" />
+            app:srcCompat="@drawable/img_login_title" />
 
         <ImageView
             android:id="@+id/kakaoLoginBtn"
@@ -32,14 +32,14 @@
             app:layout_constraintBottom_toTopOf="@+id/appleLoginBtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/kakao_login_btn" />
+            app:srcCompat="@drawable/img_kako_login" />
 
         <ImageView
             android:id="@+id/appleLoginBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
-            app:srcCompat="@drawable/apple_login_btn"
+            app:srcCompat="@drawable/img_apple_login"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
