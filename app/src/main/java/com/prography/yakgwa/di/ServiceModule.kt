@@ -1,6 +1,7 @@
 package com.prography.yakgwa.di
 
 import com.prography.data.service.AuthService
+import com.prography.data.service.MeetService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,5 +17,10 @@ object ServiceModule {
     @Singleton
     fun providesAuthService(retrofit: Retrofit): AuthService =
         retrofit.create(AuthService::class.java)
+
+    @Provides
+    @Singleton
+    fun providesMeetService(retrofit: Retrofit): MeetService =
+        retrofit.create(MeetService::class.java)
 
 }
