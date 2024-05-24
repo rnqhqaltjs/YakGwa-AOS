@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.prography.data.datasource.local.YakGwaLocalDataSource
 import kotlinx.coroutines.flow.Flow
@@ -43,6 +44,18 @@ class YakGwaLocalDataSourceImpl @Inject constructor(
             preferences[REFRESH_TOKEN_KEY] ?: ""
         }
 
+    override val userId: Flow<Int> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[USER_ID] ?: -1
+        }
+
     override val isLogin: Flow<Boolean> = dataStore.data
         .catch { exception ->
             if (exception is IOException) {
@@ -67,6 +80,12 @@ class YakGwaLocalDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun saveUserId(userId: Int) {
+        dataStore.edit { preferences ->
+            preferences[USER_ID] = userId
+        }
+    }
+
     override suspend fun saveIsLogin(isLogin: Boolean) {
         dataStore.edit { preferences ->
             preferences[IS_LOGIN_KEY] = isLogin
@@ -82,6 +101,7 @@ class YakGwaLocalDataSourceImpl @Inject constructor(
     companion object {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("ACCESS_TOKEN")
         private val REFRESH_TOKEN_KEY = stringPreferencesKey("REFRESH_TOKEN")
+        private val USER_ID = intPreferencesKey("USER_ID")
         private val IS_LOGIN_KEY = booleanPreferencesKey("IS_LOGIN")
     }
 }
