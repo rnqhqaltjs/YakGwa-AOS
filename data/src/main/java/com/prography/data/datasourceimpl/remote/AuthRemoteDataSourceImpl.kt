@@ -2,8 +2,8 @@ package com.prography.data.datasourceimpl.remote
 
 import com.prography.data.datasource.remote.AuthRemoteDataSource
 import com.prography.data.model.request.RequestAuthDto
-import com.prography.data.model.response.AuthResponse.ResponseAuthDto
 import com.prography.data.model.response.BaseResponse
+import com.prography.data.model.response.ResponseAuthDto
 import com.prography.data.service.AuthService
 import javax.inject.Inject
 
@@ -17,7 +17,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
         return authService.postLogin(kakaoAccessToken, requestAuthDto)
     }
 
-    override suspend fun logout(accessToken: String): BaseResponse<Unit> {
-        return authService.logout(accessToken)
+    override suspend fun logout(): BaseResponse<Unit> {
+        return authService.logout()
     }
 }

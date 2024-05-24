@@ -1,7 +1,7 @@
 package com.prography.data.mapper
 
 import com.prography.data.model.request.RequestAuthDto
-import com.prography.data.model.response.AuthResponse.ResponseAuthDto
+import com.prography.data.model.response.ResponseAuthDto
 import com.prography.domain.model.request.AuthRequestEntity
 import com.prography.domain.model.response.AuthResponseEntity
 
@@ -17,6 +17,7 @@ object AuthMapper {
             AuthResponseEntity(
                 this.tokenSet.accessToken,
                 this.tokenSet.refreshToken,
+                this.userId,
                 this.isNew
             )
         }

@@ -9,5 +9,5 @@ interface AuthRepository {
         authRequestEntity: AuthRequestEntity
     ): Result<AuthResponseEntity>
 
-    suspend fun logout(accessToken: String): Result<Unit>
+    suspend fun logout(): Result<Unit>
 }
