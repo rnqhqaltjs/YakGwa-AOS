@@ -7,8 +7,8 @@ import com.prography.domain.repository.AuthRepository
 import com.prography.yakgwa.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -20,23 +20,26 @@ class HomeViewModel @Inject constructor(
     private val localStorage: YakGwaLocalDataSource
 ) : ViewModel() {
 
-    private val _logoutState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
-    val logoutState = _logoutState.asStateFlow()
+    private val _logoutState = MutableSharedFlow<UiState<Unit>>(replay = 1)
+    val logoutState = _logoutState.asSharedFlow()
 
     fun logout() {
-        _logoutState.value = UiState.Loading
-
         viewModelScope.launch {
-            val accessToken = withContext(Dispatchers.IO) {
-                localStorage.accessToken.first()
-            }
-            authRepository.logout(accessToken)
+            _logoutState.emit(UiState.Loading)
+
+            authRepository.logout()
                 .onSuccess {
-                    _logoutState.value = UiState.Success(Unit)
+                    _logoutState.emit(UiState.Success(Unit))
                     localStorage.clear()
-                }.onFailure { throwable ->
-                    _logoutState.value = UiState.Failure(throwable.message)
+                }.onFailure {
+                    _logoutState.emit(UiState.Failure(it.message))
                 }
+        }
+    }
+
+    suspend fun isLogin(): String {
+        return withContext(Dispatchers.IO) {
+            localStorage.accessToken.first()
         }
     }
 
