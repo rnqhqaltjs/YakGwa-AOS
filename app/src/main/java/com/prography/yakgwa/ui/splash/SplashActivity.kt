@@ -47,7 +47,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
                     val pendingIntent = NavDeepLinkBuilder(this@SplashActivity)
                         .setComponentName(MainActivity::class.java)
                         .setGraph(R.navigation.main_navigation)
-                        .setDestination(R.id.invitationLeaderFragment)
+                        .setDestination(R.id.invitationMemberFragment)
                         .createPendingIntent()
 
                     pendingIntent.send()
