@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    id ("dagger.hilt.android.plugin")
+    id("dagger.hilt.android.plugin")
     kotlin("kapt")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
@@ -77,8 +77,8 @@ dependencies {
 
     // OkHttp
     implementation(platform(libs.okhttp.bom))
-    implementation("com.squareup.okhttp3:okhttp")
-    implementation("com.squareup.okhttp3:logging-interceptor")
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
 
     // Serialization
     implementation(libs.kotlinx.serialization.json)
