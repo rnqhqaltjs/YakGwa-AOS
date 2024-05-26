@@ -16,22 +16,8 @@ object MeetMapper {
         return createMeetResponseEntity.run {
             val voteDateRange =
                 RequestCreateMeetDto.VoteDateRange(voteDateRange.start, voteDateRange.end)
-
-            val voteTimeStart = RequestCreateMeetDto.Start(
-                voteTimeRange.start.hour,
-                voteTimeRange.start.minute,
-                voteTimeRange.start.nano,
-                voteTimeRange.start.second
-            )
-
-            val voteTimeEnd = RequestCreateMeetDto.End(
-                voteTimeRange.end.hour,
-                voteTimeRange.end.minute,
-                voteTimeRange.end.nano,
-                voteTimeRange.end.second
-            )
-
-            val voteTimeRange = RequestCreateMeetDto.VoteTimeRange(voteTimeStart, voteTimeEnd)
+            val voteTimeRange =
+                RequestCreateMeetDto.VoteTimeRange(voteTimeRange.start, voteTimeRange.end)
 
             RequestCreateMeetDto(
                 this.meetName,

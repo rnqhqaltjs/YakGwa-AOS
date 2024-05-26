@@ -14,7 +14,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.prography.domain.model.request.CreateMeetRequestEntity
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentCreatePromiseBinding
 import com.prography.yakgwa.util.UiState
@@ -25,6 +24,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @AndroidEntryPoint
@@ -35,7 +35,6 @@ class CreatePromiseFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         observer()
         addListeners()
     }
@@ -100,10 +99,7 @@ class CreatePromiseFragment :
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            CreatePromiseFragmentDirections.actionCreatePromiseFragmentToInvitationLeaderFragment()
-                                .apply {
-                                    findNavController().navigate(this)
-                                }
+                            navigateToInvitationLeaderFragment()
                         }
 
                         is UiState.Failure -> {
@@ -113,7 +109,6 @@ class CreatePromiseFragment :
                 }
             }
         }
-
     }
 
     private fun addListeners() {
@@ -142,24 +137,29 @@ class CreatePromiseFragment :
         }
 
         binding.btnCreatePromise.setOnClickListener {
-            viewModel.createMeet(
-                CreateMeetRequestEntity(
-                    binding.tvPromiseInformation.text.toString(),
-                    binding.tvPromiseDescription.text.toString(),
-                    0,
-                    false,
-                    listOf("테스트"),
-                    false,
-                    CreateMeetRequestEntity.VoteDateRange(
-                        viewModel.selectedStartDate.value!!,
-                        viewModel.selectedEndDate.value!!
-                    ),
-                    CreateMeetRequestEntity.VoteTimeRange(
-                        CreateMeetRequestEntity.Start(9, 0, 0, 0),
-                        CreateMeetRequestEntity.End(18, 0, 0, 0)
-                    )
-                )
-            )
+//            viewModel.createMeet(
+//                CreateMeetRequestEntity(
+//                    binding.tvPromiseInformation.text.toString(),
+//                    binding.tvPromiseDescription.text.toString(),
+//                    1,
+//                    false,
+//                    listOf("테스트"),
+//                    false,
+//                    CreateMeetRequestEntity.VoteDateRange(
+//                        viewModel.selectedStartDate.value!!,
+//                        viewModel.selectedEndDate.value!!
+//                    ),
+//                    CreateMeetRequestEntity.VoteTimeRange(
+//                        formatTimeTo24Hour(viewModel.selectedStartTime.value!!),
+//                        formatTimeTo24Hour(viewModel.selectedEndTime.value!!)
+//                    )
+//                )
+//            )
+            navigateToInvitationLeaderFragment()
+        }
+
+        binding.navigateUpBtn.setOnClickListener {
+            findNavController().navigateUp()
         }
     }
 
@@ -221,18 +221,26 @@ class CreatePromiseFragment :
 
 
     private fun parseDate(dateString: String?): LocalDate {
-        return if (dateString != null) {
-            LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        } else {
-            LocalDate.now()
-        }
+        return dateString?.let {
+            LocalDate.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        } ?: LocalDate.now()
     }
 
     private fun parseTime(timeString: String?): LocalTime {
-        return if (timeString != null) {
-            LocalTime.parse(timeString, DateTimeFormatter.ofPattern("a hh:mm"))
-        } else {
-            LocalTime.now()
-        }
+        return timeString?.let {
+            LocalTime.parse(it, DateTimeFormatter.ofPattern("a hh:mm", Locale.KOREAN))
+        } ?: LocalTime.now()
+    }
+
+    private fun formatTimeTo24Hour(timeString: String?): String {
+        return LocalTime.parse(timeString, DateTimeFormatter.ofPattern("a hh:mm", Locale.KOREAN))
+            .format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+    }
+
+    private fun navigateToInvitationLeaderFragment() {
+        CreatePromiseFragmentDirections.actionCreatePromiseFragmentToInvitationLeaderFragment()
+            .apply {
+                findNavController().navigate(this)
+            }
     }
 }

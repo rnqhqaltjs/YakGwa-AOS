@@ -16,21 +16,7 @@ data class CreateMeetRequestEntity(
     )
 
     data class VoteTimeRange(
-        val start: Start,
-        val end: End
-    )
-
-    data class Start(
-        val hour: Int,
-        val minute: Int,
-        val second: Int,
-        val nano: Int
-    )
-
-    data class End(
-        val hour: Int,
-        val minute: Int,
-        val second: Int,
-        val nano: Int
+        val start: String,
+        val end: String
     )
 }

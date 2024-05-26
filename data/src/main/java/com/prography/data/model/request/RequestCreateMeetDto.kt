@@ -34,32 +34,8 @@ data class RequestCreateMeetDto(
     @Serializable
     data class VoteTimeRange(
         @SerializedName("start")
-        val start: Start,
+        val start: String,
         @SerializedName("end")
-        val end: End
-    )
-
-    @Serializable
-    data class Start(
-        @SerializedName("hour")
-        val hour: Int,
-        @SerializedName("minute")
-        val minute: Int,
-        @SerializedName("second")
-        val second: Int,
-        @SerializedName("nano")
-        val nano: Int
-    )
-
-    @Serializable
-    data class End(
-        @SerializedName("hour")
-        val hour: Int,
-        @SerializedName("minute")
-        val minute: Int,
-        @SerializedName("second")
-        val second: Int,
-        @SerializedName("nano")
-        val nano: Int
+        val end: String
     )
 }
