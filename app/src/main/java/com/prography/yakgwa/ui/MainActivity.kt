@@ -32,7 +32,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         binding.navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.createPromiseFragment || destination.id == R.id.invitationLeaderFragment) {
+            if (destination.id == R.id.createPromiseFragment ||
+                destination.id == R.id.invitationLeaderFragment ||
+                destination.id == R.id.invitationDetailLeaderFragment ||
+                destination.id == R.id.invitationMemberFragment
+            ) {
                 binding.navView.visibility = View.GONE
                 window.statusBarColor = ContextCompat.getColor(this, R.color.neutral_200)
             } else {
