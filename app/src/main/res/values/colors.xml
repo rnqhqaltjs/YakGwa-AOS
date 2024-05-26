@@ -9,5 +9,6 @@
     <color name="neutral_500">#A9A9A9</color>
     <color name="neutral_600">#848484</color>
     <color name="neutral_700">#5E5E5E</color>
+    <color name="secondary_700">#9AB125</color>
 
 </resources>
