@@ -14,8 +14,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentCreatePromiseBinding
+import com.prography.yakgwa.model.SelectedLocationModel
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,9 +35,15 @@ class CreatePromiseFragment :
 
     private val viewModel: CreatePromiseViewModel by viewModels()
 
+    private lateinit var locationListAdapter: LocationListAdapter
+    private lateinit var selectedLocationListAdapter: SelectedLocationListAdapter
+
+    private val selectedLocations = mutableListOf<SelectedLocationModel>()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observer()
+        setupRecyclerView()
         addListeners()
     }
 
@@ -109,6 +117,47 @@ class CreatePromiseFragment :
                 }
             }
         }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.locationState.collectLatest {
+                    when (it) {
+                        is UiState.Loading -> {}
+                        is UiState.Success -> {
+                            locationListAdapter.submitList(it.data)
+                        }
+
+                        is UiState.Failure -> {
+                            Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupRecyclerView() {
+        locationListAdapter = LocationListAdapter().apply {
+            setOnItemClickListener {
+                if (selectedLocationListAdapter.itemCount > MAX_SELECTED_COUNT) {
+                    Snackbar.make(requireView(), "장소를 더 추가할 수 없어요.", Snackbar.LENGTH_SHORT).show()
+                    binding.etSearchLocation.setText("")
+                } else {
+                    selectedLocations.add(SelectedLocationModel(it.title))
+                    selectedLocationListAdapter.submitList(selectedLocations.toList())
+                    binding.etSearchLocation.setText("")
+                }
+            }
+        }
+        binding.rvSearchLocation.adapter = locationListAdapter
+
+        selectedLocationListAdapter = SelectedLocationListAdapter().apply {
+            setOnRemoveClickListener { selectedLocation ->
+                selectedLocations.remove(selectedLocation)
+                submitList(selectedLocations.toList())
+            }
+        }
+        binding.rvSelectedLocation.adapter = selectedLocationListAdapter
     }
 
     private fun addListeners() {
@@ -118,6 +167,10 @@ class CreatePromiseFragment :
 
         binding.etWithin80Msg.addTextChangedListener { text ->
             viewModel.onTextChanged80(text.toString())
+        }
+
+        binding.etSearchLocation.addTextChangedListener { text ->
+            viewModel.setSearchQuery(text.toString())
         }
 
         binding.startDate.setOnClickListener {
@@ -143,7 +196,7 @@ class CreatePromiseFragment :
 //                    binding.tvPromiseDescription.text.toString(),
 //                    1,
 //                    false,
-//                    listOf("테스트"),
+//                    selectedLocations.map { it.title },
 //                    false,
 //                    CreateMeetRequestEntity.VoteDateRange(
 //                        viewModel.selectedStartDate.value!!,
@@ -206,8 +259,8 @@ class CreatePromiseFragment :
             }
 
         val selectedTime = when (updateTime) {
-            viewModel::updateStartTime -> viewModel.selectedStartTime.value
-            else -> viewModel.selectedEndTime.value
+            viewModel::updateStartTime -> viewModel.selectedStartTime.value ?: DEFAULT_START_TIME
+            else -> viewModel.selectedEndTime.value ?: DEFAULT_END_TIME
         }
 
         val time = parseTime(selectedTime)
@@ -242,5 +295,11 @@ class CreatePromiseFragment :
             .apply {
                 findNavController().navigate(this)
             }
+    }
+
+    companion object {
+        private const val MAX_SELECTED_COUNT = 2
+        private const val DEFAULT_START_TIME = "오전 09:00"
+        private const val DEFAULT_END_TIME = "오후 06:00"
     }
 }

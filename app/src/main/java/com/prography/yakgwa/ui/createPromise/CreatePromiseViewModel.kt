@@ -6,15 +6,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prography.data.datasource.local.YakGwaLocalDataSource
 import com.prography.domain.model.request.CreateMeetRequestEntity
+import com.prography.domain.model.response.LocationResponseEntity
 import com.prography.domain.model.response.ThemesResponseEntity
+import com.prography.domain.usecase.GetLocationListUseCase
 import com.prography.domain.usecase.GetThemeListUseCase
 import com.prography.domain.usecase.PostNewMeetCreateUseCase
 import com.prography.yakgwa.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
@@ -27,7 +36,8 @@ import javax.inject.Inject
 class CreatePromiseViewModel @Inject constructor(
     private val getThemeListUseCase: GetThemeListUseCase,
     private val postNewMeetCreateUseCase: PostNewMeetCreateUseCase,
-    private val localStorage: YakGwaLocalDataSource
+    private val localStorage: YakGwaLocalDataSource,
+    private val getLocationListUseCase: GetLocationListUseCase
 ) : ViewModel() {
 
     private val _textLength20State = MutableStateFlow(0)
@@ -55,8 +65,16 @@ class CreatePromiseViewModel @Inject constructor(
     private val _createMeetState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
     val createMeetState = _createMeetState.asStateFlow()
 
+    private val _locationState =
+        MutableStateFlow<UiState<List<LocationResponseEntity>>>(UiState.Loading)
+    val locationState = _locationState.asStateFlow()
+
+    private val _searchQueryState = MutableStateFlow("")
+    val searchQueryState = _searchQueryState.asStateFlow()
+
     init {
         getThemes()
+        getLocations()
     }
 
     private fun getThemes() {
@@ -129,4 +147,35 @@ class CreatePromiseViewModel @Inject constructor(
         }
     }
 
+    fun setSearchQuery(query: String) {
+        _searchQueryState.value = query
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    private fun getLocations() {
+        viewModelScope.launch {
+            _searchQueryState
+                .debounce(SEARCH_QUERY_DELAY_TIME)
+                .distinctUntilChanged()
+                .flatMapLatest { query ->
+                    if (query.isNotBlank()) {
+                        _locationState.emit(UiState.Loading)
+
+                        getLocationListUseCase(query)
+                            .catch { e ->
+                                _locationState.emit(UiState.Failure(e.message))
+                            }
+                    } else {
+                        flowOf(emptyList())
+                    }
+                }
+                .collect { result ->
+                    _locationState.emit(UiState.Success(result))
+                }
+        }
+    }
+
+    companion object {
+        const val SEARCH_QUERY_DELAY_TIME = 300L
+    }
 }
