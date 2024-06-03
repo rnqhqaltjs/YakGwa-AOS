@@ -95,4 +95,7 @@ dependencies {
 
     // Splash
     implementation(libs.androidx.core.splashscreen)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.android)
 }
