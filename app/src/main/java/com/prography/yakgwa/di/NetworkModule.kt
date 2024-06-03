@@ -1,9 +1,8 @@
 package com.prography.yakgwa.di
 
-import android.app.Application
-import com.prography.data.datasource.local.YakGwaLocalDataSource
 import com.prography.data.interceptor.AuthInterceptor
 import com.prography.yakgwa.BuildConfig.BASE_URL
+import com.prography.yakgwa.BuildConfig.NAVER_API_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,11 +15,20 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class YAKGWA
+
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class NAVER
+
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
@@ -56,6 +64,7 @@ class NetworkModule {
     @Singleton
     fun provideAuthInterceptor(interceptor: AuthInterceptor): Interceptor = interceptor
 
+    @YAKGWA
     @Singleton
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
@@ -63,6 +72,29 @@ class NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .baseUrl(BASE_URL)
+            .build()
+    }
+
+    @NAVER
+    @Singleton
+    @Provides
+    fun provideNaverOkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(100, TimeUnit.SECONDS)
+            .readTimeout(100, TimeUnit.SECONDS)
+            .writeTimeout(100, TimeUnit.SECONDS)
+            .addInterceptor(loggingInterceptor)
+            .build()
+    }
+
+    @NAVER
+    @Singleton
+    @Provides
+    fun provideNaverRetrofit(client: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .baseUrl(NAVER_API_URL)
             .build()
     }
 }
