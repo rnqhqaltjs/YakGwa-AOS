@@ -2,6 +2,7 @@ package com.prography.data.service
 
 import com.prography.data.model.request.RequestCreateMeetDto
 import com.prography.data.model.response.BaseResponse
+import com.prography.data.model.response.ResponseMeetsDto
 import com.prography.data.model.response.ResponseThemesDto
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -17,4 +18,7 @@ interface MeetService {
         @Path("userId") userId: Int,
         @Body requestCreateMeetDto: RequestCreateMeetDto
     ): BaseResponse<Unit>
+
+    @GET("/api/v1/users/{userId}/entries")
+    suspend fun getParticipantMeets(@Path("userId") userId: Int): BaseResponse<ResponseMeetsDto>
 }
