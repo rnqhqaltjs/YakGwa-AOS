@@ -34,29 +34,28 @@
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpToInclusive="false"
+            app:popUpTo="@+id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/invitationLeaderFragment"
         android:name="com.prography.yakgwa.ui.invitation.InvitationLeaderFragment"
         android:label="InvitationLeaderFragment"
-        tools:layout="@layout/fragment_invitation_leader">
-        <action
-            android:id="@+id/action_invitationLeaderFragment_to_invitationDetailLeaderFragment"
-            app:destination="@id/invitationDetailLeaderFragment"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-    </fragment>
-    <fragment
-        android:id="@+id/invitationDetailLeaderFragment"
-        android:name="com.prography.yakgwa.ui.invitation.InvitationDetailLeaderFragment"
-        android:label="InvitationDetailLeaderFragment"
-        tools:layout="@layout/fragment_invitation_detail_leader" />
+        tools:layout="@layout/fragment_invitation_leader" />
     <fragment
         android:id="@+id/invitationMemberFragment"
         android:name="com.prography.yakgwa.ui.invitation.InvitationMemberFragment"
         android:label="InvitationMemberFragment"
-        tools:layout="@layout/fragment_invitation_member" />
+        tools:layout="@layout/fragment_invitation_member">
+        <action
+            android:id="@+id/action_invitationMemberFragment_to_invitationLeaderFragment"
+            app:destination="@id/invitationLeaderFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@+id/homeFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
 </navigation>
