@@ -25,9 +25,9 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun logout(accessToken: String): Result<Unit> {
+    override suspend fun logout(): Result<Unit> {
         return runCatching {
-            authRemoteDataSource.logout(accessToken).result
+            authRemoteDataSource.logout().result
         }
     }
 }

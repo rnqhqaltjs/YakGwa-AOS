@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Intent
 import com.prography.data.datasource.local.YakGwaLocalDataSource
 import com.prography.data.model.response.BaseResponse
-import com.prography.data.model.response.ReissueResponse.ResponseReissueDto
+import com.prography.data.model.response.ResponseReissueDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
+import okhttp3.Request
 import okhttp3.Response
 import javax.inject.Inject
 
@@ -22,8 +23,8 @@ class AuthInterceptor @Inject constructor(
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
-        val authRequest = originalRequest.newBuilder()
-            .addHeader("token", runBlocking { localStorage.accessToken.first() }).build()
+        val authRequest =
+            if (runBlocking { localStorage.isLogin.first() }) originalRequest.newAuthBuilder() else originalRequest
         val response = chain.proceed(authRequest)
 
         when (response.code) {
@@ -49,9 +50,9 @@ class AuthInterceptor @Inject constructor(
                         }
                     }
 
-                    val newRequest = originalRequest.newBuilder()
-                        .addHeader("token", runBlocking { localStorage.accessToken.first() })
-                        .build()
+                    refreshTokenResponse.close()
+
+                    val newRequest = originalRequest.newAuthBuilder()
                     return chain.proceed(newRequest)
                 } else {
                     with(context) {
@@ -69,6 +70,11 @@ class AuthInterceptor @Inject constructor(
         }
         return response
     }
+
+    private fun Request.newAuthBuilder() =
+        this.newBuilder().addHeader(AUTHORIZATION, runBlocking { localStorage.accessToken.first() })
+            .build()
+
 
     companion object {
         const val AUTHORIZATION = "Authorization"

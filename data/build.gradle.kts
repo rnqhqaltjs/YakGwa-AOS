@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    id ("dagger.hilt.android.plugin")
+    id("dagger.hilt.android.plugin")
     kotlin("kapt")
     id("kotlin-parcelize")
     id("org.jetbrains.kotlin.plugin.serialization")
@@ -66,4 +66,6 @@ dependencies {
     // Datastore
     implementation(libs.androidx.datastore.preferences)
 
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.android)
 }

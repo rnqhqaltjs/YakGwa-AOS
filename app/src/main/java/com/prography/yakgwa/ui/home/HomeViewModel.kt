@@ -2,41 +2,35 @@ package com.prography.yakgwa.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prography.data.datasource.local.YakGwaLocalDataSource
-import com.prography.domain.repository.AuthRepository
+import com.prography.domain.model.response.MeetsResponseEntity
+import com.prography.domain.usecase.GetParticipantMeetListUseCase
 import com.prography.yakgwa.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    private val localStorage: YakGwaLocalDataSource
+    private val getParticipantMeetListUseCase: GetParticipantMeetListUseCase
 ) : ViewModel() {
+    
+    private val _participantMeetState =
+        MutableStateFlow<UiState<List<MeetsResponseEntity>>>(UiState.Loading)
+    val participantMeetState = _participantMeetState.asStateFlow()
 
-    private val _logoutState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
-    val logoutState = _logoutState.asStateFlow()
-
-    fun logout() {
-        _logoutState.value = UiState.Loading
-
+    fun getParticipantMeets(userId: Int) {
         viewModelScope.launch {
-            val accessToken = withContext(Dispatchers.IO) {
-                localStorage.accessToken.first()
-            }
-            authRepository.logout(accessToken)
-                .onSuccess {
-                    _logoutState.value = UiState.Success(Unit)
-                    localStorage.clear()
-                }.onFailure { throwable ->
-                    _logoutState.value = UiState.Failure(throwable.message)
+            _participantMeetState.emit(UiState.Loading)
+
+            runCatching {
+                getParticipantMeetListUseCase(userId).collect {
+                    _participantMeetState.emit(UiState.Success(it))
                 }
+            }.onFailure {
+                _participantMeetState.emit(UiState.Failure(it.message))
+            }
         }
     }
 

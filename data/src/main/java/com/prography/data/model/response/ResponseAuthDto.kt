@@ -1,4 +1,4 @@
-package com.prography.data.model.response.AuthResponse
+package com.prography.data.model.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -11,4 +11,12 @@ data class ResponseAuthDto(
     val userId: Int,
     @SerialName("isNew")
     val isNew: Boolean
-)
+) {
+    @Serializable
+    data class TokenSet(
+        @SerialName("accessToken")
+        val accessToken: String,
+        @SerialName("refreshToken")
+        val refreshToken: String
+    )
+}
