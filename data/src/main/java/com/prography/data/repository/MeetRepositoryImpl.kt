@@ -3,8 +3,11 @@ package com.prography.data.repository
 import com.prography.data.datasource.remote.MeetRemoteDataSource
 import com.prography.data.mapper.MeetMapper
 import com.prography.domain.model.request.CreateMeetRequestEntity
+import com.prography.domain.model.response.CreateMeetResponseEntity
+import com.prography.domain.model.response.MeetDetailResponseEntity
 import com.prography.domain.model.response.MeetsResponseEntity
 import com.prography.domain.model.response.ThemesResponseEntity
+import com.prography.domain.model.response.TimePlaceResponseEntity
 import com.prography.domain.repository.MeetRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -24,14 +27,14 @@ class MeetRepositoryImpl @Inject constructor(
     override suspend fun createMeet(
         userId: Int,
         createMeetRequestEntity: CreateMeetRequestEntity
-    ): Result<Unit> {
+    ): Result<CreateMeetResponseEntity> {
         val response = meetRemoteDataSource.createMeet(
             userId,
             MeetMapper.mapperToRequestCreateMeetDto(createMeetRequestEntity)
         )
 
         return runCatching {
-            response.result
+            MeetMapper.mapperToCreateMeetResponseEntity(response.result)
         }
     }
 
@@ -40,5 +43,36 @@ class MeetRepositoryImpl @Inject constructor(
             MeetMapper.mapperToMeetsResponseEntity(meetRemoteDataSource.getParticipantMeets(userId).result)
         }
         emit(result.getOrThrow())
+    }
+
+    override suspend fun getMeetInformationDetail(
+        userId: Int,
+        meetId: Int
+    ): Flow<MeetDetailResponseEntity> = flow {
+        val result = runCatching {
+            MeetMapper.mapperToMeetDetailResponseEntity(
+                meetRemoteDataSource.getMeetInformationDetail(
+                    userId,
+                    meetId
+                ).result
+            )
+        }
+        emit(result.getOrThrow())
+    }
+
+    override suspend fun participantMeet(userId: Int, meetId: Int): Result<Unit> {
+        val response = meetRemoteDataSource.participantMeet(userId, meetId)
+
+        return runCatching {
+            response.result
+        }
+    }
+
+    override suspend fun getTimePlaceCandidate(meetId: Int): Result<TimePlaceResponseEntity> {
+        val response = meetRemoteDataSource.getTimePlaceCandidate(meetId)
+
+        return runCatching {
+            MeetMapper.mapperToTimePlaceResponseEntity(response.result)
+        }
     }
 }

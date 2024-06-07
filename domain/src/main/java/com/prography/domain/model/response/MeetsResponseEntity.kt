@@ -1,19 +1,14 @@
 package com.prography.domain.model.response
 
 data class MeetsResponseEntity(
-    val meetInfo: MeetInfo,
     val meetStatus: String,
-    val participantsInfo: List<ParticipantsInfo>
+    val meetInfo: MeetInfo
 ) {
     data class MeetInfo(
-        val address: String?,
-        val meetId: Int?,
+        val userVote: Boolean,
+        val meetId: Int,
+        val startMeetTime: String?,
         val placeName: String?,
-        val startMeetTime: String?
-    )
-
-    data class ParticipantsInfo(
-        val imageUrl: String,
-        val participantId: Int
+        val address: String?,
     )
 }
