@@ -40,7 +40,14 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
 
     private fun handleDeepLink(uri: Uri?) {
         if (uri != null) {
-            val inviteId = uri.getQueryParameter("inviteId")
+            val userId = uri.getQueryParameter("userId")
+            val meetId = uri.getQueryParameter("meetId")
+
+            val args = Bundle().apply {
+                putString("userId", userId)
+                putString("meetId", meetId)
+            }
+
             lifecycleScope.launch {
                 delay(SPLASH_SCREEN_DELAY_TIME)
                 if (viewModel.isLogin()) {
@@ -48,6 +55,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
                         .setComponentName(MainActivity::class.java)
                         .setGraph(R.navigation.main_navigation)
                         .setDestination(R.id.invitationMemberFragment)
+                        .setArguments(args)
                         .createPendingIntent()
 
                     pendingIntent.send()
