@@ -33,7 +33,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.createPromiseFragment ||
                 destination.id == R.id.invitationLeaderFragment ||
-                destination.id == R.id.invitationMemberFragment
+                destination.id == R.id.invitationMemberFragment ||
+                destination.id == R.id.votePromiseTimeFragment ||
+                destination.id == R.id.votePromisePlaceFragment
             ) {
                 binding.navView.visibility = View.GONE
             } else {
