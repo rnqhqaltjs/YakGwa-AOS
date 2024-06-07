@@ -2,7 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="primary_100">#FFE6C9</color>
     <color name="primary_300">#FECB8F</color>
+    <color name="primary_700">#FF9E2B</color>
     <color name="primary_800">#FF8A00</color>
     <color name="neutral_200">#F7F7F7</color>
     <color name="neutral_300">#DDDDDD</color>
@@ -11,5 +13,8 @@
     <color name="neutral_700">#5E5E5E</color>
     <color name="neutral_800">#444444</color>
     <color name="secondary_700">#9AB125</color>
+    <color name="sub_red">#FF3B3B</color>
+    <color name="sub_blue">#5A71E9</color>
+
 
 </resources>
