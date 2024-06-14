@@ -54,8 +54,8 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
         <argument
-            android:name="createMeet"
-            app:argType="com.prography.domain.model.response.CreateMeetResponseEntity" />
+            android:name="meetId"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/invitationMemberFragment"

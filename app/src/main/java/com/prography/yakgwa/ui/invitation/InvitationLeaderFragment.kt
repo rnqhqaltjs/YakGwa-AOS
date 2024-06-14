@@ -2,9 +2,10 @@ package com.prography.yakgwa.ui.invitation
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -29,8 +30,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
+@RequiresApi(Build.VERSION_CODES.O)
 class InvitationLeaderFragment :
     BaseFragment<FragmentInvitationLeaderBinding>(R.layout.fragment_invitation_leader) {
 
@@ -39,7 +43,7 @@ class InvitationLeaderFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val meetId = args.createMeet.meetId
+        val meetId = args.meetId
 
         initView(meetId)
         observer()
@@ -52,7 +56,6 @@ class InvitationLeaderFragment :
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun observer() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -60,15 +63,10 @@ class InvitationLeaderFragment :
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            binding.tvTemaName.text = it.data.meetInfo.meetThemeName
-                            binding.tvInvitationTitle.text = it.data.meetInfo.meetName
-                            binding.tvInvitationDescription.text = it.data.meetInfo.meetDescription
-                            binding.tvInvitationEnd.text =
-                                it.data.meetInfo.leftInviteTime + "시간 뒤 초대 마감"
+                            showMeetDetails(it.data.meetInfo)
                         }
 
                         is UiState.Failure -> {
-                            Log.d("111111111", it.error!!)
                         }
                     }
                 }
@@ -93,7 +91,17 @@ class InvitationLeaderFragment :
     }
 
     private fun sendKakaoLink(userId: Int, meetInfo: MeetInfo) {
-        val defaultFeed = FeedTemplate(
+        val defaultFeed = createKakaoFeedTemplate(userId, meetInfo)
+
+        if (ShareClient.instance.isKakaoTalkSharingAvailable(requireActivity())) {
+            shareViaKakaoTalk(defaultFeed)
+        } else {
+            shareViaWeb(defaultFeed)
+        }
+    }
+
+    private fun createKakaoFeedTemplate(userId: Int, meetInfo: MeetInfo): FeedTemplate {
+        return FeedTemplate(
             content = Content(
                 title = meetInfo.meetName,
                 description = meetInfo.meetDescription,
@@ -125,37 +133,57 @@ class InvitationLeaderFragment :
                 )
             )
         )
+    }
 
-        if (ShareClient.instance.isKakaoTalkSharingAvailable(requireActivity())) {
-            ShareClient.instance.shareDefault(
-                requireActivity(),
-                defaultFeed
-            ) { sharingResult, error ->
-                if (error != null) {
-                    Timber.e("카카오톡 공유 실패", error)
-                } else if (sharingResult != null) {
-                    Timber.d("카카오톡 공유 성공 ${sharingResult.intent}")
-                    startActivity(sharingResult.intent)
+    private fun shareViaKakaoTalk(defaultFeed: FeedTemplate) {
+        ShareClient.instance.shareDefault(
+            requireActivity(),
+            defaultFeed
+        ) { sharingResult, error ->
+            if (error != null) {
+                Timber.e("카카오톡 공유 실패", error)
+            } else if (sharingResult != null) {
+                Timber.d("카카오톡 공유 성공 ${sharingResult.intent}")
+                startActivity(sharingResult.intent)
 
-                    Timber.w("Warning Msg: ${sharingResult.warningMsg}")
-                    Timber.w("Argument Msg: ${sharingResult.argumentMsg}")
-                }
-            }
-        } else {
-            val sharerUrl = WebSharerClient.instance.makeDefaultUrl(defaultFeed)
-
-            try {
-                KakaoCustomTabsClient.openWithDefault(requireActivity(), sharerUrl)
-            } catch (e: UnsupportedOperationException) {
-                // CustomTabsServiceConnection 지원 브라우저가 없을 때 예외처리
-            }
-
-            try {
-                KakaoCustomTabsClient.open(requireActivity(), sharerUrl)
-            } catch (e: ActivityNotFoundException) {
-                // 디바이스에 설치된 인터넷 브라우저가 없을 때 예외처리
+                Timber.w("Warning Msg: ${sharingResult.warningMsg}")
+                Timber.w("Argument Msg: ${sharingResult.argumentMsg}")
             }
         }
+    }
+
+    private fun shareViaWeb(defaultFeed: FeedTemplate) {
+        val sharerUrl = WebSharerClient.instance.makeDefaultUrl(defaultFeed)
+
+        try {
+            KakaoCustomTabsClient.openWithDefault(requireActivity(), sharerUrl)
+        } catch (e: UnsupportedOperationException) {
+            Timber.e("CustomTabsServiceConnection 지원 브라우저가 없습니다: $e")
+        }
+
+        try {
+            KakaoCustomTabsClient.open(requireActivity(), sharerUrl)
+        } catch (e: ActivityNotFoundException) {
+            Timber.e("디바이스에 설치된 인터넷 브라우저가 없습니다: $e")
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showMeetDetails(meetInfo: MeetInfo) {
+        binding.apply {
+            tvTemaName.text = meetInfo.meetThemeName
+            tvInvitationTitle.text = meetInfo.meetName
+            tvInvitationDescription.text = meetInfo.meetDescription
+
+            val hours = parseHourFromTimeString(meetInfo.leftInviteTime)
+            tvInvitationEnd.text = "${hours}시간 뒤 초대 마감"
+        }
+    }
+
+    private fun parseHourFromTimeString(timeString: String): Int {
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        val localTime = LocalTime.parse(timeString, formatter)
+        return localTime.hour
     }
 
     private fun navigateToVotePromiseTimeFragment(meetId: Int) {
