@@ -11,9 +11,9 @@ data class RequestVoteTimeDto(
 ) {
     @Serializable
     data class PossibleSchedule(
-        @SerializedName("possibleEndTime")
-        val possibleEndTime: String,
         @SerializedName("possibleStartTime")
-        val possibleStartTime: String
+        val possibleStartTime: String,
+        @SerializedName("possibleEndTime")
+        val possibleEndTime: String
     )
 }

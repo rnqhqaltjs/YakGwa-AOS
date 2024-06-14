@@ -15,8 +15,9 @@ import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentVotePromiseTimeBinding
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
-import com.prography.yakgwa.util.calendarUtils.DayDecorator
 import com.prography.yakgwa.util.calendarUtils.MinMaxDecorator
+import com.prography.yakgwa.util.calendarUtils.SelectDayDecorator
+import com.prography.yakgwa.util.calendarUtils.TimeSelectedDecorator
 import com.prography.yakgwa.util.calendarUtils.WeekDayColorFormatter
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
@@ -24,6 +25,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 
 @AndroidEntryPoint
@@ -36,10 +39,12 @@ class VotePromiseTimeFragment :
 
     private lateinit var timeListAdapter: TimeListAdapter
     private val args by navArgs<VotePromiseTimeFragmentArgs>()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val meetId = args.meetId
 
+        setupRecyclerView()
         initView(meetId)
         observer()
         addListeners(meetId)
@@ -49,26 +54,37 @@ class VotePromiseTimeFragment :
         viewModel.getTimePlaceCandidate(meetId)
     }
 
-    private fun initCalendarView() {
+    private fun initCalendarView(
+        startDate: LocalDate,
+        endDate: LocalDate,
+        startTime: LocalTime,
+        endTime: LocalTime
+    ) {
         binding.calendarView.apply {
             configureCalendarView(this)
-            setupCalendarDecorators(this)
+            setupCalendarDecorators(this, startDate, endDate)
             setupTitleFormatter(this)
             setupWeekdayFormatter(this)
-            configureDateRange(this)
+            configureDateRange(this, startDate, endDate)
             setupDateChangeListener(this)
         }
+        viewModel.calculateTimeSlots(startDate, endDate, startTime, endTime)
     }
 
     private fun observer() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.timePlaceState.collectLatest {
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            initCalendarView()
-                            setupRecyclerView()
+                            val startDate = LocalDate.parse(it.data.timeItems.dateRange.start)
+                            val endDate = LocalDate.parse(it.data.timeItems.dateRange.end)
+                            val startTime = LocalTime.parse(it.data.timeItems.timeRange.start)
+                            val endTime = LocalTime.parse(it.data.timeItems.timeRange.end)
+
+                            viewModel.setDateRange(startDate, endDate)
+                            initCalendarView(startDate, endDate, startTime, endTime)
                         }
 
                         is UiState.Failure -> {
@@ -77,22 +93,32 @@ class VotePromiseTimeFragment :
                 }
             }
         }
+
+        lifecycleScope.launch {
+            viewModel.selectedTimeState.collectLatest {
+                timeListAdapter.submitList(it)
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.selectedDateState.collectLatest {
+                binding.tvSelectedDate.text = it?.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                updateCalendarDecorators(it)
+            }
+        }
     }
 
     private fun addListeners(meetId: Int) {
-        binding.btnVoteNext.setOnClickListener {
-            navigateToVotePromisePlaceFragment(meetId)
-        }
-
-        binding.ivNavigateUpBtn.setOnClickListener {
-            findNavController().navigateUp()
+        binding.apply {
+            btnVoteNext.setOnClickListener { navigateToVotePromisePlaceFragment(meetId) }
+            ivNavigateUpBtn.setOnClickListener { findNavController().navigateUp() }
         }
     }
 
     private fun setupRecyclerView() {
         timeListAdapter = TimeListAdapter().apply {
-            setOnItemClickListener {
-
+            setOnItemClickListener { position ->
+                viewModel.selectTimeSlot(viewModel.selectedDateState.value!!, position)
             }
         }
         binding.rvTime.adapter = timeListAdapter
@@ -100,27 +126,44 @@ class VotePromiseTimeFragment :
 
     private fun configureCalendarView(calendarView: MaterialCalendarView) {
         calendarView.setTopbarVisible(false)
-        calendarView.isDynamicHeightEnabled = true
+//        calendarView.isDynamicHeightEnabled = true
     }
 
-    private fun setupCalendarDecorators(calendarView: MaterialCalendarView) {
-        val startDate = LocalDate.parse(viewModel.startDateState.value)
-        val endDate = LocalDate.parse(viewModel.endDateState.value)
-
-        val startCalendarDay =
-            CalendarDay(startDate.year, startDate.monthValue - 1, startDate.dayOfMonth)
-        val endCalendarDay = CalendarDay(endDate.year, endDate.monthValue - 1, endDate.dayOfMonth)
-
+    private fun setupCalendarDecorators(
+        calendarView: MaterialCalendarView,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ) {
         calendarView.addDecorators(
-            MinMaxDecorator(startCalendarDay, endCalendarDay),
-            DayDecorator(requireContext(), startCalendarDay, endCalendarDay)
+            MinMaxDecorator(startDate.toCalendarDay(), endDate.toCalendarDay()),
+            SelectDayDecorator(requireContext(), startDate.toCalendarDay(), endDate.toCalendarDay())
         )
+    }
+
+    private fun updateCalendarDecorators(selectedDate: LocalDate?) {
+        val startDate = viewModel.startDate.value
+        val endDate = viewModel.endDate.value
+
+        if (startDate != null && endDate != null) {
+            binding.calendarView.apply {
+                removeDecorators()
+                addDecorators(
+                    MinMaxDecorator(startDate.toCalendarDay(), endDate.toCalendarDay()),
+                    SelectDayDecorator(
+                        requireContext(),
+                        startDate.toCalendarDay(),
+                        endDate.toCalendarDay()
+                    ),
+                    TimeSelectedDecorator(requireContext(), viewModel.timeSlots.value, selectedDate)
+                )
+            }
+        }
     }
 
     private fun setupTitleFormatter(calendarView: MaterialCalendarView) {
         calendarView.setTitleFormatter { day ->
             val year = day.year
-            val month = String.format("%02d", day.month + 1)
+            val month = String.format("%02d", day.month + MONTH_OFFSET)
             val headerText = "$year.$month"
 
             binding.tvCalendarHeader.text = headerText
@@ -132,30 +175,22 @@ class VotePromiseTimeFragment :
         calendarView.setWeekDayFormatter(WeekDayColorFormatter(requireContext()))
     }
 
-    private fun configureDateRange(calendarView: MaterialCalendarView) {
-        val startDate = LocalDate.parse(viewModel.startDateState.value)
-        val endDate = LocalDate.parse(viewModel.endDateState.value)
+    private fun configureDateRange(
+        calendarView: MaterialCalendarView,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ) {
         val lastDayOfMonth = endDate.withDayOfMonth(endDate.lengthOfMonth()).dayOfMonth
 
         calendarView.state().edit()
-            .setMinimumDate(CalendarDay.from(startDate.year, startDate.monthValue - 1, 1))
-            .setMaximumDate(CalendarDay.from(endDate.year, endDate.monthValue - 1, lastDayOfMonth))
+            .setMinimumDate(startDate.toCalendarDay(FIRST_DAY_OF_MONTH))
+            .setMaximumDate(endDate.toCalendarDay(lastDayOfMonth))
             .commit()
     }
 
     private fun setupDateChangeListener(calendarView: MaterialCalendarView) {
         calendarView.setOnDateChangedListener { _, date, _ ->
-            binding.tvSelectedDate.text =
-                String.format("%04d/%02d/%02d", date.year, date.month + 1, date.day)
-
-            val selectedDate = LocalDate.of(date.year, date.month + 1, date.day)
-
-            viewModel.calculateTimeSlots(
-                selectedDate,
-                viewModel.startTimeState.value!!,
-                viewModel.endTimeState.value!!,
-            )
-            timeListAdapter.submitList(viewModel.timeSlots.value.toList())
+            viewModel.selectedDate(LocalDate.of(date.year, date.month + MONTH_OFFSET, date.day))
         }
     }
 
@@ -166,5 +201,14 @@ class VotePromiseTimeFragment :
             .apply {
                 findNavController().navigate(this)
             }
+    }
+
+    private fun LocalDate.toCalendarDay(dayOfMonth: Int = this.dayOfMonth): CalendarDay {
+        return CalendarDay.from(this.year, this.monthValue - MONTH_OFFSET, dayOfMonth)
+    }
+
+    companion object {
+        const val MONTH_OFFSET = 1
+        const val FIRST_DAY_OF_MONTH = 1
     }
 }
