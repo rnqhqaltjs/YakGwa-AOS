@@ -9,6 +9,8 @@ import com.prography.domain.usecase.GetThemeListUseCase
 import com.prography.domain.usecase.GetVoteTimePlaceCandidateInfoUseCase
 import com.prography.domain.usecase.PostMeetParticipantUseCase
 import com.prography.domain.usecase.PostNewMeetCreateUseCase
+import com.prography.domain.usecase.PostUserVotePlaceUseCase
+import com.prography.domain.usecase.PostUserVoteTimeUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,4 +54,14 @@ class UseCaseModule {
     @Singleton
     fun providesGetVoteTimeCandidateInfoUseCase(meetRepository: MeetRepository): GetVoteTimePlaceCandidateInfoUseCase =
         GetVoteTimePlaceCandidateInfoUseCase(meetRepository)
+
+    @Provides
+    @Singleton
+    fun providesPostUserVoteTimeUseCase(meetRepository: MeetRepository): PostUserVoteTimeUseCase =
+        PostUserVoteTimeUseCase(meetRepository)
+
+    @Provides
+    @Singleton
+    fun providesPostUserVotePlaceUseCase(meetRepository: MeetRepository): PostUserVotePlaceUseCase =
+        PostUserVotePlaceUseCase(meetRepository)
 }

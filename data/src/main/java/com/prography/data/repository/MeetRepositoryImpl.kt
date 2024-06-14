@@ -3,6 +3,8 @@ package com.prography.data.repository
 import com.prography.data.datasource.remote.MeetRemoteDataSource
 import com.prography.data.mapper.MeetMapper
 import com.prography.domain.model.request.CreateMeetRequestEntity
+import com.prography.domain.model.request.VotePlaceRequestEntity
+import com.prography.domain.model.request.VoteTimeRequestEntity
 import com.prography.domain.model.response.CreateMeetResponseEntity
 import com.prography.domain.model.response.MeetDetailResponseEntity
 import com.prography.domain.model.response.MeetsResponseEntity
@@ -73,6 +75,38 @@ class MeetRepositoryImpl @Inject constructor(
 
         return runCatching {
             MeetMapper.mapperToTimePlaceResponseEntity(response.result)
+        }
+    }
+
+    override suspend fun voteTime(
+        userId: Int,
+        meetId: Int,
+        voteTimeRequestEntity: VoteTimeRequestEntity
+    ): Result<Unit> {
+        val response = meetRemoteDataSource.voteTime(
+            userId,
+            meetId,
+            MeetMapper.mapperToRequestVoteTimeDto(voteTimeRequestEntity)
+        )
+
+        return runCatching {
+            response.result
+        }
+    }
+
+    override suspend fun votePlace(
+        userId: Int,
+        meetId: Int,
+        votePlaceRequestEntity: VotePlaceRequestEntity
+    ): Result<Unit> {
+        val response = meetRemoteDataSource.votePlace(
+            userId,
+            meetId,
+            MeetMapper.mapperToRequestVotePlaceDto(votePlaceRequestEntity)
+        )
+
+        return runCatching {
+            response.result
         }
     }
 }

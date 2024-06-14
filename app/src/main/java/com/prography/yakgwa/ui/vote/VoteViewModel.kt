@@ -4,9 +4,13 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prography.domain.model.request.VotePlaceRequestEntity
+import com.prography.domain.model.request.VoteTimeRequestEntity
 import com.prography.domain.model.response.TimePlaceResponseEntity
 import com.prography.domain.usecase.GetVoteTimePlaceCandidateInfoUseCase
-import com.prography.yakgwa.model.DateTimeModel
+import com.prography.domain.usecase.PostUserVotePlaceUseCase
+import com.prography.domain.usecase.PostUserVoteTimeUseCase
+import com.prography.yakgwa.model.TimeModel
 import com.prography.yakgwa.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,30 +23,35 @@ import javax.inject.Inject
 @HiltViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 class VoteViewModel @Inject constructor(
-    private val getVoteTimePlaceCandidateInfoUseCase: GetVoteTimePlaceCandidateInfoUseCase
+    private val getVoteTimePlaceCandidateInfoUseCase: GetVoteTimePlaceCandidateInfoUseCase,
+    private val postUserVoteTimeUseCase: PostUserVoteTimeUseCase,
+    private val postUserVotePlaceUseCase: PostUserVotePlaceUseCase
 ) : ViewModel() {
 
     private val _timePlaceState =
         MutableStateFlow<UiState<TimePlaceResponseEntity>>(UiState.Loading)
     val timePlaceState = _timePlaceState.asStateFlow()
 
-    private val _timeSlots = MutableStateFlow<List<DateTimeModel>>(emptyList())
+    private val _timeSlots = MutableStateFlow<Map<LocalDate, List<TimeModel>>>(emptyMap())
     val timeSlots = _timeSlots.asStateFlow()
 
-    private val _startDateState = MutableStateFlow<String?>(null)
-    val startDateState = _startDateState.asStateFlow()
+    private val _selectedDateState = MutableStateFlow<LocalDate?>(null)
+    val selectedDateState = _selectedDateState.asStateFlow()
 
-    private val _endDateState = MutableStateFlow<String?>(null)
-    val endDateState = _endDateState.asStateFlow()
-
-    private val _startTimeState = MutableStateFlow<String?>(null)
-    val startTimeState = _startTimeState.asStateFlow()
-
-    private val _endTimeState = MutableStateFlow<String?>(null)
-    val endTimeState = _endTimeState.asStateFlow()
-
-    private val _selectedTimeState = MutableStateFlow<List<DateTimeModel>?>(null)
+    private val _selectedTimeState = MutableStateFlow<List<TimeModel>>(emptyList())
     val selectedTimeState = _selectedTimeState.asStateFlow()
+
+    private val _startDate = MutableStateFlow<LocalDate?>(null)
+    val startDate = _startDate.asStateFlow()
+
+    private val _endDate = MutableStateFlow<LocalDate?>(null)
+    val endDate = _endDate.asStateFlow()
+
+    private val _timeVoteState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
+    val timeVoteState = _timeVoteState.asStateFlow()
+
+    private val _placeVoteState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
+    val placeVoteState = _timeVoteState.asStateFlow()
 
     fun getTimePlaceCandidate(meetId: Int) {
         _timePlaceState.value = UiState.Loading
@@ -50,10 +59,6 @@ class VoteViewModel @Inject constructor(
         viewModelScope.launch {
             getVoteTimePlaceCandidateInfoUseCase(meetId)
                 .onSuccess {
-                    _startDateState.value = it.timeItems.dateRange.start
-                    _endDateState.value = it.timeItems.dateRange.end
-                    _startTimeState.value = it.timeItems.timeRange.start
-                    _endTimeState.value = it.timeItems.timeRange.end
                     _timePlaceState.value = UiState.Success(it)
                 }
                 .onFailure {
@@ -62,28 +67,83 @@ class VoteViewModel @Inject constructor(
         }
     }
 
-    fun calculateTimeSlots(date: LocalDate, startTime: String, endTime: String) {
-        val start = LocalTime.parse(startTime)
-        val end = LocalTime.parse(endTime)
+    fun calculateTimeSlots(
+        startDate: LocalDate,
+        endDate: LocalDate,
+        startTime: LocalTime,
+        endTime: LocalTime
+    ) {
+        val timeSlotsPerDate = mutableMapOf<LocalDate, List<TimeModel>>()
 
-        val timeSlots = generateSequence(start) { it.plusHours(1) }
-            .takeWhile { !it.isAfter(end) }
-            .map { DateTimeModel(date, it) }
-            .toList()
+        var currentDate = startDate
+        while (!currentDate.isAfter(endDate)) {
+            val timeSlots = generateSequence(startTime) { it.plusHours(1) }
+                .takeWhile { !it.isAfter(endTime) }
+                .map { TimeModel(it) }
+                .toList()
 
-        _timeSlots.value = timeSlots
+            timeSlotsPerDate[currentDate] = timeSlots
+            currentDate = currentDate.plusDays(1)
+        }
+
+        _timeSlots.value = timeSlotsPerDate
     }
 
-//    fun selectTimeSLot() {
-//        val items = _selectedTimeState.value.orEmpty().toMutableList()
-//
-//        val selectedItem = items
-//        val updatedItem = selectedItem.copy(
-//            isSelected = !selectedItem.isSelected,
-//            voteCount = if (!selectedItem.isSelected) selectedItem.voteCount + 1 else selectedItem.voteCount - 1
-//        )
-//
-//        items[position] = updatedItem
-//
-//    }
+    fun selectedDate(date: LocalDate) {
+        val timeSlotsForSelectedDate = _timeSlots.value[date] ?: emptyList()
+
+        _selectedDateState.value = date
+        _selectedTimeState.value = timeSlotsForSelectedDate
+    }
+
+    fun selectTimeSlot(date: LocalDate, position: Int) {
+        val items = _timeSlots.value.toMutableMap()
+        val selectedDateItems = items[date].orEmpty().toMutableList()
+
+        if (position in selectedDateItems.indices) {
+            val selectedItem = selectedDateItems[position]
+            val updatedItem = selectedItem.copy(
+                isSelected = !selectedItem.isSelected,
+                voteCount = if (!selectedItem.isSelected) selectedItem.voteCount + 1 else selectedItem.voteCount - 1
+            )
+            selectedDateItems[position] = updatedItem
+            items[date] = selectedDateItems
+
+            _timeSlots.value = items
+            _selectedTimeState.value = selectedDateItems
+        }
+    }
+
+    fun setDateRange(start: LocalDate, end: LocalDate) {
+        _startDate.value = start
+        _endDate.value = end
+    }
+
+    fun voteTime(meetId: Int, userId: Int, voteTimeRequestEntity: VoteTimeRequestEntity) {
+        _timeVoteState.value = UiState.Loading
+
+        viewModelScope.launch {
+            postUserVoteTimeUseCase(meetId, userId, voteTimeRequestEntity)
+                .onSuccess {
+                    _timeVoteState.value = UiState.Success(it)
+                }
+                .onFailure {
+                    _timeVoteState.value = UiState.Failure(it.message)
+                }
+        }
+    }
+
+    fun votePlace(meetId: Int, userId: Int, votePlaceRequestEntity: VotePlaceRequestEntity) {
+        _placeVoteState.value = UiState.Loading
+
+        viewModelScope.launch {
+            postUserVotePlaceUseCase(meetId, userId, votePlaceRequestEntity)
+                .onSuccess {
+                    _placeVoteState.value = UiState.Success(it)
+                }
+                .onFailure {
+                    _placeVoteState.value = UiState.Failure(it.message)
+                }
+        }
+    }
 }

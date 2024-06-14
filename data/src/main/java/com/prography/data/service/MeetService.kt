@@ -1,6 +1,8 @@
 package com.prography.data.service
 
 import com.prography.data.model.request.RequestCreateMeetDto
+import com.prography.data.model.request.RequestVotePlaceDto
+import com.prography.data.model.request.RequestVoteTimeDto
 import com.prography.data.model.response.BaseResponse
 import com.prography.data.model.response.ResponseCreateMeetDto
 import com.prography.data.model.response.ResponseMeetDetailDto
@@ -39,4 +41,18 @@ interface MeetService {
 
     @GET("/api/v1/meets/{meetId}/vote/items")
     suspend fun getTimePlaceCandidate(@Path("meetId") meetId: Int): BaseResponse<ResponseTimePlaceDto>
+
+    @POST("/api/v1/users/{userId}/meets/{meetId}/vote/schedules")
+    suspend fun voteTime(
+        @Path("userId") userId: Int,
+        @Path("meetId") meetId: Int,
+        @Body requestVoteTimeDto: RequestVoteTimeDto
+    ): BaseResponse<Unit>
+
+    @POST("/api/v1/users/{userId}/meets/{meetId}/vote/places")
+    suspend fun votePlace(
+        @Path("userId") userId: Int,
+        @Path("meetId") meetId: Int,
+        @Body requestVoteTimeDto: RequestVotePlaceDto
+    ): BaseResponse<Unit>
 }
