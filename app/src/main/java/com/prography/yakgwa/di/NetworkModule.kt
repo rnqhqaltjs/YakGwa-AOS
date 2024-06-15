@@ -39,6 +39,7 @@ class NetworkModule {
         ignoreUnknownKeys = true
     }
 
+    @YAKGWA
     @Provides
     @Singleton
     fun provideOkHttpClient(
@@ -67,7 +68,7 @@ class NetworkModule {
     @YAKGWA
     @Singleton
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofit(@YAKGWA okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
@@ -90,12 +91,11 @@ class NetworkModule {
     @NAVER
     @Singleton
     @Provides
-    fun provideNaverRetrofit(client: OkHttpClient): Retrofit {
+    fun provideNaverRetrofit(@NAVER okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
+            .client(okHttpClient)
             .baseUrl(NAVER_API_URL)
             .build()
     }
 }
-
