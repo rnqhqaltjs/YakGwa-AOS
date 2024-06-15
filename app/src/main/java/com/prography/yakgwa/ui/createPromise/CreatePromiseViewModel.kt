@@ -19,7 +19,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
@@ -70,8 +72,8 @@ class CreatePromiseViewModel @Inject constructor(
     val createMeetState = _createMeetState.asStateFlow()
 
     private val _locationState =
-        MutableStateFlow<UiState<List<LocationResponseEntity>>>(UiState.Loading)
-    val locationState = _locationState.asStateFlow()
+        MutableSharedFlow<UiState<List<LocationResponseEntity>>>()
+    val locationState = _locationState.asSharedFlow()
 
     private val _searchQueryState = MutableStateFlow("")
 
@@ -167,7 +169,7 @@ class CreatePromiseViewModel @Inject constructor(
     private fun getLocations() {
         viewModelScope.launch {
             _searchQueryState
-                .debounce(SEARCH_QUERY_DELAY_TIME)
+                .debounce(SEARCH_QUERY_DEBOUNCE_DELAY)
                 .distinctUntilChanged()
                 .flatMapLatest { query ->
                     if (query.isNotBlank()) {
@@ -189,6 +191,7 @@ class CreatePromiseViewModel @Inject constructor(
 
     fun singleThemeSelection(position: Int) {
         val items = _selectedThemeState.value.orEmpty().toMutableList()
+
         val selectedItem = items[position].copy(isSelected = true)
         items[position] = selectedItem
 
@@ -199,7 +202,7 @@ class CreatePromiseViewModel @Inject constructor(
             }
         }
 
-        _selectedThemeState.value = items.toList()
+        _selectedThemeState.value = items
     }
 
     fun addLocation(location: SelectedLocationModel) {
@@ -215,6 +218,6 @@ class CreatePromiseViewModel @Inject constructor(
     }
 
     companion object {
-        const val SEARCH_QUERY_DELAY_TIME = 300L
+        const val SEARCH_QUERY_DEBOUNCE_DELAY = 300L
     }
 }

@@ -16,7 +16,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.prography.domain.model.request.CreateMeetRequestEntity
-import com.prography.domain.model.response.CreateMeetResponseEntity
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentCreatePromiseBinding
 import com.prography.yakgwa.model.SelectedLocationModel
@@ -100,7 +99,7 @@ class CreatePromiseFragment :
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.themesState.collect {
                     when (it) {
                         is UiState.Loading -> {}
@@ -126,7 +125,7 @@ class CreatePromiseFragment :
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            navigateToInvitationLeaderFragment(it.data)
+                            navigateToInvitationLeaderFragment(it.data.meetId)
                         }
 
                         is UiState.Failure -> {
@@ -218,8 +217,11 @@ class CreatePromiseFragment :
                 CreateMeetRequestEntity(
                     binding.etWithin20Msg.text.toString(),
                     binding.etWithin80Msg.text.toString(),
-                    viewModel.selectedThemeState.value?.indexOfFirst { it.isSelected }!!,
-                    viewModel.selectedLocationsState.value?.map { it.title }!!,
+                    viewModel.selectedThemeState.value
+                        ?.firstOrNull { it.isSelected }
+                        ?.themesResponseEntity
+                        ?.meetThemeId!!,
+                    listOf("수원역"),
                     CreateMeetRequestEntity.VoteDateRange(
                         viewModel.selectedStartDate.value!!,
                         viewModel.selectedEndDate.value!!
@@ -294,27 +296,24 @@ class CreatePromiseFragment :
         ).show()
     }
 
-
     private fun parseDate(dateString: String?): LocalDate {
         return dateString?.let {
             LocalDate.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         } ?: LocalDate.now()
     }
 
-    private fun parseTime(timeString: String?): LocalTime {
-        return timeString?.let {
-            LocalTime.parse(it, DateTimeFormatter.ofPattern("a hh:mm", Locale.KOREAN))
-        } ?: LocalTime.now()
+    private fun parseTime(timeString: String): LocalTime {
+        return LocalTime.parse(timeString, DateTimeFormatter.ofPattern("a hh:mm", Locale.KOREAN))
     }
 
-    private fun formatTimeTo24Hour(timeString: String?): String {
+    private fun formatTimeTo24Hour(timeString: String): String {
         return LocalTime.parse(timeString, DateTimeFormatter.ofPattern("a hh:mm", Locale.KOREAN))
             .format(DateTimeFormatter.ofPattern("HH:mm"))
     }
 
-    private fun navigateToInvitationLeaderFragment(createMeetResponseEntity: CreateMeetResponseEntity) {
+    private fun navigateToInvitationLeaderFragment(meetId: Int) {
         CreatePromiseFragmentDirections.actionCreatePromiseFragmentToInvitationLeaderFragment(
-            createMeetResponseEntity
+            meetId
         )
             .apply {
                 findNavController().navigate(this)
