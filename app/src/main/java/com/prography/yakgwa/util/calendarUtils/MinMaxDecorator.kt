@@ -6,9 +6,8 @@ import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
 
-class MinMaxDecorator(min: CalendarDay, max: CalendarDay) : DayViewDecorator {
-    private val maxDay = max
-    private val minDay = min
+class MinMaxDecorator(private val minDay: CalendarDay, private val maxDay: CalendarDay) :
+    DayViewDecorator {
     override fun shouldDecorate(day: CalendarDay?): Boolean {
         return (day?.month == maxDay.month && day.day > maxDay.day)
                 || (day?.month == minDay.month && day.day < minDay.day)
