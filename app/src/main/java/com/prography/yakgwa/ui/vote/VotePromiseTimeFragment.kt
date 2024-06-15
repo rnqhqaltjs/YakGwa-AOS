@@ -5,7 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -35,7 +35,7 @@ import java.time.format.DateTimeFormatter
 class VotePromiseTimeFragment :
     BaseFragment<FragmentVotePromiseTimeBinding>(R.layout.fragment_vote_promise_time) {
 
-    private val viewModel: VoteViewModel by viewModels()
+    private val viewModel: VoteViewModel by activityViewModels()
 
     private lateinit var timeListAdapter: TimeListAdapter
     private val args by navArgs<VotePromiseTimeFragmentArgs>()
@@ -49,9 +49,11 @@ class VotePromiseTimeFragment :
         observer()
         addListeners(meetId)
     }
-
+    
     private fun initView(meetId: Int) {
-        viewModel.getTimePlaceCandidate(meetId)
+        if (viewModel.selectedPlaceState.value.isNullOrEmpty()) {
+            viewModel.getTimePlaceCandidate(meetId)
+        }
     }
 
     private fun initCalendarView(
@@ -68,7 +70,9 @@ class VotePromiseTimeFragment :
             configureDateRange(this, startDate, endDate)
             setupDateChangeListener(this)
         }
-        viewModel.calculateTimeSlots(startDate, endDate, startTime, endTime)
+        if (viewModel.timeSlotsState.value.isEmpty()) {
+            viewModel.calculateTimeSlots(startDate, endDate, startTime, endTime)
+        }
     }
 
     private fun observer() {
@@ -154,7 +158,11 @@ class VotePromiseTimeFragment :
                         startDate.toCalendarDay(),
                         endDate.toCalendarDay()
                     ),
-                    TimeSelectedDecorator(requireContext(), viewModel.timeSlots.value, selectedDate)
+                    TimeSelectedDecorator(
+                        requireContext(),
+                        viewModel.timeSlotsState.value,
+                        selectedDate
+                    )
                 )
             }
         }
