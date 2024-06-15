@@ -8,13 +8,13 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.prography.domain.model.response.TimePlaceResponseEntity.PlaceItem
 import com.prography.yakgwa.databinding.ItemPlaceListBinding
+import com.prography.yakgwa.model.PlaceModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SetTextI18n")
 class PlaceListAdapter :
-    ListAdapter<PlaceItem, PlaceListAdapter.PlaceListViewHolder>(
+    ListAdapter<PlaceModel, PlaceListAdapter.PlaceListViewHolder>(
         PlaceDiffCallback
     ) {
 
@@ -32,29 +32,37 @@ class PlaceListAdapter :
     inner class PlaceListViewHolder(private val binding: ItemPlaceListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(itemView: PlaceItem) {
+        fun bind(itemView: PlaceModel) {
+            binding.tvTitle.text = itemView.placeItem.name
+            binding.tvDescription.text = itemView.placeItem.description
+            binding.tvAddress.text = itemView.placeItem.address
 
+            binding.cvPlace.isSelected = itemView.isSelected
+
+            binding.cvPlace.setOnClickListener {
+                onItemClickListener?.invoke(adapterPosition)
+            }
         }
     }
 
-    private var onItemClickListener: ((PlaceItem) -> Unit)? = null
-    fun setOnItemClickListener(listener: (PlaceItem) -> Unit) {
+    private var onItemClickListener: ((Int) -> Unit)? = null
+    fun setOnItemClickListener(listener: (Int) -> Unit) {
         onItemClickListener = listener
     }
 
     companion object {
         private val PlaceDiffCallback =
-            object : DiffUtil.ItemCallback<PlaceItem>() {
+            object : DiffUtil.ItemCallback<PlaceModel>() {
                 override fun areItemsTheSame(
-                    oldItem: PlaceItem,
-                    newItem: PlaceItem
+                    oldItem: PlaceModel,
+                    newItem: PlaceModel
                 ): Boolean {
-                    return oldItem.candidatePlaceId == newItem.candidatePlaceId
+                    return oldItem.placeItem.candidatePlaceId == newItem.placeItem.candidatePlaceId
                 }
 
                 override fun areContentsTheSame(
-                    oldItem: PlaceItem,
-                    newItem: PlaceItem
+                    oldItem: PlaceModel,
+                    newItem: PlaceModel
                 ): Boolean {
                     return oldItem == newItem
                 }
