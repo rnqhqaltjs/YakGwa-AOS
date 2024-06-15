@@ -12,16 +12,14 @@ data class RequestCreateMeetDto(
     val meetDescription: String,
     @SerializedName("meetThemeId")
     val meetThemeId: Int,
-    @SerializedName("placeDecide")
-    val placeDecide: Boolean,
     @SerializedName("places")
     val places: List<String>,
-    @SerializedName("timeDecide")
-    val timeDecide: Boolean,
     @SerializedName("voteDateRange")
     val voteDateRange: VoteDateRange,
     @SerializedName("voteTimeRange")
-    val voteTimeRange: VoteTimeRange
+    val voteTimeRange: VoteTimeRange,
+    @SerializedName("endVoteHour")
+    val entVoteHour: Int
 ) {
     @Serializable
     data class VoteDateRange(

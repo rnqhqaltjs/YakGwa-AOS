@@ -17,6 +17,9 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_invitationLeaderFragment"
+            app:destination="@id/invitationLeaderFragment" />
     </fragment>
     <fragment
         android:id="@+id/myPageFragment"
@@ -42,7 +45,18 @@
         android:id="@+id/invitationLeaderFragment"
         android:name="com.prography.yakgwa.ui.invitation.InvitationLeaderFragment"
         android:label="InvitationLeaderFragment"
-        tools:layout="@layout/fragment_invitation_leader" />
+        tools:layout="@layout/fragment_invitation_leader">
+        <action
+            android:id="@+id/action_invitationLeaderFragment_to_votePromiseTimeFragment"
+            app:destination="@id/votePromiseTimeFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <argument
+            android:name="meetId"
+            app:argType="integer" />
+    </fragment>
     <fragment
         android:id="@+id/invitationMemberFragment"
         android:name="com.prography.yakgwa.ui.invitation.InvitationMemberFragment"
@@ -57,5 +71,30 @@
             app:popExitAnim="@android:anim/slide_out_right"
             app:popUpTo="@+id/homeFragment"
             app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/votePromiseTimeFragment"
+        android:name="com.prography.yakgwa.ui.vote.VotePromiseTimeFragment"
+        android:label="VotePromiseTimeFragment"
+        tools:layout="@layout/fragment_vote_promise_time">
+        <action
+            android:id="@+id/action_votePromiseTimeFragment_to_votePromisePlaceFragment"
+            app:destination="@id/votePromisePlaceFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <argument
+            android:name="meetId"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/votePromisePlaceFragment"
+        android:name="com.prography.yakgwa.ui.vote.VotePromisePlaceFragment"
+        android:label="VotePromisePlaceFragment"
+        tools:layout="@layout/fragment_vote_promise_place">
+        <argument
+            android:name="meetId"
+            app:argType="integer" />
     </fragment>
 </navigation>

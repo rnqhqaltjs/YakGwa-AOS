@@ -4,11 +4,10 @@ data class CreateMeetRequestEntity(
     val meetName: String,
     val meetDescription: String,
     val meetThemeId: Int,
-    val placeDecide: Boolean,
     val places: List<String>,
-    val timeDecide: Boolean,
     val voteDateRange: VoteDateRange,
-    val voteTimeRange: VoteTimeRange
+    val voteTimeRange: VoteTimeRange,
+    val endVoteHour: Int
 ) {
     data class VoteDateRange(
         val start: String,

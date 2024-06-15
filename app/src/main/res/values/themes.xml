@@ -32,4 +32,14 @@
     <style name="SpinnerTimePicker" parent="android:Widget.Material.TimePicker">
         <item name="android:timePickerMode">spinner</item>
     </style>
+
+    <style name="CustomCalendarDate">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@drawable/selector_calendar_day_text_color</item>
+    </style>
+
+    <style name="CustomCalendarWeekDay">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
 </resources>

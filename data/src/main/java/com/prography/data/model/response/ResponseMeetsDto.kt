@@ -11,31 +11,23 @@ data class ResponseMeetsDto(
 ) {
     @Serializable
     data class EntryInfo(
-        @SerializedName("meetInfo")
-        val meetInfo: MeetInfo,
         @SerializedName("meetStatus")
         val meetStatus: String,
-        @SerializedName("participantsInfo")
-        val participantsInfo: List<ParticipantsInfo>
+        @SerializedName("meetInfo")
+        val meetInfo: MeetInfo,
     )
 
     @Serializable
     data class MeetInfo(
-        @SerializedName("address")
-        val address: String,
+        @SerializedName("userVote")
+        val userVote: Boolean,
         @SerializedName("meetId")
         val meetId: Int,
-        @SerializedName("placeName")
-        val placeName: String,
         @SerializedName("startMeetTime")
-        val startMeetTime: String
-    )
-
-    @Serializable
-    data class ParticipantsInfo(
-        @SerializedName("imageUrl")
-        val imageUrl: String,
-        @SerializedName("participantId")
-        val participantId: Int
+        val startMeetTime: String?,
+        @SerializedName("placeName")
+        val placeName: String?,
+        @SerializedName("address")
+        val address: String?,
     )
 }

@@ -20,23 +20,23 @@ import kotlinx.coroutines.launch
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private val viewModel: HomeViewModel by viewModels()
+    private var meetId: Int? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.getParticipantMeets(3)
-
         observer()
         addListeners()
-
     }
 
     private fun observer() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.participantMeetState.collectLatest {
+                viewModel.meetsState.collectLatest {
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
+                            binding.tvVoteTimePlace.text =
+                                it.data.reversed()[0].meetInfo.meetId.toString()
+                            meetId = it.data.reversed()[0].meetInfo.meetId
                         }
 
                         is UiState.Failure -> {
@@ -51,10 +51,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         binding.btnGoCreatePromise.setOnClickListener {
             navigateToCreatePromiseFragment()
         }
+
+        binding.tvVoteTimePlace.setOnClickListener {
+            navigateToInvitationLeaderFragment()
+        }
     }
 
     private fun navigateToCreatePromiseFragment() {
         HomeFragmentDirections.actionHomeFragmentToCreatePromiseFragment().apply {
+            findNavController().navigate(this)
+        }
+    }
+
+    private fun navigateToInvitationLeaderFragment() {
+        HomeFragmentDirections.actionHomeFragmentToInvitationLeaderFragment(meetId!!).apply {
             findNavController().navigate(this)
         }
     }

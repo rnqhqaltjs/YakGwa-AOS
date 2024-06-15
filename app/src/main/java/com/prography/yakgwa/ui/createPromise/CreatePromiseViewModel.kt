@@ -6,17 +6,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prography.data.datasource.local.YakGwaLocalDataSource
 import com.prography.domain.model.request.CreateMeetRequestEntity
+import com.prography.domain.model.response.CreateMeetResponseEntity
 import com.prography.domain.model.response.LocationResponseEntity
 import com.prography.domain.model.response.ThemesResponseEntity
 import com.prography.domain.usecase.GetLocationListUseCase
 import com.prography.domain.usecase.GetThemeListUseCase
 import com.prography.domain.usecase.PostNewMeetCreateUseCase
+import com.prography.yakgwa.model.SelectedLocationModel
+import com.prography.yakgwa.model.ThemeModel
 import com.prography.yakgwa.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
@@ -62,15 +67,21 @@ class CreatePromiseViewModel @Inject constructor(
     private val _selectedEndTime = MutableStateFlow<String?>(null)
     val selectedEndTime = _selectedEndTime.asStateFlow()
 
-    private val _createMeetState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
+    private val _createMeetState =
+        MutableStateFlow<UiState<CreateMeetResponseEntity>>(UiState.Loading)
     val createMeetState = _createMeetState.asStateFlow()
 
     private val _locationState =
-        MutableStateFlow<UiState<List<LocationResponseEntity>>>(UiState.Loading)
-    val locationState = _locationState.asStateFlow()
+        MutableSharedFlow<UiState<List<LocationResponseEntity>>>()
+    val locationState = _locationState.asSharedFlow()
 
     private val _searchQueryState = MutableStateFlow("")
-    val searchQueryState = _searchQueryState.asStateFlow()
+
+    private val _selectedThemeState = MutableStateFlow<List<ThemeModel>?>(null)
+    val selectedThemeState = _selectedThemeState.asStateFlow()
+
+    private val _selectedLocationsState = MutableStateFlow<List<SelectedLocationModel>?>(null)
+    val selectedLocationsState = _selectedLocationsState.asStateFlow()
 
     init {
         getThemes()
@@ -83,10 +94,13 @@ class CreatePromiseViewModel @Inject constructor(
         viewModelScope.launch {
             getThemeListUseCase()
                 .onSuccess {
+                    _selectedThemeState.value = it.map { themeEntity ->
+                        ThemeModel(themeEntity)
+                    }
                     _themesState.value = UiState.Success(it)
                 }
                 .onFailure {
-                    UiState.Failure(it.message)
+                    _themesState.value = UiState.Failure(it.message)
                 }
         }
     }
@@ -133,7 +147,7 @@ class CreatePromiseViewModel @Inject constructor(
         viewModelScope.launch {
             postNewMeetCreateUseCase(userId(), createMeetRequestEntity)
                 .onSuccess {
-                    _createMeetState.value = UiState.Success(Unit)
+                    _createMeetState.value = UiState.Success(it)
                 }
                 .onFailure {
                     _createMeetState.value = UiState.Failure(it.message)
@@ -155,7 +169,7 @@ class CreatePromiseViewModel @Inject constructor(
     private fun getLocations() {
         viewModelScope.launch {
             _searchQueryState
-                .debounce(SEARCH_QUERY_DELAY_TIME)
+                .debounce(SEARCH_QUERY_DEBOUNCE_DELAY)
                 .distinctUntilChanged()
                 .flatMapLatest { query ->
                     if (query.isNotBlank()) {
@@ -175,7 +189,35 @@ class CreatePromiseViewModel @Inject constructor(
         }
     }
 
+    fun singleThemeSelection(position: Int) {
+        val items = _selectedThemeState.value.orEmpty().toMutableList()
+
+        val selectedItem = items[position].copy(isSelected = true)
+        items[position] = selectedItem
+
+        for (i in items.indices) {
+            if (i != position && items[i].isSelected) {
+                val unselectedItem = items[i].copy(isSelected = false)
+                items[i] = unselectedItem
+            }
+        }
+
+        _selectedThemeState.value = items
+    }
+
+    fun addLocation(location: SelectedLocationModel) {
+        val currentList = _selectedLocationsState.value.orEmpty().toMutableList()
+        currentList.add(location)
+        _selectedLocationsState.value = currentList
+    }
+
+    fun removeLocation(location: SelectedLocationModel) {
+        val currentList = _selectedLocationsState.value.orEmpty().toMutableList()
+        currentList.remove(location)
+        _selectedLocationsState.value = currentList
+    }
+
     companion object {
-        const val SEARCH_QUERY_DELAY_TIME = 300L
+        const val SEARCH_QUERY_DEBOUNCE_DELAY = 300L
     }
 }

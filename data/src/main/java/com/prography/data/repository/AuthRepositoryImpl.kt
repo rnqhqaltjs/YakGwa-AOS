@@ -26,8 +26,10 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun logout(): Result<Unit> {
+        val response = authRemoteDataSource.logout()
+
         return runCatching {
-            authRemoteDataSource.logout().result
+            response.result
         }
     }
 }

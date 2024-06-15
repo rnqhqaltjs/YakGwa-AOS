@@ -8,7 +8,7 @@ import com.prography.domain.model.response.AuthResponseEntity
 object AuthMapper {
     fun mapperToRequestAuthDto(authRequestEntity: AuthRequestEntity): RequestAuthDto {
         return authRequestEntity.run {
-            RequestAuthDto(loginType)
+            RequestAuthDto(this.loginType)
         }
     }
 

@@ -15,9 +15,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.prography.domain.model.request.CreateMeetRequestEntity
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentCreatePromiseBinding
 import com.prography.yakgwa.model.SelectedLocationModel
+import com.prography.yakgwa.model.ThemeModel
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,13 +39,12 @@ class CreatePromiseFragment :
 
     private lateinit var locationListAdapter: LocationListAdapter
     private lateinit var selectedLocationListAdapter: SelectedLocationListAdapter
-
-    private val selectedLocations = mutableListOf<SelectedLocationModel>()
+    private lateinit var themeListAdapter: ThemeListAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observer()
         setupRecyclerView()
+        observer()
         addListeners()
     }
 
@@ -86,11 +87,28 @@ class CreatePromiseFragment :
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.selectedThemeState.collectLatest { selectedTheme ->
+                themeListAdapter.submitList(selectedTheme)
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.selectedLocationsState.collectLatest { selectedLocations ->
+                selectedLocationListAdapter.submitList(selectedLocations)
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.themesState.collect {
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
+                            themeListAdapter.submitList(
+                                it.data.map { themeItem ->
+                                    ThemeModel(themeItem)
+                                }
+                            )
                         }
 
                         is UiState.Failure -> {
@@ -107,7 +125,7 @@ class CreatePromiseFragment :
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            navigateToInvitationLeaderFragment()
+                            navigateToInvitationLeaderFragment(it.data.meetId)
                         }
 
                         is UiState.Failure -> {
@@ -138,13 +156,12 @@ class CreatePromiseFragment :
 
     private fun setupRecyclerView() {
         locationListAdapter = LocationListAdapter().apply {
-            setOnItemClickListener {
+            setOnItemClickListener { selectedLocation ->
                 if (selectedLocationListAdapter.itemCount > MAX_SELECTED_COUNT) {
                     Snackbar.make(requireView(), "장소를 더 추가할 수 없어요.", Snackbar.LENGTH_SHORT).show()
                     binding.etSearchLocation.setText("")
                 } else {
-                    selectedLocations.add(SelectedLocationModel(it.title))
-                    selectedLocationListAdapter.submitList(selectedLocations.toList())
+                    viewModel.addLocation(SelectedLocationModel(selectedLocation.title))
                     binding.etSearchLocation.setText("")
                 }
             }
@@ -153,11 +170,17 @@ class CreatePromiseFragment :
 
         selectedLocationListAdapter = SelectedLocationListAdapter().apply {
             setOnRemoveClickListener { selectedLocation ->
-                selectedLocations.remove(selectedLocation)
-                submitList(selectedLocations.toList())
+                viewModel.removeLocation(selectedLocation)
             }
         }
         binding.rvSelectedLocation.adapter = selectedLocationListAdapter
+
+        themeListAdapter = ThemeListAdapter().apply {
+            setOnItemClickListener { position ->
+                viewModel.singleThemeSelection(position)
+            }
+        }
+        binding.rvTema.adapter = themeListAdapter
     }
 
     private fun addListeners() {
@@ -190,25 +213,26 @@ class CreatePromiseFragment :
         }
 
         binding.btnCreatePromise.setOnClickListener {
-//            viewModel.createMeet(
-//                CreateMeetRequestEntity(
-//                    binding.tvPromiseInformation.text.toString(),
-//                    binding.tvPromiseDescription.text.toString(),
-//                    1,
-//                    false,
-//                    selectedLocations.map { it.title },
-//                    false,
-//                    CreateMeetRequestEntity.VoteDateRange(
-//                        viewModel.selectedStartDate.value!!,
-//                        viewModel.selectedEndDate.value!!
-//                    ),
-//                    CreateMeetRequestEntity.VoteTimeRange(
-//                        formatTimeTo24Hour(viewModel.selectedStartTime.value!!),
-//                        formatTimeTo24Hour(viewModel.selectedEndTime.value!!)
-//                    )
-//                )
-//            )
-            navigateToInvitationLeaderFragment()
+            viewModel.createMeet(
+                CreateMeetRequestEntity(
+                    binding.etWithin20Msg.text.toString(),
+                    binding.etWithin80Msg.text.toString(),
+                    viewModel.selectedThemeState.value
+                        ?.firstOrNull { it.isSelected }
+                        ?.themesResponseEntity
+                        ?.meetThemeId!!,
+                    listOf("수원역"),
+                    CreateMeetRequestEntity.VoteDateRange(
+                        viewModel.selectedStartDate.value!!,
+                        viewModel.selectedEndDate.value!!
+                    ),
+                    CreateMeetRequestEntity.VoteTimeRange(
+                        formatTimeTo24Hour(viewModel.selectedStartTime.value!!),
+                        formatTimeTo24Hour(viewModel.selectedEndTime.value!!)
+                    ),
+                    12
+                )
+            )
         }
 
         binding.navigateUpBtn.setOnClickListener {
@@ -272,26 +296,25 @@ class CreatePromiseFragment :
         ).show()
     }
 
-
     private fun parseDate(dateString: String?): LocalDate {
         return dateString?.let {
             LocalDate.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         } ?: LocalDate.now()
     }
 
-    private fun parseTime(timeString: String?): LocalTime {
-        return timeString?.let {
-            LocalTime.parse(it, DateTimeFormatter.ofPattern("a hh:mm", Locale.KOREAN))
-        } ?: LocalTime.now()
-    }
-
-    private fun formatTimeTo24Hour(timeString: String?): String {
+    private fun parseTime(timeString: String): LocalTime {
         return LocalTime.parse(timeString, DateTimeFormatter.ofPattern("a hh:mm", Locale.KOREAN))
-            .format(DateTimeFormatter.ofPattern("HH:mm:ss"))
     }
 
-    private fun navigateToInvitationLeaderFragment() {
-        CreatePromiseFragmentDirections.actionCreatePromiseFragmentToInvitationLeaderFragment()
+    private fun formatTimeTo24Hour(timeString: String): String {
+        return LocalTime.parse(timeString, DateTimeFormatter.ofPattern("a hh:mm", Locale.KOREAN))
+            .format(DateTimeFormatter.ofPattern("HH:mm"))
+    }
+
+    private fun navigateToInvitationLeaderFragment(meetId: Int) {
+        CreatePromiseFragmentDirections.actionCreatePromiseFragmentToInvitationLeaderFragment(
+            meetId
+        )
             .apply {
                 findNavController().navigate(this)
             }

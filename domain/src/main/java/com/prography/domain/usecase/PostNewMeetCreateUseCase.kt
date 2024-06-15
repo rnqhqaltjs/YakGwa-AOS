@@ -1,6 +1,7 @@
 package com.prography.domain.usecase
 
 import com.prography.domain.model.request.CreateMeetRequestEntity
+import com.prography.domain.model.response.CreateMeetResponseEntity
 import com.prography.domain.repository.MeetRepository
 
 class PostNewMeetCreateUseCase(
@@ -9,6 +10,6 @@ class PostNewMeetCreateUseCase(
     suspend operator fun invoke(
         userId: Int,
         createMeetRequestEntity: CreateMeetRequestEntity
-    ): Result<Unit> =
+    ): Result<CreateMeetResponseEntity> =
         meetRepository.createMeet(userId, createMeetRequestEntity)
 }
