@@ -14,6 +14,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
+import org.json.JSONObject
 import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
@@ -28,41 +29,51 @@ class AuthInterceptor @Inject constructor(
         val response = chain.proceed(authRequest)
 
         when (response.code) {
-            401 -> {
-                response.close()
-                val refreshTokenRequest = originalRequest.newBuilder().get()
-                    .url("${BASE_URL}api/v1/auth/reissue")
-                    .addHeader(AUTHORIZATION, runBlocking { localStorage.refreshToken.first() })
-                    .build()
-                val refreshTokenResponse = chain.proceed(refreshTokenRequest)
+            200 -> {
+                val responseBody = response.peekBody(Long.MAX_VALUE).string()
+                val jsonObject = JSONObject(responseBody)
+                val status = jsonObject.optInt("status")
 
-                if (refreshTokenResponse.isSuccessful) {
-                    val responseRefresh =
-                        json.decodeFromString<BaseResponse<ResponseReissueDto>>(
-                            refreshTokenResponse.body?.string()
-                                ?: throw IllegalStateException("\"refreshTokenResponse is null $refreshTokenResponse\"")
-                        )
+                when (status) {
+                    400 -> {
+                        response.close()
+                        val refreshTokenRequest = originalRequest.newBuilder().get()
+                            .url("${BASE_URL}api/v1/auth/reissue")
+                            .addHeader(
+                                AUTHORIZATION,
+                                runBlocking { localStorage.refreshToken.first() })
+                            .build()
+                        val refreshTokenResponse = chain.proceed(refreshTokenRequest)
 
-                    with(localStorage) {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            saveAccessToken(BEARER + responseRefresh.result.tokenSet.accessToken)
-                            saveRefreshToken(BEARER + responseRefresh.result.tokenSet.refreshToken)
-                        }
-                    }
-
-                    refreshTokenResponse.close()
-
-                    val newRequest = originalRequest.newAuthBuilder()
-                    return chain.proceed(newRequest)
-                } else {
-                    with(context) {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            startActivity(
-                                Intent.makeRestartActivityTask(
-                                    packageManager.getLaunchIntentForPackage(packageName)?.component
+                        if (refreshTokenResponse.isSuccessful) {
+                            val responseRefresh =
+                                json.decodeFromString<BaseResponse<ResponseReissueDto>>(
+                                    refreshTokenResponse.body?.string()
+                                        ?: throw IllegalStateException("\"refreshTokenResponse is null $refreshTokenResponse\"")
                                 )
-                            )
-                            localStorage.clear()
+
+                            with(localStorage) {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    saveAccessToken(BEARER + responseRefresh.result.tokenSet.accessToken)
+                                    saveRefreshToken(BEARER + responseRefresh.result.tokenSet.refreshToken)
+                                }
+                            }
+
+                            refreshTokenResponse.close()
+
+                            val newRequest = originalRequest.newAuthBuilder()
+                            return chain.proceed(newRequest)
+                        } else {
+                            with(context) {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    startActivity(
+                                        Intent.makeRestartActivityTask(
+                                            packageManager.getLaunchIntentForPackage(packageName)?.component
+                                        )
+                                    )
+                                    localStorage.clear()
+                                }
+                            }
                         }
                     }
                 }
