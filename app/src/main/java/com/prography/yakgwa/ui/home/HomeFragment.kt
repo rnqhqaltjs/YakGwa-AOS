@@ -7,7 +7,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.prography.domain.model.response.CreateMeetResponseEntity
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentHomeBinding
 import com.prography.yakgwa.util.UiState
@@ -36,8 +35,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
                             binding.tvVoteTimePlace.text =
-                                it.data[1].meetInfo.meetId.toString()
-                            meetId = it.data[1].meetInfo.meetId
+                                it.data.reversed()[0].meetInfo.meetId.toString()
+                            meetId = it.data.reversed()[0].meetInfo.meetId
                         }
 
                         is UiState.Failure -> {
@@ -65,13 +64,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun navigateToInvitationLeaderFragment() {
-        HomeFragmentDirections.actionHomeFragmentToInvitationLeaderFragment(
-            CreateMeetResponseEntity(
-                meetId!!
-            )
-        )
-            .apply {
-                findNavController().navigate(this)
-            }
+        HomeFragmentDirections.actionHomeFragmentToInvitationLeaderFragment(meetId!!).apply {
+            findNavController().navigate(this)
+        }
     }
 }

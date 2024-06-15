@@ -25,11 +25,10 @@ class HomeViewModel @Inject constructor(
         getParticipantMeets()
     }
 
-    private val _meetsState =
-        MutableStateFlow<UiState<List<MeetsResponseEntity>>>(UiState.Loading)
+    private val _meetsState = MutableStateFlow<UiState<List<MeetsResponseEntity>>>(UiState.Loading)
     val meetsState = _meetsState.asStateFlow()
 
-    fun getParticipantMeets() {
+    private fun getParticipantMeets() {
         viewModelScope.launch {
             _meetsState.emit(UiState.Loading)
 
