@@ -7,6 +7,16 @@
         android:title="homeFragment" />
 
     <item
+        android:id="@+id/locationFragment"
+        android:icon="@drawable/ic_location"
+        android:title="locationFragment" />
+
+    <item
+        android:id="@+id/listFragment"
+        android:icon="@drawable/ic_list"
+        android:title="listFragment" />
+
+    <item
         android:id="@+id/myPageFragment"
         android:icon="@drawable/ic_my_page"
         android:title="myPageFragment" />

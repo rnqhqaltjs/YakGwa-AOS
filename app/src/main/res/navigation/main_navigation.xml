@@ -96,5 +96,33 @@
         <argument
             android:name="meetId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_votePromisePlaceFragment_to_voteCompletionFragment"
+            app:destination="@id/voteCompletionFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
     </fragment>
+    <fragment
+        android:id="@+id/voteCompletionFragment"
+        android:name="com.prography.yakgwa.ui.vote.VoteCompletionFragment"
+        android:label="VoteCompletionFragment"
+        tools:layout="@layout/fragment_vote_completion">
+        <argument
+            android:name="meetId"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="com.prography.yakgwa.ui.list.ListFragment"
+        android:label="ListFragment"
+        tools:layout="@layout/fragment_list" />
+    <fragment
+        android:id="@+id/locationFragment"
+        android:name="com.prography.yakgwa.ui.location.LocationFragment"
+        android:label="LocationFragment"
+        tools:layout="@layout/fragment_location" />
 </navigation>

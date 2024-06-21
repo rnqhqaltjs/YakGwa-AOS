@@ -35,7 +35,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
                 destination.id == R.id.invitationLeaderFragment ||
                 destination.id == R.id.invitationMemberFragment ||
                 destination.id == R.id.votePromiseTimeFragment ||
-                destination.id == R.id.votePromisePlaceFragment
+                destination.id == R.id.votePromisePlaceFragment ||
+                destination.id == R.id.voteCompletionFragment
             ) {
                 binding.navView.visibility = View.GONE
             } else {
