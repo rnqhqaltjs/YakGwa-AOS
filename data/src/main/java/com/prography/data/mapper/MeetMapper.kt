@@ -1,21 +1,15 @@
 package com.prography.data.mapper
 
 import com.prography.data.model.request.RequestCreateMeetDto
-import com.prography.data.model.request.RequestVotePlaceDto
-import com.prography.data.model.request.RequestVoteTimeDto
 import com.prography.data.model.response.ResponseCreateMeetDto
 import com.prography.data.model.response.ResponseMeetDetailDto
 import com.prography.data.model.response.ResponseMeetsDto
 import com.prography.data.model.response.ResponseThemesDto
-import com.prography.data.model.response.ResponseTimePlaceDto
 import com.prography.domain.model.request.CreateMeetRequestEntity
-import com.prography.domain.model.request.VotePlaceRequestEntity
-import com.prography.domain.model.request.VoteTimeRequestEntity
 import com.prography.domain.model.response.CreateMeetResponseEntity
 import com.prography.domain.model.response.MeetDetailResponseEntity
 import com.prography.domain.model.response.MeetsResponseEntity
 import com.prography.domain.model.response.ThemesResponseEntity
-import com.prography.domain.model.response.TimePlaceResponseEntity
 
 object MeetMapper {
     fun mapperToThemesResponseEntity(responseThemesDto: ResponseThemesDto): List<ThemesResponseEntity> {
@@ -93,54 +87,6 @@ object MeetMapper {
                     }
                 }
             )
-        }
-    }
-
-    fun mapperToTimePlaceResponseEntity(responseTimePlaceDto: ResponseTimePlaceDto): TimePlaceResponseEntity {
-        return responseTimePlaceDto.run {
-            TimePlaceResponseEntity(
-                placeItems.map { placeItemDto ->
-                    placeItemDto.run {
-                        TimePlaceResponseEntity.PlaceItem(
-                            this.candidatePlaceId,
-                            this.name,
-                            this.address,
-                            this.description
-                        )
-                    }
-                },
-                TimePlaceResponseEntity.TimeItems(
-                    TimePlaceResponseEntity.TimeRange(
-                        this.timeItems.timeRange.start,
-                        this.timeItems.timeRange.end
-                    ),
-                    TimePlaceResponseEntity.DateRange(
-                        this.timeItems.dateRange.start,
-                        this.timeItems.dateRange.end
-                    )
-                )
-            )
-        }
-    }
-
-    fun mapperToRequestVoteTimeDto(voteTimeRequestEntity: VoteTimeRequestEntity): RequestVoteTimeDto {
-        return voteTimeRequestEntity.run {
-            RequestVoteTimeDto(
-                this.possibleSchedules.map { schedule ->
-                    schedule.run {
-                        RequestVoteTimeDto.PossibleSchedule(
-                            this.possibleStartTime,
-                            this.possibleEndTime
-                        )
-                    }
-                }
-            )
-        }
-    }
-
-    fun mapperToRequestVotePlaceDto(votePlaceRequestEntity: VotePlaceRequestEntity): RequestVotePlaceDto {
-        return votePlaceRequestEntity.run {
-            RequestVotePlaceDto(this.candidatePlaceIds)
         }
     }
 }
