@@ -21,24 +21,25 @@ class HomeViewModel @Inject constructor(
     private val localStorage: YakGwaLocalDataSource
 ) : ViewModel() {
 
-    init {
-        getParticipantMeets()
-    }
-
     private val _meetsState = MutableStateFlow<UiState<List<MeetsResponseEntity>>>(UiState.Loading)
     val meetsState = _meetsState.asStateFlow()
 
+    init {
+        getParticipantMeets()
+    }
+    
     private fun getParticipantMeets() {
-        viewModelScope.launch {
-            _meetsState.emit(UiState.Loading)
+        _meetsState.value = UiState.Loading
 
-            runCatching {
-                getParticipantMeetListUseCase(userId()).collect {
-                    _meetsState.emit(UiState.Success(it))
+        viewModelScope.launch {
+            val userId = userId()
+
+            getParticipantMeetListUseCase(userId)
+                .onSuccess {
+                    _meetsState.value = UiState.Success(it)
+                }.onFailure {
+                    _meetsState.value = UiState.Failure(it.message)
                 }
-            }.onFailure {
-                _meetsState.emit(UiState.Failure(it.message))
-            }
         }
     }
 

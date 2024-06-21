@@ -39,21 +39,23 @@ class InvitationViewModel @Inject constructor(
         _detailMeetState.value = UiState.Loading
 
         viewModelScope.launch {
-            runCatching {
-                getMeetInformationDetailUseCase(userId, meetId).collect {
+            getMeetInformationDetailUseCase(userId, meetId)
+                .onSuccess {
                     _meetInfoState.value = it.meetInfo
                     _detailMeetState.value = UiState.Success(it)
                 }
-            }.onFailure {
-                _detailMeetState.value = UiState.Failure(it.message)
-            }
+                .onFailure {
+                    _detailMeetState.value = UiState.Failure(it.message)
+                }
         }
     }
 
-    fun participantMeet(userId: Int, meetId: Int) {
+    fun participantMeet(meetId: Int) {
         _participantMeetState.value = UiState.Loading
 
         viewModelScope.launch {
+            val userId = userId()
+
             postMeetParticipantUseCase(userId, meetId)
                 .onSuccess {
                     _participantMeetState.value = UiState.Success(it)
