@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -16,11 +17,10 @@ import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentInvitationMemberBinding
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
+import com.prography.yakgwa.util.dateTimeUtils.DateTimeUtils.parseHourFromTimeString
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 @RequiresApi(Build.VERSION_CODES.O)
@@ -30,16 +30,17 @@ class InvitationMemberFragment :
     private val viewModel: InvitationViewModel by viewModels()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val userId = arguments?.getString("userId")?.toInt()
-        val meetId = arguments?.getString("meetId")?.toInt()
+        val userId = arguments?.getString("userId")?.toIntOrNull()
+        val meetId = arguments?.getString("meetId")?.toIntOrNull()
 
-        if (userId != null && meetId != null) {
-            initView(userId, meetId)
-            observer(meetId)
-            addListeners(meetId)
-        } else {
+        if (userId == null || meetId == null) {
             handleInvalidInvitation()
+            return
         }
+
+        initView(userId, meetId)
+        observer(meetId)
+        addListeners(meetId)
     }
 
     private fun initView(userId: Int, meetId: Int) {
@@ -59,6 +60,7 @@ class InvitationMemberFragment :
                         }
 
                         is UiState.Failure -> {
+                            Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -75,6 +77,7 @@ class InvitationMemberFragment :
                         }
 
                         is UiState.Failure -> {
+                            Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -84,15 +87,13 @@ class InvitationMemberFragment :
 
     private fun addListeners(meetId: Int) {
         binding.btnInvitationParticipant.setOnClickListener {
-            lifecycleScope.launch {
-                viewModel.participantMeet(viewModel.userId(), meetId)
-            }
+            viewModel.participantMeet(meetId)
         }
     }
 
     @SuppressLint("SetTextI18n")
     private fun showMeetDetails(meetInfo: MeetInfo) {
-        binding.apply {
+        with(binding) {
             tvTemaName.text = meetInfo.meetThemeName
             tvInvitationTitle.text = meetInfo.meetName
             tvInvitationDescription.text = meetInfo.meetDescription
@@ -111,12 +112,6 @@ class InvitationMemberFragment :
         Snackbar.make(requireView(), "만료되거나 유효하지 않은 초대장입니다.", Snackbar.LENGTH_SHORT).show()
     }
 
-    private fun parseHourFromTimeString(timeString: String): Int {
-        val formatter = DateTimeFormatter.ofPattern("HH:mm")
-        val localTime = LocalTime.parse(timeString, formatter)
-        return localTime.hour
-    }
-
     private fun navigateToInvitationLeaderFragment(meetId: Int) {
         InvitationMemberFragmentDirections.actionInvitationMemberFragmentToInvitationLeaderFragment(
             meetId
@@ -127,6 +122,6 @@ class InvitationMemberFragment :
     }
 
     companion object {
-        private const val EXPIRED_INVITATION_HOUR = 0
+        const val EXPIRED_INVITATION_HOUR = 0
     }
 }
