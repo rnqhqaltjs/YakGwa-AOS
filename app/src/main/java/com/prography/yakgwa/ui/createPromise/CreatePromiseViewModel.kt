@@ -15,13 +15,16 @@ import com.prography.domain.usecase.PostNewMeetCreateUseCase
 import com.prography.yakgwa.model.SelectedLocationModel
 import com.prography.yakgwa.model.ThemeModel
 import com.prography.yakgwa.util.UiState
+import com.prography.yakgwa.util.dateTimeUtils.DateTimeUtils.formatDateToString
+import com.prography.yakgwa.util.dateTimeUtils.DateTimeUtils.formatTimeTo24Hour
+import com.prography.yakgwa.util.dateTimeUtils.DateTimeUtils.formatTimeToString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
@@ -29,11 +32,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -45,48 +48,56 @@ class CreatePromiseViewModel @Inject constructor(
     private val getLocationListUseCase: GetLocationListUseCase
 ) : ViewModel() {
 
-    private val _textLength20State = MutableStateFlow(0)
-    val textLength20State = _textLength20State.asStateFlow()
+    private val _textLength20State = MutableStateFlow("")
+    val textLength20State = _textLength20State
 
-    private val _textLength80State = MutableStateFlow(0)
-    val textLength80State = _textLength80State.asStateFlow()
+    private val _textLength80State = MutableStateFlow("")
+    val textLength80State = _textLength80State
+
+    private val _selectedStartDate = MutableStateFlow<String?>(null)
+    val selectedStartDate = _selectedStartDate
+
+    private val _selectedEndDate = MutableStateFlow<String?>(null)
+    val selectedEndDate = _selectedEndDate
+
+    private val _selectedStartTime = MutableStateFlow<String?>(null)
+    val selectedStartTime = _selectedStartTime
+
+    private val _selectedEndTime = MutableStateFlow<String?>(null)
+    val selectedEndTime = _selectedEndTime
+
+    private val _searchQueryState = MutableStateFlow("")
 
     private val _themesState =
         MutableStateFlow<UiState<List<ThemesResponseEntity>>>(UiState.Loading)
-    val themesState = _themesState.asStateFlow()
-
-    private val _selectedStartDate = MutableStateFlow<String?>(null)
-    val selectedStartDate = _selectedStartDate.asStateFlow()
-
-    private val _selectedEndDate = MutableStateFlow<String?>(null)
-    val selectedEndDate = _selectedEndDate.asStateFlow()
-
-    private val _selectedStartTime = MutableStateFlow<String?>(null)
-    val selectedStartTime = _selectedStartTime.asStateFlow()
-
-    private val _selectedEndTime = MutableStateFlow<String?>(null)
-    val selectedEndTime = _selectedEndTime.asStateFlow()
+    val themesState = _themesState
+        .onSubscription {
+            getThemes()
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = UiState.Loading
+        )
 
     private val _createMeetState =
         MutableStateFlow<UiState<CreateMeetResponseEntity>>(UiState.Loading)
     val createMeetState = _createMeetState.asStateFlow()
 
+
     private val _locationState =
         MutableSharedFlow<UiState<List<LocationResponseEntity>>>()
-    val locationState = _locationState.asSharedFlow()
-
-    private val _searchQueryState = MutableStateFlow("")
-
-    private val _selectedThemeState = MutableStateFlow<List<ThemeModel>?>(null)
-    val selectedThemeState = _selectedThemeState.asStateFlow()
-
-    private val _selectedLocationsState = MutableStateFlow<List<SelectedLocationModel>?>(null)
-    val selectedLocationsState = _selectedLocationsState.asStateFlow()
-
-    init {
-        getThemes()
+    val locationState = _locationState.onSubscription {
         getLocations()
-    }
+    }.shareIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+    )
+
+    private val _selectedThemeState = MutableStateFlow<List<ThemeModel>>(emptyList())
+    val selectedThemeState = _selectedThemeState
+
+    private val _selectedLocationsState = MutableStateFlow<List<SelectedLocationModel>>(emptyList())
+    val selectedLocationsState = _selectedLocationsState
 
     private fun getThemes() {
         _themesState.value = UiState.Loading
@@ -106,46 +117,53 @@ class CreatePromiseViewModel @Inject constructor(
     }
 
     fun onTextChanged20(text: String) {
-        _textLength20State.value = text.length
+        _textLength20State.value = text
     }
 
     fun onTextChanged80(text: String) {
-        _textLength80State.value = text.length
+        _textLength80State.value = text
     }
 
     fun updateStartDate(year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        _selectedStartDate.value = formatDate(year, monthOfYear, dayOfMonth)
+        _selectedStartDate.value = formatDateToString(year, monthOfYear, dayOfMonth)
     }
 
     fun updateEndDate(year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        _selectedEndDate.value = formatDate(year, monthOfYear, dayOfMonth)
+        _selectedEndDate.value = formatDateToString(year, monthOfYear, dayOfMonth)
     }
 
     fun updateStartTime(hourOfDay: Int, minute: Int) {
-        _selectedStartTime.value = formatTime(hourOfDay, minute)
+        _selectedStartTime.value = formatTimeToString(hourOfDay, minute)
     }
 
     fun updateEndTime(hourOfDay: Int, minute: Int) {
-        _selectedEndTime.value = formatTime(hourOfDay, minute)
+        _selectedEndTime.value = formatTimeToString(hourOfDay, minute)
     }
 
-    private fun formatDate(year: Int, month: Int, day: Int): String {
-        val date = LocalDate.of(year, month, day)
-        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        return date.format(dateFormat)
-    }
-
-    private fun formatTime(hour: Int, minute: Int): String {
-        val time = LocalTime.of(hour, minute)
-        val timeFormat = DateTimeFormatter.ofPattern("a hh:mm")
-        return time.format(timeFormat)
-    }
-
-    fun createMeet(createMeetRequestEntity: CreateMeetRequestEntity) {
+    fun createMeet() {
         _createMeetState.value = UiState.Loading
 
         viewModelScope.launch {
-            postNewMeetCreateUseCase(userId(), createMeetRequestEntity)
+            val userId = userId()
+            val createMeetRequestEntity = CreateMeetRequestEntity(
+                _textLength20State.value,
+                _textLength80State.value,
+                _selectedThemeState.value
+                    .find { it.isSelected }
+                    ?.themesResponseEntity
+                    ?.meetThemeId!!,
+                listOf("홍대역"),
+                CreateMeetRequestEntity.VoteDateRange(
+                    _selectedStartDate.value!!,
+                    _selectedEndDate.value!!
+                ),
+                CreateMeetRequestEntity.VoteTimeRange(
+                    formatTimeTo24Hour(_selectedStartTime.value!!),
+                    formatTimeTo24Hour(_selectedEndTime.value!!)
+                ),
+                12)
+
+            postNewMeetCreateUseCase(userId, createMeetRequestEntity)
                 .onSuccess {
                     _createMeetState.value = UiState.Success(it)
                 }
@@ -190,31 +208,20 @@ class CreatePromiseViewModel @Inject constructor(
     }
 
     fun singleThemeSelection(position: Int) {
-        val items = _selectedThemeState.value.orEmpty().toMutableList()
-
-        val selectedItem = items[position].copy(isSelected = true)
-        items[position] = selectedItem
-
-        for (i in items.indices) {
-            if (i != position && items[i].isSelected) {
-                val unselectedItem = items[i].copy(isSelected = false)
-                items[i] = unselectedItem
-            }
+        val currentList = _selectedThemeState.value.mapIndexed { index, item ->
+            item.copy(isSelected = index == position)
         }
-
-        _selectedThemeState.value = items
+        _selectedThemeState.value = currentList
     }
 
     fun addLocation(location: SelectedLocationModel) {
-        val currentList = _selectedLocationsState.value.orEmpty().toMutableList()
-        currentList.add(location)
-        _selectedLocationsState.value = currentList
+        val currentList = _selectedLocationsState.value
+        _selectedLocationsState.value = currentList + location
     }
 
     fun removeLocation(location: SelectedLocationModel) {
-        val currentList = _selectedLocationsState.value.orEmpty().toMutableList()
-        currentList.remove(location)
-        _selectedLocationsState.value = currentList
+        val currentList = _selectedLocationsState.value
+        _selectedLocationsState.value = currentList - location
     }
 
     companion object {
