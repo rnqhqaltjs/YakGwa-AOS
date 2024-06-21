@@ -3,6 +3,7 @@ package com.prography.yakgwa.ui.vote
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -33,9 +34,8 @@ class VotePromisePlaceFragment :
         val meetId = args.meetId
 
         setupRecyclerView()
-        initView(meetId)
-        observer()
-        addListeners()
+        observer(meetId)
+        addListeners(meetId)
     }
 
     private fun setupRecyclerView() {
@@ -47,11 +47,7 @@ class VotePromisePlaceFragment :
         binding.rvPlace.adapter = placeListAdapter
     }
 
-    private fun initView(meetId: Int) {
-//        viewModel.voteTime()
-    }
-
-    private fun observer() {
+    private fun observer(meetId: Int) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.timePlaceState.collectLatest {
@@ -66,6 +62,41 @@ class VotePromisePlaceFragment :
                         }
 
                         is UiState.Failure -> {
+                            Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.timeVoteState.collectLatest {
+                    when (it) {
+                        is UiState.Loading -> {}
+                        is UiState.Success -> {
+                            viewModel.votePlace(meetId)
+                        }
+
+                        is UiState.Failure -> {
+                            Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.placeVoteState.collectLatest {
+                    when (it) {
+                        is UiState.Loading -> {}
+                        is UiState.Success -> {
+                            navigateToVoteCompletionFragment(meetId)
+                        }
+
+                        is UiState.Failure -> {
+                            Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -79,12 +110,21 @@ class VotePromisePlaceFragment :
         }
     }
 
-    private fun addListeners() {
+    private fun addListeners(meetId: Int) {
         binding.btnVoteComplete.setOnClickListener {
-
+            viewModel.voteTime(meetId)
         }
         binding.ivNavigateUpBtn.setOnClickListener {
             findNavController().navigateUp()
         }
+    }
+
+    private fun navigateToVoteCompletionFragment(meetId: Int) {
+        VotePromisePlaceFragmentDirections.actionVotePromisePlaceFragmentToVoteCompletionFragment(
+            meetId
+        )
+            .apply {
+                findNavController().navigate(this)
+            }
     }
 }
