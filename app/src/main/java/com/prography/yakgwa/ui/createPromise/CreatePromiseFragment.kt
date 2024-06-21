@@ -15,26 +15,22 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.prography.domain.model.request.CreateMeetRequestEntity
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentCreatePromiseBinding
 import com.prography.yakgwa.model.SelectedLocationModel
 import com.prography.yakgwa.model.ThemeModel
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
+import com.prography.yakgwa.util.dateTimeUtils.DateTimeUtils.parseDateFromString
+import com.prography.yakgwa.util.dateTimeUtils.DateTimeUtils.parseTimeFromString
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @AndroidEntryPoint
 class CreatePromiseFragment :
     BaseFragment<FragmentCreatePromiseBinding>(R.layout.fragment_create_promise) {
-
     private val viewModel: CreatePromiseViewModel by viewModels()
 
     private lateinit var locationListAdapter: LocationListAdapter
@@ -51,14 +47,14 @@ class CreatePromiseFragment :
     @SuppressLint("SetTextI18n")
     private fun observer() {
         lifecycleScope.launch {
-            viewModel.textLength20State.collectLatest { length ->
-                binding.tvWithin20.text = "$length/20"
+            viewModel.textLength20State.collectLatest { text ->
+                binding.tvWithin20.text = "${text.length}/20"
             }
         }
 
         lifecycleScope.launch {
-            viewModel.textLength80State.collectLatest { length ->
-                binding.tvWithin80.text = "$length/80"
+            viewModel.textLength80State.collectLatest { text ->
+                binding.tvWithin80.text = "${text.length}/80"
             }
         }
 
@@ -197,63 +193,28 @@ class CreatePromiseFragment :
         }
 
         binding.startDate.setOnClickListener {
-            selectStartDate()
+            showDatePickerDialog(viewModel::updateStartDate)
         }
 
         binding.endDate.setOnClickListener {
-            selectEndDate()
+            showDatePickerDialog(viewModel::updateEndDate)
         }
 
         binding.startTime.setOnClickListener {
-            selectStartTime()
+            showTimePickerDialog(viewModel::updateStartTime)
         }
 
         binding.endTime.setOnClickListener {
-            selectEndTime()
+            showTimePickerDialog(viewModel::updateEndTime)
         }
 
         binding.btnCreatePromise.setOnClickListener {
-            viewModel.createMeet(
-                CreateMeetRequestEntity(
-                    binding.etWithin20Msg.text.toString(),
-                    binding.etWithin80Msg.text.toString(),
-                    viewModel.selectedThemeState.value
-                        ?.firstOrNull { it.isSelected }
-                        ?.themesResponseEntity
-                        ?.meetThemeId!!,
-                    listOf("수원역"),
-                    CreateMeetRequestEntity.VoteDateRange(
-                        viewModel.selectedStartDate.value!!,
-                        viewModel.selectedEndDate.value!!
-                    ),
-                    CreateMeetRequestEntity.VoteTimeRange(
-                        formatTimeTo24Hour(viewModel.selectedStartTime.value!!),
-                        formatTimeTo24Hour(viewModel.selectedEndTime.value!!)
-                    ),
-                    12
-                )
-            )
+            viewModel.createMeet()
         }
 
         binding.navigateUpBtn.setOnClickListener {
             findNavController().navigateUp()
         }
-    }
-
-    private fun selectStartDate() {
-        showDatePickerDialog(viewModel::updateStartDate)
-    }
-
-    private fun selectEndDate() {
-        showDatePickerDialog(viewModel::updateEndDate)
-    }
-
-    private fun selectStartTime() {
-        showTimePickerDialog(viewModel::updateStartTime)
-    }
-
-    private fun selectEndTime() {
-        showTimePickerDialog(viewModel::updateEndTime)
     }
 
     private fun showDatePickerDialog(updateDate: (Int, Int, Int) -> Unit) {
@@ -264,10 +225,10 @@ class CreatePromiseFragment :
 
         val selectedDate = when (updateDate) {
             viewModel::updateStartDate -> viewModel.selectedStartDate.value
-            else -> viewModel.selectedEndDate.value
+            else -> viewModel.selectedEndDate.value ?: viewModel.selectedStartDate.value
         }
 
-        val date = parseDate(selectedDate)
+        val date = parseDateFromString(selectedDate)
         DatePickerDialog(
             requireContext(), dateFromDialog,
             date.year,
@@ -287,28 +248,13 @@ class CreatePromiseFragment :
             else -> viewModel.selectedEndTime.value ?: DEFAULT_END_TIME
         }
 
-        val time = parseTime(selectedTime)
+        val time = parseTimeFromString(selectedTime)
         TimePickerDialog(
             requireContext(), timeFromDialog,
             time.hour,
             time.minute,
             false
         ).show()
-    }
-
-    private fun parseDate(dateString: String?): LocalDate {
-        return dateString?.let {
-            LocalDate.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        } ?: LocalDate.now()
-    }
-
-    private fun parseTime(timeString: String): LocalTime {
-        return LocalTime.parse(timeString, DateTimeFormatter.ofPattern("a hh:mm", Locale.KOREAN))
-    }
-
-    private fun formatTimeTo24Hour(timeString: String): String {
-        return LocalTime.parse(timeString, DateTimeFormatter.ofPattern("a hh:mm", Locale.KOREAN))
-            .format(DateTimeFormatter.ofPattern("HH:mm"))
     }
 
     private fun navigateToInvitationLeaderFragment(meetId: Int) {
@@ -321,8 +267,8 @@ class CreatePromiseFragment :
     }
 
     companion object {
-        private const val MAX_SELECTED_COUNT = 2
-        private const val DEFAULT_START_TIME = "오전 09:00"
-        private const val DEFAULT_END_TIME = "오후 06:00"
+        const val MAX_SELECTED_COUNT = 2
+        const val DEFAULT_START_TIME = "오전 09:00"
+        const val DEFAULT_END_TIME = "오후 06:00"
     }
 }
