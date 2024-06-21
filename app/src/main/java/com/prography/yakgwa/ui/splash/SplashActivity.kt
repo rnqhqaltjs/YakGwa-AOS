@@ -39,13 +39,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
     }
 
     private fun handleDeepLink(uri: Uri?) {
-        if (uri != null) {
-            val userId = uri.getQueryParameter("userId")
-            val meetId = uri.getQueryParameter("meetId")
+        uri?.let {
+            val userId = it.getQueryParameter(USER_ID)
+            val meetId = it.getQueryParameter(MEET_ID)
 
             val args = Bundle().apply {
-                putString("userId", userId)
-                putString("meetId", meetId)
+                putString(USER_ID, userId)
+                putString(MEET_ID, meetId)
             }
 
             lifecycleScope.launch {
@@ -93,5 +93,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
 
     companion object {
         const val SPLASH_SCREEN_DELAY_TIME = 500L
+        const val MEET_ID = "meetId"
+        const val USER_ID = "userId"
     }
 }
