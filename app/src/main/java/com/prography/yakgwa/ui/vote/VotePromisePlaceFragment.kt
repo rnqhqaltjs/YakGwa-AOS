@@ -1,10 +1,8 @@
 package com.prography.yakgwa.ui.vote
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,7 +19,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-@RequiresApi(Build.VERSION_CODES.O)
 class VotePromisePlaceFragment :
     BaseFragment<FragmentVotePromisePlaceBinding>(R.layout.fragment_vote_promise_place) {
 

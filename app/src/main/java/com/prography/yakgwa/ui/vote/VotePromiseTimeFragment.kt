@@ -1,11 +1,9 @@
 package com.prography.yakgwa.ui.vote
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -31,7 +29,6 @@ import java.time.format.DateTimeFormatter
 
 
 @AndroidEntryPoint
-@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("DefaultLocale")
 class VotePromiseTimeFragment :
     BaseFragment<FragmentVotePromiseTimeBinding>(R.layout.fragment_vote_promise_time) {

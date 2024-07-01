@@ -1,7 +1,5 @@
 package com.prography.yakgwa.ui.vote
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prography.data.datasource.local.YakGwaLocalDataSource
@@ -29,7 +27,6 @@ import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
-@RequiresApi(Build.VERSION_CODES.O)
 class VoteViewModel @Inject constructor(
     private val getVoteTimePlaceCandidateInfoUseCase: GetVoteTimePlaceCandidateInfoUseCase,
     private val postUserVoteTimeUseCase: PostUserVoteTimeUseCase,
