@@ -90,6 +90,6 @@ class AuthInterceptor @Inject constructor(
     companion object {
         const val AUTHORIZATION = "Authorization"
         const val BEARER = "Bearer "
-        const val BASE_URL = "http://43.202.47.80:8081/"
+        const val BASE_URL = "http://13.125.49.95:8081/"
     }
 }
