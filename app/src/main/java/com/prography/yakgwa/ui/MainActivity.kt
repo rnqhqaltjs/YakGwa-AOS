@@ -31,7 +31,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         binding.navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.createPromiseFragment ||
+            if (destination.id == R.id.createPromiseTitleFragment ||
+                destination.id == R.id.createPromiseThemeFragment ||
+                destination.id == R.id.createPromiseTimeFragment ||
+                destination.id == R.id.createPromisePlaceFragment ||
                 destination.id == R.id.invitationLeaderFragment ||
                 destination.id == R.id.invitationMemberFragment ||
                 destination.id == R.id.votePromiseTimeFragment ||
