@@ -11,36 +11,24 @@
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_homeFragment_to_createPromiseFragment"
-            app:destination="@id/createPromiseFragment"
+            android:id="@+id/action_homeFragment_to_invitationLeaderFragment"
+            app:destination="@id/invitationLeaderFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_voteCompletionFragment"
+            app:destination="@id/voteCompletionFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_createPromiseTitleFragment"
+            app:destination="@id/create_promise_navigation"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
-        <action
-            android:id="@+id/action_homeFragment_to_invitationLeaderFragment"
-            app:destination="@id/invitationLeaderFragment" />
     </fragment>
     <fragment
         android:id="@+id/myPageFragment"
         android:name="com.prography.yakgwa.ui.myPage.MyPageFragment"
         android:label="MyPageFragment"
         tools:layout="@layout/fragment_my_page" />
-    <fragment
-        android:id="@+id/createPromiseFragment"
-        android:name="com.prography.yakgwa.ui.createPromise.CreatePromiseFragment"
-        android:label="CreatePromiseFragment"
-        tools:layout="@layout/fragment_create_promise">
-        <action
-            android:id="@+id/action_createPromiseFragment_to_invitationLeaderFragment"
-            app:destination="@id/invitationLeaderFragment"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"
-            app:popUpToInclusive="false"
-            app:popUpTo="@+id/homeFragment" />
-    </fragment>
     <fragment
         android:id="@+id/invitationLeaderFragment"
         android:name="com.prography.yakgwa.ui.invitation.InvitationLeaderFragment"
@@ -125,4 +113,63 @@
         android:name="com.prography.yakgwa.ui.location.LocationFragment"
         android:label="LocationFragment"
         tools:layout="@layout/fragment_location" />
+
+    <navigation
+        android:id="@+id/create_promise_navigation"
+        app:startDestination="@id/createPromiseTitleFragment">
+        <fragment
+            android:id="@+id/createPromiseTitleFragment"
+            android:name="com.prography.yakgwa.ui.createPromise.CreatePromiseTitleFragment"
+            android:label="CreatePromiseTitleFragment"
+            tools:layout="@layout/fragment_create_promise_title">
+            <action
+                android:id="@+id/action_createPromiseTitleFragment_to_createPromiseThemeFragment"
+                app:destination="@id/createPromiseThemeFragment"
+                app:enterAnim="@android:anim/slide_in_left"
+                app:exitAnim="@android:anim/slide_out_right"
+                app:popEnterAnim="@android:anim/slide_in_left"
+                app:popExitAnim="@android:anim/slide_out_right" />
+        </fragment>
+        <fragment
+            android:id="@+id/createPromiseThemeFragment"
+            android:name="com.prography.yakgwa.ui.createPromise.CreatePromiseThemeFragment"
+            android:label="CreatePromiseThemeFragment"
+            tools:layout="@layout/fragment_create_promise_theme">
+            <action
+                android:id="@+id/action_createPromiseThemeFragment_to_createPromiseTimeFragment"
+                app:destination="@id/createPromiseTimeFragment"
+                app:enterAnim="@android:anim/slide_in_left"
+                app:exitAnim="@android:anim/slide_out_right"
+                app:popEnterAnim="@android:anim/slide_in_left"
+                app:popExitAnim="@android:anim/slide_out_right" />
+        </fragment>
+        <fragment
+            android:id="@+id/createPromiseTimeFragment"
+            android:name="com.prography.yakgwa.ui.createPromise.createPromiseTime.CreatePromiseTimeFragment"
+            android:label="CreatePromiseTimeFragment"
+            tools:layout="@layout/fragment_create_promise_time">
+            <action
+                android:id="@+id/action_createPromiseTimeFragment_to_createPromisePlaceFragment"
+                app:destination="@id/createPromisePlaceFragment"
+                app:enterAnim="@android:anim/slide_in_left"
+                app:exitAnim="@android:anim/slide_out_right"
+                app:popEnterAnim="@android:anim/slide_in_left"
+                app:popExitAnim="@android:anim/slide_out_right" />
+        </fragment>
+        <fragment
+            android:id="@+id/createPromisePlaceFragment"
+            android:name="com.prography.yakgwa.ui.createPromise.createPromisePlace.CreatePromisePlaceFragment"
+            android:label="CreatePromisePlaceFragment"
+            tools:layout="@layout/fragment_create_promise_place">
+            <action
+                android:id="@+id/action_createPromisePlaceFragment_to_invitationLeaderFragment"
+                app:destination="@id/invitationLeaderFragment"
+                app:enterAnim="@android:anim/slide_in_left"
+                app:exitAnim="@android:anim/slide_out_right"
+                app:popEnterAnim="@android:anim/slide_in_left"
+                app:popExitAnim="@android:anim/slide_out_right"
+                app:popUpTo="@id/homeFragment"
+                app:popUpToInclusive="false" />
+        </fragment>
+    </navigation>
 </navigation>
