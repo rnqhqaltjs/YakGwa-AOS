@@ -2,11 +2,9 @@ package com.prography.yakgwa.ui.invitation
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -34,7 +32,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-@RequiresApi(Build.VERSION_CODES.O)
 class InvitationLeaderFragment :
     BaseFragment<FragmentInvitationLeaderBinding>(R.layout.fragment_invitation_leader) {
 
@@ -187,7 +184,7 @@ class InvitationLeaderFragment :
     }
 
     companion object {
-        const val USER_ID = "userId"
-        const val MEET_ID = "meetId"
+        private const val USER_ID = "userId"
+        private const val MEET_ID = "meetId"
     }
 }

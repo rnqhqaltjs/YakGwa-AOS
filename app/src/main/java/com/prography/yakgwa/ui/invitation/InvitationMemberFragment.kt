@@ -1,11 +1,9 @@
 package com.prography.yakgwa.ui.invitation
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -23,7 +21,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-@RequiresApi(Build.VERSION_CODES.O)
 class InvitationMemberFragment :
     BaseFragment<FragmentInvitationMemberBinding>(R.layout.fragment_invitation_member) {
 
@@ -122,6 +119,6 @@ class InvitationMemberFragment :
     }
 
     companion object {
-        const val EXPIRED_INVITATION_HOUR = 0
+        private const val EXPIRED_INVITATION_HOUR = 0
     }
 }
