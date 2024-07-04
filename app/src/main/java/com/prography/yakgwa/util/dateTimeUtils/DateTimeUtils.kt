@@ -1,7 +1,5 @@
 package com.prography.yakgwa.util.dateTimeUtils
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.prography.yakgwa.ui.vote.VotePromiseTimeFragment
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import java.time.LocalDate
@@ -9,7 +7,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-@RequiresApi(Build.VERSION_CODES.O)
 object DateTimeUtils {
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private val timeFormatter12Hour = DateTimeFormatter.ofPattern("a hh:mm")
