@@ -1,17 +1,14 @@
 package com.prography.yakgwa.ui.vote
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.prography.yakgwa.databinding.ItemPlaceListBinding
 import com.prography.yakgwa.model.PlaceModel
 
-@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SetTextI18n")
 class PlaceListAdapter :
     ListAdapter<PlaceModel, PlaceListAdapter.PlaceListViewHolder>(

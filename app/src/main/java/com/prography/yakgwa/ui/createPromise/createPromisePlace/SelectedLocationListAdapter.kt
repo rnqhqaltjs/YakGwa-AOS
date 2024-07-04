@@ -1,4 +1,4 @@
-package com.prography.yakgwa.ui.createPromise
+package com.prography.yakgwa.ui.createPromise.createPromisePlace
 
 import android.text.Html
 import android.view.LayoutInflater
