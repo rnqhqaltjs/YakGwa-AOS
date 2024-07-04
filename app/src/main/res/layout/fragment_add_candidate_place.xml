@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/neutral_200"
+        tools:context=".ui.createPromise.createPromisePlace.CreatePromisePlaceFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/tv_where_meet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="20dp"
+                android:text="약속 장소 후보를 추가해주세요"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_max_three"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="최대 3개 선택 가능"
+                android:textColor="@color/neutral_600"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/tv_where_meet"
+                app:layout_constraintTop_toBottomOf="@+id/tv_where_meet" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_search_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="20dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:layout_constraintStart_toStartOf="@+id/tv_max_three"
+                app:layout_constraintTop_toBottomOf="@+id/tv_max_three">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:id="@+id/et_search_location"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="14dp"
+                        android:background="@android:color/transparent"
+                        android:ems="10"
+                        android:hint="지역/지하철역을 검색해주세요"
+                        android:inputType="text"
+                        android:maxLength="20"
+                        android:textColorHint="@color/neutral_500"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/iv_search_location"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/iv_search_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:textColor="@color/neutral_600"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_search" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

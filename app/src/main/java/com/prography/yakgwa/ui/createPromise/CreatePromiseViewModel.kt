@@ -1,7 +1,5 @@
 package com.prography.yakgwa.ui.createPromise
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prography.data.datasource.local.YakGwaLocalDataSource
@@ -25,8 +23,10 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -37,9 +37,9 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 import javax.inject.Inject
 
-@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class CreatePromiseViewModel @Inject constructor(
     private val getThemeListUseCase: GetThemeListUseCase,
@@ -98,6 +98,12 @@ class CreatePromiseViewModel @Inject constructor(
 
     private val _selectedLocationsState = MutableStateFlow<List<SelectedLocationModel>>(emptyList())
     val selectedLocationsState = _selectedLocationsState
+
+    private var _selectedTabTimeIndex = MutableStateFlow(TAB_ADD_CANDIDATE)
+    val selectedTabTimeIndex = _selectedTabTimeIndex
+
+    private val _selectedDates = MutableStateFlow<List<LocalDate>>(emptyList())
+    val selectedDates = _selectedDates
 
     private fun getThemes() {
         _themesState.value = UiState.Loading
@@ -224,7 +230,26 @@ class CreatePromiseViewModel @Inject constructor(
         _selectedLocationsState.value = currentList - location
     }
 
+    fun setSelectedDates(dates: List<LocalDate>) {
+        _selectedDates.value = dates
+    }
+
+    val isTimeBtnEnabled: StateFlow<Boolean> = combine(
+        _selectedTabTimeIndex,
+        _selectedDates,
+        _selectedStartDate,
+        _selectedStartTime
+    ) { tabIndex, dates, startDate, startTime ->
+        tabIndex == 0 && dates.isNotEmpty() || tabIndex == 1 && startDate != null && startTime != null
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = false
+    )
+
     companion object {
         const val SEARCH_QUERY_DEBOUNCE_DELAY = 300L
+        const val TAB_ADD_CANDIDATE = 0
+        const val TAB_DIRECT_INPUT = 1
     }
 }
