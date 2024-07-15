@@ -7,15 +7,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponseThemesDto(
-    @SerializedName("meetThemeInfos")
-    val meetThemeInfos: List<MeetThemeInfo>
-) {
-    @Serializable
-    data class MeetThemeInfo(
-        @SerializedName("meetThemeId")
-        val meetThemeId: Int,
-        @SerializedName("name")
-        val name: String
-    )
-}
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("name")
+    val name: String
+)
 

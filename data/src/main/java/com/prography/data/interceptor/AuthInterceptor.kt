@@ -85,11 +85,10 @@ class AuthInterceptor @Inject constructor(
     private fun Request.newAuthBuilder() =
         this.newBuilder().addHeader(AUTHORIZATION, runBlocking { localStorage.accessToken.first() })
             .build()
-
-
+    
     companion object {
         const val AUTHORIZATION = "Authorization"
         const val BEARER = "Bearer "
-        const val BASE_URL = "http://13.125.49.95:8081/"
+        const val BASE_URL = "https://yakgwa.site/"
     }
 }

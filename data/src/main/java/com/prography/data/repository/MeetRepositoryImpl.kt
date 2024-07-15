@@ -22,11 +22,9 @@ class MeetRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createMeet(
-        userId: Int,
         createMeetRequestEntity: CreateMeetRequestEntity
     ): Result<CreateMeetResponseEntity> {
         val response = meetRemoteDataSource.createMeet(
-            userId,
             MeetMapper.mapperToRequestCreateMeetDto(createMeetRequestEntity)
         )
 
@@ -35,8 +33,8 @@ class MeetRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getParticipantMeets(userId: Int): Result<List<MeetsResponseEntity>> {
-        val response = meetRemoteDataSource.getParticipantMeets(userId)
+    override suspend fun getParticipantMeets(): Result<List<MeetsResponseEntity>> {
+        val response = meetRemoteDataSource.getParticipantMeets()
 
         return runCatching {
             MeetMapper.mapperToMeetsResponseEntity(response.result)
@@ -44,10 +42,9 @@ class MeetRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMeetInformationDetail(
-        userId: Int,
         meetId: Int
     ): Result<MeetDetailResponseEntity> {
-        val response = meetRemoteDataSource.getMeetInformationDetail(userId, meetId)
+        val response = meetRemoteDataSource.getMeetInformationDetail(meetId)
 
         return runCatching {
             MeetMapper.mapperToMeetDetailResponseEntity(

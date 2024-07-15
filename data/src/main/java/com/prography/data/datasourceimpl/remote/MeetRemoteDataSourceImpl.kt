@@ -13,26 +13,24 @@ import javax.inject.Inject
 class MeetRemoteDataSourceImpl @Inject constructor(
     private val meetService: MeetService
 ) : MeetRemoteDataSource {
-    override suspend fun getMeetThemes(): BaseResponse<ResponseThemesDto> {
+    override suspend fun getMeetThemes(): BaseResponse<List<ResponseThemesDto>> {
         return meetService.getMeetThemes()
     }
 
     override suspend fun createMeet(
-        userId: Int,
         requestCreateMeetDto: RequestCreateMeetDto
     ): BaseResponse<ResponseCreateMeetDto> {
-        return meetService.createMeet(userId, requestCreateMeetDto)
+        return meetService.createMeet(requestCreateMeetDto)
     }
 
-    override suspend fun getParticipantMeets(userId: Int): BaseResponse<ResponseMeetsDto> {
-        return meetService.getParticipantMeets(userId)
+    override suspend fun getParticipantMeets(): BaseResponse<ResponseMeetsDto> {
+        return meetService.getParticipantMeets()
     }
 
     override suspend fun getMeetInformationDetail(
-        userId: Int,
         meetId: Int
     ): BaseResponse<ResponseMeetDetailDto> {
-        return meetService.getMeetInformationDetail(userId, meetId)
+        return meetService.getMeetInformationDetail(meetId)
     }
 
     override suspend fun participantMeet(userId: Int, meetId: Int): BaseResponse<Unit> {

@@ -8,12 +8,8 @@ import com.prography.domain.model.response.ThemesResponseEntity
 
 interface MeetRepository {
     suspend fun getMeetThemes(): Result<List<ThemesResponseEntity>>
-    suspend fun createMeet(
-        userId: Int,
-        createMeetRequestEntity: CreateMeetRequestEntity
-    ): Result<CreateMeetResponseEntity>
-
-    suspend fun getParticipantMeets(userId: Int): Result<List<MeetsResponseEntity>>
-    suspend fun getMeetInformationDetail(userId: Int, meetId: Int): Result<MeetDetailResponseEntity>
+    suspend fun createMeet(createMeetRequestEntity: CreateMeetRequestEntity): Result<CreateMeetResponseEntity>
+    suspend fun getParticipantMeets(): Result<List<MeetsResponseEntity>>
+    suspend fun getMeetInformationDetail(meetId: Int): Result<MeetDetailResponseEntity>
     suspend fun participantMeet(userId: Int, meetId: Int): Result<Unit>
 }

@@ -1,5 +1,5 @@
 package com.prography.yakgwa.type
 
 enum class MeetType {
-    VOTE, BEFORE_CONFIRM, CONFIRM
+    BEFORE_VOTE, VOTE, BEFORE_CONFIRM, CONFIRM
 }

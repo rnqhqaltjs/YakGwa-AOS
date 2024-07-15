@@ -12,21 +12,19 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface MeetService {
-    @GET("/api/v1/meetThemes")
-    suspend fun getMeetThemes(): BaseResponse<ResponseThemesDto>
+    @GET("/api/v1/theme")
+    suspend fun getMeetThemes(): BaseResponse<List<ResponseThemesDto>>
 
-    @POST("/api/v1/users/{userId}/meets")
+    @POST("/api/v1/meets")
     suspend fun createMeet(
-        @Path("userId") userId: Int,
         @Body requestCreateMeetDto: RequestCreateMeetDto
     ): BaseResponse<ResponseCreateMeetDto>
 
-    @GET("/api/v1/users/{userId}/entries")
-    suspend fun getParticipantMeets(@Path("userId") userId: Int): BaseResponse<ResponseMeetsDto>
+    @GET("/api/v1/meets")
+    suspend fun getParticipantMeets(): BaseResponse<ResponseMeetsDto>
 
-    @GET("/api/v1/users/{userId}/meets/{meetId}")
+    @GET("/api/v1/meets/{meetId}")
     suspend fun getMeetInformationDetail(
-        @Path("userId") userId: Int,
         @Path("meetId") meetId: Int
     ): BaseResponse<ResponseMeetDetailDto>
 
@@ -35,6 +33,5 @@ interface MeetService {
         @Path("userId") userId: Int,
         @Path("meetId") meetId: Int
     ): BaseResponse<Unit>
-
 
 }

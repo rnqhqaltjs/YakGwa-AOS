@@ -6,6 +6,6 @@ import com.prography.domain.repository.MeetRepository
 class GetMeetInformationDetailUseCase(
     private val meetRepository: MeetRepository
 ) {
-    suspend operator fun invoke(userId: Int, meetId: Int): Result<MeetDetailResponseEntity> =
-        meetRepository.getMeetInformationDetail(userId, meetId)
+    suspend operator fun invoke(meetId: Int): Result<MeetDetailResponseEntity> =
+        meetRepository.getMeetInformationDetail(meetId)
 }

@@ -6,6 +6,6 @@ import com.prography.domain.repository.MeetRepository
 class GetParticipantMeetListUseCase(
     private val meetRepository: MeetRepository
 ) {
-    suspend operator fun invoke(userId: Int): Result<List<MeetsResponseEntity>> =
-        meetRepository.getParticipantMeets(userId)
+    suspend operator fun invoke(): Result<List<MeetsResponseEntity>> =
+        meetRepository.getParticipantMeets()
 }
