@@ -6,8 +6,8 @@ import com.prography.data.datasource.local.YakGwaLocalDataSource
 import com.prography.domain.repository.AuthRepository
 import com.prography.yakgwa.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,19 +17,19 @@ class MyPageViewModel @Inject constructor(
     private val localStorage: YakGwaLocalDataSource
 ) : ViewModel() {
 
-    private val _logoutState = MutableSharedFlow<UiState<Unit>>()
-    val logoutState = _logoutState.asSharedFlow()
+    private val _logoutState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
+    val logoutState = _logoutState.asStateFlow()
 
     fun logout() {
-        viewModelScope.launch {
-            _logoutState.emit(UiState.Loading)
+        _logoutState.value = UiState.Loading
 
+        viewModelScope.launch {
             authRepository.logout()
                 .onSuccess {
-                    _logoutState.emit(UiState.Success(Unit))
+                    _logoutState.value = UiState.Success(Unit)
                     localStorage.clear()
                 }.onFailure {
-                    _logoutState.emit(UiState.Failure(it.message))
+                    _logoutState.value = UiState.Failure(it.message)
                 }
         }
     }

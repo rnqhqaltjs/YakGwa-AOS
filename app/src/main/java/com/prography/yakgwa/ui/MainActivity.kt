@@ -3,6 +3,7 @@ package com.prography.yakgwa.ui
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -22,6 +23,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         super.onCreate(savedInstanceState)
 
         setupJetpackNavigation()
+        addListeners()
+    }
+
+    private fun addListeners() {
+        binding.icAddBtn.setOnClickListener {
+            findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_createPromiseTitleFragment)
+        }
     }
 
     private fun setupJetpackNavigation() {
@@ -31,11 +39,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         binding.navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.createPromiseFragment ||
+            if (destination.id == R.id.createPromiseTitleFragment ||
+                destination.id == R.id.createPromiseThemeFragment ||
+                destination.id == R.id.createPromiseTimeFragment ||
+                destination.id == R.id.createPromisePlaceFragment ||
                 destination.id == R.id.invitationLeaderFragment ||
                 destination.id == R.id.invitationMemberFragment ||
                 destination.id == R.id.votePromiseTimeFragment ||
-                destination.id == R.id.votePromisePlaceFragment
+                destination.id == R.id.votePromisePlaceFragment ||
+                destination.id == R.id.voteCompletionFragment ||
+                destination.id == R.id.exitDialogFragment ||
+                destination.id == R.id.addCandidatePlaceDetailFragment
             ) {
                 binding.navView.visibility = View.GONE
             } else {

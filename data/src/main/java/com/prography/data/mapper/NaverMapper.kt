@@ -6,7 +6,19 @@ import com.prography.domain.model.response.LocationResponseEntity
 object NaverMapper {
     fun mapperToLocationResponseEntity(responseLocationDto: ResponseLocationDto): List<LocationResponseEntity> {
         return responseLocationDto.items.map { item ->
-            LocationResponseEntity(item.title)
+            item.run {
+                LocationResponseEntity(
+                    this.title,
+                    this.link,
+                    this.category,
+                    this.description,
+                    this.telephone,
+                    this.address,
+                    this.roadAddress,
+                    this.mapx,
+                    this.mapy
+                )
+            }
         }
     }
 }

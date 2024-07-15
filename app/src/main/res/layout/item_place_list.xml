@@ -32,7 +32,7 @@
 
             <ImageView
                 android:id="@+id/iv_place"
-                android:layout_width="80dp"
+                android:layout_width="100dp"
                 android:layout_height="80dp"
                 android:scaleType="fitXY"
                 tools:srcCompat="@tools:sample/avatars" />
@@ -41,9 +41,9 @@
 
         <TextView
             android:id="@+id/tv_title"
-            android:textSize="13sp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
+            android:textSize="15sp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
             android:layout_width="wrap_content"
             android:textColor="@color/black"
             android:layout_height="wrap_content"
@@ -54,9 +54,9 @@
         <TextView
             android:id="@+id/tv_address"
             android:layout_width="wrap_content"
-            android:textSize="11sp"
+            android:textSize="12sp"
             android:layout_marginTop="5dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="12dp"
             android:textColor="@color/neutral_700"
             android:layout_height="wrap_content"
             android:text="서울시 강남구 강남대로 34길 34 4층"
@@ -68,10 +68,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="12dp"
             android:textColor="@color/neutral_500"
             android:text="장소 설명입니다. 장소 설명입니다."
-            android:textSize="10sp"
+            android:textSize="11sp"
             app:layout_constraintStart_toEndOf="@+id/cv_place_img"
             app:layout_constraintTop_toBottomOf="@+id/tv_address" />
     </androidx.constraintlayout.widget.ConstraintLayout>

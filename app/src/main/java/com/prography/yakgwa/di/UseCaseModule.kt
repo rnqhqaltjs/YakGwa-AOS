@@ -2,10 +2,12 @@ package com.prography.yakgwa.di
 
 import com.prography.domain.repository.MeetRepository
 import com.prography.domain.repository.NaverRepository
+import com.prography.domain.repository.VoteRepository
 import com.prography.domain.usecase.GetLocationListUseCase
 import com.prography.domain.usecase.GetMeetInformationDetailUseCase
 import com.prography.domain.usecase.GetParticipantMeetListUseCase
 import com.prography.domain.usecase.GetThemeListUseCase
+import com.prography.domain.usecase.GetUserVoteInfoUsecase
 import com.prography.domain.usecase.GetVoteTimePlaceCandidateInfoUseCase
 import com.prography.domain.usecase.PostMeetParticipantUseCase
 import com.prography.domain.usecase.PostNewMeetCreateUseCase
@@ -52,16 +54,21 @@ class UseCaseModule {
 
     @Provides
     @Singleton
-    fun providesGetVoteTimeCandidateInfoUseCase(meetRepository: MeetRepository): GetVoteTimePlaceCandidateInfoUseCase =
-        GetVoteTimePlaceCandidateInfoUseCase(meetRepository)
+    fun providesGetVoteTimeCandidateInfoUseCase(voteRepository: VoteRepository): GetVoteTimePlaceCandidateInfoUseCase =
+        GetVoteTimePlaceCandidateInfoUseCase(voteRepository)
 
     @Provides
     @Singleton
-    fun providesPostUserVoteTimeUseCase(meetRepository: MeetRepository): PostUserVoteTimeUseCase =
-        PostUserVoteTimeUseCase(meetRepository)
+    fun providesPostUserVoteTimeUseCase(voteRepository: VoteRepository): PostUserVoteTimeUseCase =
+        PostUserVoteTimeUseCase(voteRepository)
 
     @Provides
     @Singleton
-    fun providesPostUserVotePlaceUseCase(meetRepository: MeetRepository): PostUserVotePlaceUseCase =
-        PostUserVotePlaceUseCase(meetRepository)
+    fun providesPostUserVotePlaceUseCase(voteRepository: VoteRepository): PostUserVotePlaceUseCase =
+        PostUserVotePlaceUseCase(voteRepository)
+
+    @Provides
+    @Singleton
+    fun providesGetUserVoteInfoUseCase(voteRepository: VoteRepository): GetUserVoteInfoUsecase =
+        GetUserVoteInfoUsecase(voteRepository)
 }

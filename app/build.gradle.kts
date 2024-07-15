@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "com.prography.yakgwa"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -70,6 +70,7 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.fragment)
     kapt(libs.hilt.compiler)
 
     // Retrofit

@@ -1,4 +1,4 @@
-package com.prography.yakgwa.ui.createPromise
+package com.prography.yakgwa.ui.createPromise.createPromisePlace
 
 import android.text.Html
 import android.view.LayoutInflater
@@ -6,12 +6,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.prography.domain.model.response.LocationResponseEntity
 import com.prography.yakgwa.databinding.ItemSelectedLocationListBinding
-import com.prography.yakgwa.model.SelectedLocationModel
 
-class SelectedLocationListAdapter :
-    ListAdapter<SelectedLocationModel, SelectedLocationListAdapter.SelectedLocationListViewHolder>(
-        SelectedLocationDiffCallback
+class SelectedDirectLocationListAdapter :
+    ListAdapter<LocationResponseEntity, SelectedDirectLocationListAdapter.SelectedLocationListViewHolder>(
+        SelectedDirectLocationDiffCallback
     ) {
 
     override fun onCreateViewHolder(
@@ -34,7 +34,7 @@ class SelectedLocationListAdapter :
 
     inner class SelectedLocationListViewHolder(private val binding: ItemSelectedLocationListBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(itemView: SelectedLocationModel) {
+        fun bind(itemView: LocationResponseEntity) {
             binding.tvSelectedTitle.text = Html.fromHtml(itemView.title)
 
             binding.ivRemoveBtn.setOnClickListener {
@@ -43,24 +43,24 @@ class SelectedLocationListAdapter :
         }
     }
 
-    private var onRemoveClickListener: ((SelectedLocationModel) -> Unit)? = null
-    fun setOnRemoveClickListener(listener: (SelectedLocationModel) -> Unit) {
+    private var onRemoveClickListener: ((LocationResponseEntity) -> Unit)? = null
+    fun setOnRemoveClickListener(listener: (LocationResponseEntity) -> Unit) {
         onRemoveClickListener = listener
     }
 
     companion object {
-        private val SelectedLocationDiffCallback =
-            object : DiffUtil.ItemCallback<SelectedLocationModel>() {
+        private val SelectedDirectLocationDiffCallback =
+            object : DiffUtil.ItemCallback<LocationResponseEntity>() {
                 override fun areItemsTheSame(
-                    oldItem: SelectedLocationModel,
-                    newItem: SelectedLocationModel
+                    oldItem: LocationResponseEntity,
+                    newItem: LocationResponseEntity
                 ): Boolean {
-                    return oldItem.title == newItem.title
+                    return oldItem.address == newItem.address
                 }
 
                 override fun areContentsTheSame(
-                    oldItem: SelectedLocationModel,
-                    newItem: SelectedLocationModel
+                    oldItem: LocationResponseEntity,
+                    newItem: LocationResponseEntity
                 ): Boolean {
                     return oldItem == newItem
                 }

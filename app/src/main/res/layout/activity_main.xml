@@ -28,15 +28,37 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/nav_view"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp"
-            android:background="?android:attr/windowBackground"
-            app:labelVisibilityMode="unlabeled"
+            android:layout_height="68dp"
+            android:background="@color/white"
+            app:itemBackground="@android:color/transparent"
+            app:itemIconSize="30dp"
+            app:itemPaddingTop="10dp"
+            android:paddingStart="40dp"
+            android:paddingEnd="40dp"
+            app:itemActiveIndicatorStyle="@android:color/transparent"
+            app:itemPaddingBottom="12dp"
+            app:itemIconTint="@color/selector_bottom_navigation"
+            app:itemTextColor="@color/selector_bottom_navigation"
+            app:labelVisibilityMode="labeled"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:menu="@menu/bottom_nav_menu" />
 
+        <ImageView
+            android:id="@+id/ic_add_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:translationZ="4dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="6dp"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/nav_view"
+            app:srcCompat="@drawable/ic_add" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

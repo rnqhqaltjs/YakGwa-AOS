@@ -1,4 +1,4 @@
-package com.prography.yakgwa.ui.createPromise
+package com.prography.yakgwa.ui.createPromise.createPromisePlace
 
 import android.text.Html
 import android.view.LayoutInflater
@@ -9,18 +9,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.prography.domain.model.response.LocationResponseEntity
 import com.prography.yakgwa.databinding.ItemLocationListBinding
 
-class LocationListAdapter :
-    ListAdapter<LocationResponseEntity, LocationListAdapter.LocationListViewHolder>(
-        LocationDiffCallback
+class DirectLocationListAdapter :
+    ListAdapter<LocationResponseEntity, DirectLocationListAdapter.DirectLocationListViewHolder>(
+        DirectLocationDiffCallback
     ) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationListViewHolder {
-        return LocationListViewHolder(
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): DirectLocationListViewHolder {
+        return DirectLocationListViewHolder(
             ItemLocationListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
-    override fun onBindViewHolder(holder: LocationListViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: DirectLocationListViewHolder, position: Int) {
         val itemView = currentList[position]
         holder.bind(itemView)
 
@@ -29,7 +32,7 @@ class LocationListAdapter :
         }
     }
 
-    inner class LocationListViewHolder(private val binding: ItemLocationListBinding) :
+    inner class DirectLocationListViewHolder(private val binding: ItemLocationListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: LocationResponseEntity) {
             binding.tvTitle.text = Html.fromHtml(itemView.title)
@@ -42,13 +45,13 @@ class LocationListAdapter :
     }
 
     companion object {
-        private val LocationDiffCallback =
+        private val DirectLocationDiffCallback =
             object : DiffUtil.ItemCallback<LocationResponseEntity>() {
                 override fun areItemsTheSame(
                     oldItem: LocationResponseEntity,
                     newItem: LocationResponseEntity
                 ): Boolean {
-                    return oldItem.title == newItem.title
+                    return oldItem.address == newItem.address
                 }
 
                 override fun areContentsTheSame(

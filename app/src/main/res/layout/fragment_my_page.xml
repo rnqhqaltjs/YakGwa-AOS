@@ -10,7 +10,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.myPage.MyPageFragment">
+        tools:context=".ui.myPage.MyPageFragment"
+        android:background="@color/neutral_200">
 
         <Button
             android:id="@+id/btn_logout"

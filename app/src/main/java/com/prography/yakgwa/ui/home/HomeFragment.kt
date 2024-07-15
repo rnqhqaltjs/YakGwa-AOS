@@ -2,13 +2,17 @@ package com.prography.yakgwa.ui.home
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.PagerSnapHelper
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentHomeBinding
+import com.prography.yakgwa.ui.createPromise.CreatePromiseViewModel
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,11 +22,16 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
+    private val homeViewModel: HomeViewModel by viewModels()
+    private val createPromiseViewModel: CreatePromiseViewModel by activityViewModels()
 
-    private val viewModel: HomeViewModel by viewModels()
+    private lateinit var participantMeetListAdapter: ParticipantMeetListAdapter
+
     private var meetId: Int? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        createPromiseViewModel.clearData()
+        setupRecyclerView()
         observer()
         addListeners()
     }
@@ -30,16 +39,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private fun observer() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.meetsState.collectLatest {
+                homeViewModel.meetsState.collectLatest {
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            binding.tvVoteTimePlace.text =
-                                it.data.reversed()[0].meetInfo.meetId.toString()
-                            meetId = it.data.reversed()[0].meetInfo.meetId
+                            participantMeetListAdapter.submitList(it.data.reversed())
+                            updateNoPromiseCardVisibility()
                         }
 
                         is UiState.Failure -> {
+                            Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -47,24 +56,47 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
     }
 
-    private fun addListeners() {
-        binding.btnGoCreatePromise.setOnClickListener {
-            navigateToCreatePromiseFragment()
+    private fun setupRecyclerView() {
+        participantMeetListAdapter = ParticipantMeetListAdapter().apply {
         }
 
-        binding.tvVoteTimePlace.setOnClickListener {
-            navigateToInvitationLeaderFragment()
+        val snapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(binding.rvParticipantMeets)
+        binding.rvParticipantMeets.adapter = participantMeetListAdapter
+    }
+
+    private fun addListeners() {
+        binding.btnGoCreatePromise.setOnClickListener {
+            navigateToCreatePromiseTitleFragment()
+        }
+
+        binding.ivAddBtn.setOnClickListener {
+            navigateToCreatePromiseTitleFragment()
         }
     }
 
-    private fun navigateToCreatePromiseFragment() {
-        HomeFragmentDirections.actionHomeFragmentToCreatePromiseFragment().apply {
+    private fun updateNoPromiseCardVisibility() {
+        if (participantMeetListAdapter.itemCount == 0) {
+            binding.cvNoPromise.visibility = View.VISIBLE
+        } else {
+            binding.cvNoPromise.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun navigateToCreatePromiseTitleFragment() {
+        HomeFragmentDirections.actionHomeFragmentToCreatePromiseTitleFragment().apply {
             findNavController().navigate(this)
         }
     }
 
     private fun navigateToInvitationLeaderFragment() {
         HomeFragmentDirections.actionHomeFragmentToInvitationLeaderFragment(meetId!!).apply {
+            findNavController().navigate(this)
+        }
+    }
+
+    private fun navigateToVoteCompletionFragment() {
+        HomeFragmentDirections.actionHomeFragmentToVoteCompletionFragment(meetId!!).apply {
             findNavController().navigate(this)
         }
     }

@@ -1,5 +1,8 @@
 package com.prography.yakgwa.model
 
+import com.prography.domain.model.response.LocationResponseEntity
+
 data class SelectedLocationModel(
-    val title: String
+    val locationResponseEntity: LocationResponseEntity,
+    var isSelected: Boolean = false
 )

@@ -27,7 +27,7 @@ class ThemeListAdapter :
     inner class ThemeListViewHolder(private val binding: ItemThemeListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: ThemeModel) {
-            binding.tvThemeName.text = itemView.themesResponseEntity.name
+            binding.tvThemeName.text = itemView.themesResponseEntity.themeName
             binding.cvTheme.isSelected = itemView.isSelected
 
             binding.cvTheme.setOnClickListener {
@@ -48,7 +48,7 @@ class ThemeListAdapter :
                     oldItem: ThemeModel,
                     newItem: ThemeModel
                 ): Boolean {
-                    return oldItem.themesResponseEntity.meetThemeId == newItem.themesResponseEntity.meetThemeId
+                    return oldItem.themesResponseEntity.themeId == newItem.themesResponseEntity.themeId
                 }
 
                 override fun areContentsTheSame(

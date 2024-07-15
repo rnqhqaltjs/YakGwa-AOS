@@ -1,15 +1,15 @@
 package com.prography.domain.usecase
 
 import com.prography.domain.model.request.VoteTimeRequestEntity
-import com.prography.domain.repository.MeetRepository
+import com.prography.domain.repository.VoteRepository
 
 class PostUserVoteTimeUseCase(
-    private val meetRepository: MeetRepository
+    private val voteRepository: VoteRepository
 ) {
     suspend operator fun invoke(
         userId: Int,
         meetId: Int,
         voteTimeRequestEntity: VoteTimeRequestEntity
     ): Result<Unit> =
-        meetRepository.voteTime(userId, meetId, voteTimeRequestEntity)
+        voteRepository.voteTime(userId, meetId, voteTimeRequestEntity)
 }

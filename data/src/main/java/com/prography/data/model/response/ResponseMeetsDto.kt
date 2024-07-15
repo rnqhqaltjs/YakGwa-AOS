@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponseMeetsDto(
-    @SerializedName("entryInfo")
-    val entryInfo: List<EntryInfo>
+    @SerializedName("meetInfosWithStatus")
+    val meetInfosWithStatus: List<MeetInfosWithStatus>
 ) {
     @Serializable
-    data class EntryInfo(
+    data class MeetInfosWithStatus(
         @SerializedName("meetStatus")
         val meetStatus: String,
         @SerializedName("meetInfo")
@@ -19,15 +19,15 @@ data class ResponseMeetsDto(
 
     @Serializable
     data class MeetInfo(
-        @SerializedName("userVote")
-        val userVote: Boolean,
-        @SerializedName("meetId")
-        val meetId: Int,
-        @SerializedName("startMeetTime")
-        val startMeetTime: String?,
+        @SerializedName("meetThemeName")
+        val meetThemeName: String,
+        @SerializedName("meetDateTime")
+        val meetDateTime: String?,
         @SerializedName("placeName")
         val placeName: String?,
-        @SerializedName("address")
-        val address: String?,
+        @SerializedName("meetTitle")
+        val meetTitle: String,
+        @SerializedName("meetId")
+        val meetId: Int,
     )
 }

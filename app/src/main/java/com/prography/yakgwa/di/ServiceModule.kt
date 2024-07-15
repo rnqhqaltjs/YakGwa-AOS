@@ -3,6 +3,7 @@ package com.prography.yakgwa.di
 import com.prography.data.service.AuthService
 import com.prography.data.service.MeetService
 import com.prography.data.service.NaverService
+import com.prography.data.service.VoteService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,6 +23,11 @@ object ServiceModule {
     @Singleton
     fun providesMeetService(@NetworkModule.YAKGWA retrofit: Retrofit): MeetService =
         retrofit.create(MeetService::class.java)
+
+    @Provides
+    @Singleton
+    fun providesVoteService(@NetworkModule.YAKGWA retrofit: Retrofit): VoteService =
+        retrofit.create(VoteService::class.java)
 
     @Provides
     @Singleton

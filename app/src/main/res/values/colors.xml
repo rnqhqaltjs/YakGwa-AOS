@@ -15,6 +15,7 @@
     <color name="secondary_700">#9AB125</color>
     <color name="sub_red">#FF3B3B</color>
     <color name="sub_blue">#5A71E9</color>
+    <color name="neutral_black">#2A2A2A</color>
 
 
 </resources>

@@ -8,8 +8,7 @@ class PostNewMeetCreateUseCase(
     private val meetRepository: MeetRepository
 ) {
     suspend operator fun invoke(
-        userId: Int,
         createMeetRequestEntity: CreateMeetRequestEntity
     ): Result<CreateMeetResponseEntity> =
-        meetRepository.createMeet(userId, createMeetRequestEntity)
+        meetRepository.createMeet(createMeetRequestEntity)
 }
