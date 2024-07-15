@@ -35,11 +35,11 @@ class InvitationViewModel @Inject constructor(
     private val _meetInfoState = MutableStateFlow<MeetInfo?>(null)
     val meetInfoState = _meetInfoState.asStateFlow()
 
-    fun getMeetInformationDetail(userId: Int, meetId: Int) {
+    fun getMeetInformationDetail(meetId: Int) {
         _detailMeetState.value = UiState.Loading
 
         viewModelScope.launch {
-            getMeetInformationDetailUseCase(userId, meetId)
+            getMeetInformationDetailUseCase(meetId)
                 .onSuccess {
                     _meetInfoState.value = it.meetInfo
                     _detailMeetState.value = UiState.Success(it)

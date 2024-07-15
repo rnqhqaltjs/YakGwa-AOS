@@ -25,7 +25,6 @@ import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentInvitationLeaderBinding
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
-import com.prography.yakgwa.util.dateTimeUtils.DateTimeUtils.parseHourFromTimeString
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -44,12 +43,12 @@ class InvitationLeaderFragment :
 
         initView(meetId)
         observer()
-        addListeners()
+        addListeners(meetId)
     }
 
     private fun initView(meetId: Int) {
         lifecycleScope.launch {
-            viewModel.getMeetInformationDetail(viewModel.userId(), meetId)
+            viewModel.getMeetInformationDetail(meetId)
         }
     }
 
@@ -72,10 +71,10 @@ class InvitationLeaderFragment :
         }
     }
 
-    private fun addListeners() {
+    private fun addListeners(meetId: Int) {
         binding.ivInvitationBtn.setOnClickListener {
             lifecycleScope.launch {
-                sendKakaoLink(viewModel.userId(), viewModel.meetInfoState.value!!)
+                sendKakaoLink(viewModel.meetInfoState.value!!, meetId)
             }
         }
 
@@ -84,12 +83,12 @@ class InvitationLeaderFragment :
         }
 
         binding.btnTimePlaceVote.setOnClickListener {
-            navigateToVotePromiseTimeFragment(viewModel.meetInfoState.value?.meetId!!)
+            navigateToVotePromiseTimeFragment(meetId)
         }
     }
 
-    private fun sendKakaoLink(userId: Int, meetInfo: MeetInfo) {
-        val defaultFeed = createKakaoFeedTemplate(userId, meetInfo)
+    private fun sendKakaoLink(meetInfo: MeetInfo, meetId: Int) {
+        val defaultFeed = createKakaoFeedTemplate(meetInfo, meetId)
 
         if (ShareClient.instance.isKakaoTalkSharingAvailable(requireActivity())) {
             shareViaKakaoTalk(defaultFeed)
@@ -98,10 +97,9 @@ class InvitationLeaderFragment :
         }
     }
 
-    private fun createKakaoFeedTemplate(userId: Int, meetInfo: MeetInfo): FeedTemplate {
+    private fun createKakaoFeedTemplate(meetInfo: MeetInfo, meetId: Int): FeedTemplate {
         val executionParams = mapOf(
-            USER_ID to userId.toString(),
-            MEET_ID to meetInfo.meetId.toString()
+            MEET_ID to meetId.toString()
         )
         val link = Link(
             androidExecutionParams = executionParams,
@@ -109,8 +107,8 @@ class InvitationLeaderFragment :
         )
         return FeedTemplate(
             content = Content(
-                title = meetInfo.meetName,
-                description = meetInfo.meetDescription,
+                title = meetInfo.meetTitle,
+                description = meetInfo.meetTitle,
                 imageUrl = "http://k.kakaocdn.net/dn/bp2Qmz/btsHbRn5Auu/I4MY1Ks8YoU2npkzSr7WT0/kakaolink40_original.png",
                 link = link
             ),
@@ -165,26 +163,24 @@ class InvitationLeaderFragment :
     @SuppressLint("SetTextI18n")
     private fun showMeetDetails(meetInfo: MeetInfo) {
         with(binding) {
-            tvTemaName.text = meetInfo.meetThemeName
-            tvInvitationTitle.text = meetInfo.meetName
-            tvInvitationDescription.text = meetInfo.meetDescription
+            tvTemaName.text = meetInfo.themeName
+            tvInvitationTitle.text = meetInfo.meetTitle
+//            tvInvitationDescription.text = meetInfo.meetDescription
 
-            val hours = parseHourFromTimeString(meetInfo.leftInviteTime)
-            tvInvitationEnd.text = "${hours}시간 뒤 초대 마감"
+//            val hours = parseHourFromTimeString(meetInfo.leftInviteTime)
+//            tvInvitationEnd.text = "${hours}시간 뒤 초대 마감"
         }
     }
 
     private fun navigateToVotePromiseTimeFragment(meetId: Int) {
         InvitationLeaderFragmentDirections.actionInvitationLeaderFragmentToVotePromiseTimeFragment(
             meetId
-        )
-            .apply {
-                findNavController().navigate(this)
-            }
+        ).apply {
+            findNavController().navigate(this)
+        }
     }
 
     companion object {
-        private const val USER_ID = "userId"
         private const val MEET_ID = "meetId"
     }
 }

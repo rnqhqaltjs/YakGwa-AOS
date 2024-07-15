@@ -15,7 +15,6 @@ import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentInvitationMemberBinding
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
-import com.prography.yakgwa.util.dateTimeUtils.DateTimeUtils.parseHourFromTimeString
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -27,22 +26,21 @@ class InvitationMemberFragment :
     private val viewModel: InvitationViewModel by viewModels()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val userId = arguments?.getString("userId")?.toIntOrNull()
         val meetId = arguments?.getString("meetId")?.toIntOrNull()
 
-        if (userId == null || meetId == null) {
+        if (meetId == null) {
             handleInvalidInvitation()
             return
         }
 
-        initView(userId, meetId)
+        initView(meetId)
         observer(meetId)
         addListeners(meetId)
     }
 
-    private fun initView(userId: Int, meetId: Int) {
+    private fun initView(meetId: Int) {
         lifecycleScope.launch {
-            viewModel.getMeetInformationDetail(userId, meetId)
+            viewModel.getMeetInformationDetail(meetId)
         }
     }
 
@@ -91,16 +89,16 @@ class InvitationMemberFragment :
     @SuppressLint("SetTextI18n")
     private fun showMeetDetails(meetInfo: MeetInfo) {
         with(binding) {
-            tvTemaName.text = meetInfo.meetThemeName
-            tvInvitationTitle.text = meetInfo.meetName
-            tvInvitationDescription.text = meetInfo.meetDescription
+            tvTemaName.text = meetInfo.themeName
+            tvInvitationTitle.text = meetInfo.meetTitle
+//            tvInvitationDescription.text = meetInfo.meetDescription
 
-            val hours = parseHourFromTimeString(meetInfo.leftInviteTime)
-            tvInvitationEnd.text = "${hours}시간 뒤 초대 마감"
-
-            if (hours == EXPIRED_INVITATION_HOUR) {
-                handleInvalidInvitation()
-            }
+//            val hours = parseHourFromTimeString(meetInfo.leftInviteTime)
+//            tvInvitationEnd.text = "${hours}시간 뒤 초대 마감"
+//
+//            if (hours == EXPIRED_INVITATION_HOUR) {
+//                handleInvalidInvitation()
+//            }
         }
     }
 
