@@ -1,6 +1,5 @@
 package com.prography.yakgwa.ui.createPromise.createPromiseTime
 
-import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
@@ -28,16 +27,15 @@ class DirectInputTimeFragment :
         addListeners()
     }
 
-    @SuppressLint("SetTextI18n")
     private fun observer() {
         lifecycleScope.launch {
-            viewModel.selectedStartDate.collectLatest { date ->
+            viewModel.selectedDate.collectLatest { date ->
                 binding.tvDate.text = date
             }
         }
 
         lifecycleScope.launch {
-            viewModel.selectedStartTime.collectLatest { time ->
+            viewModel.selectedTime.collectLatest { time ->
                 binding.tvTime.text = time
             }
         }
@@ -59,12 +57,7 @@ class DirectInputTimeFragment :
                 updateDate(year, monthOfYear + 1, dayOfMonth)
             }
 
-        val selectedDate = when (updateDate) {
-            viewModel::updateStartDate -> viewModel.selectedStartDate.value
-            else -> viewModel.selectedEndDate.value ?: viewModel.selectedStartDate.value
-        }
-
-        val date = parseDateFromString(selectedDate)
+        val date = parseDateFromString(viewModel.selectedDate.value)
         DatePickerDialog(
             requireContext(), dateFromDialog,
             date.year,
@@ -79,12 +72,7 @@ class DirectInputTimeFragment :
                 updateTime(hourOfDay, minute)
             }
 
-        val selectedTime = when (updateTime) {
-            viewModel::updateStartTime -> viewModel.selectedStartTime.value ?: DEFAULT_START_TIME
-            else -> viewModel.selectedEndTime.value ?: DEFAULT_END_TIME
-        }
-
-        val time = parseTimeFromString(selectedTime)
+        val time = parseTimeFromString(viewModel.selectedTime.value ?: DEFAULT_START_TIME)
         TimePickerDialog(
             requireContext(), timeFromDialog,
             time.hour,
@@ -95,6 +83,5 @@ class DirectInputTimeFragment :
 
     companion object {
         const val DEFAULT_START_TIME = "오전 09:00"
-        const val DEFAULT_END_TIME = "오후 06:00"
     }
 }

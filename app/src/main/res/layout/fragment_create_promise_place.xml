@@ -133,7 +133,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/btn_previous"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/img_create_promise" />
+                    app:srcCompat="@drawable/selector_create_promise_button" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>

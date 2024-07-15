@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.snackbar.Snackbar
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentAddCandidateTimeBinding
 import com.prography.yakgwa.ui.createPromise.CreatePromiseViewModel
@@ -14,7 +15,6 @@ import com.prography.yakgwa.util.calendarUtils.WeekDayColorFormatter
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.LocalDate
 import java.util.Calendar
 
 @AndroidEntryPoint
@@ -36,7 +36,7 @@ class AddCandidateTimeFragment :
         val startDate = CalendarDay.from(today)
 
         val endOfMonth = Calendar.getInstance().apply {
-            add(Calendar.MONTH, 5)
+            add(Calendar.MONTH, MAX_MONTH)
             set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
         }
         val endDate = CalendarDay.from(endOfMonth)
@@ -55,6 +55,7 @@ class AddCandidateTimeFragment :
             applyCalendarDecorators(this, startDate, endDate)
             setupDateChangeListener(this)
         }
+        updateSelectedDatesInCalendar()
     }
 
     private fun applyCalendarDecorators(
@@ -103,14 +104,35 @@ class AddCandidateTimeFragment :
 
     private fun setupDateChangeListener(calendarView: MaterialCalendarView) {
         calendarView.setOnRangeSelectedListener { _, dates ->
-            val selectedDates = dates.map { date ->
-                LocalDate.of(date.year, date.month + MONTH_OFFSET, date.day)
+            if (dates.size > MAX_SELECT_RANGE) {
+                calendarView.clearSelection()
+                viewModel.setSelectedDates(emptyList())
+                Snackbar.make(requireView(), "최대 2주까지만 설정할 수 있어요.", Snackbar.LENGTH_SHORT).show()
+            } else {
+                viewModel.setSelectedDates(dates)
             }
-            viewModel.setSelectedDates(selectedDates)
+        }
+
+        calendarView.setOnDateChangedListener { _, date, selected ->
+            if (!selected) {
+                viewModel.setSelectedDates(emptyList())
+            } else {
+                viewModel.setSelectedDates(listOf(date))
+            }
         }
     }
 
-    @SuppressLint("SetTextI18n")
+    private fun updateSelectedDatesInCalendar() {
+        viewModel.selectedCalendarDates.value.forEach { date ->
+            binding.calendarView.setDateSelected(date, true)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateSelectedDatesInCalendar()
+    }
+
     private fun observer() {
     }
 
@@ -120,5 +142,7 @@ class AddCandidateTimeFragment :
     companion object {
         private const val MONTH_OFFSET = 1
         private const val FIRST_DAY_OF_MONTH = 1
+        private const val MAX_MONTH = 5
+        private const val MAX_SELECT_RANGE = 14
     }
 }

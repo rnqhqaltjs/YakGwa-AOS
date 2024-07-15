@@ -1,10 +1,9 @@
 package com.prography.yakgwa.ui.createPromise.createPromisePlace
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -15,17 +14,19 @@ import com.google.android.material.tabs.TabLayout
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentCreatePromisePlaceBinding
 import com.prography.yakgwa.ui.createPromise.CreatePromiseViewModel
+import com.prography.yakgwa.ui.createPromise.CreatePromiseViewModel.Companion.TAB_ADD_CANDIDATE
+import com.prography.yakgwa.ui.createPromise.CreatePromiseViewModel.Companion.TAB_DIRECT_INPUT
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-@SuppressLint("SetTextI18n")
 class CreatePromisePlaceFragment :
     BaseFragment<FragmentCreatePromisePlaceBinding>(R.layout.fragment_create_promise_place) {
 
-    private val viewModel: CreatePromiseViewModel by viewModels()
+    private val viewModel: CreatePromiseViewModel by activityViewModels()
     private lateinit var navController: NavController
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -33,6 +34,47 @@ class CreatePromisePlaceFragment :
         setupJetpackNavigation()
         observer()
         addListeners()
+        initView()
+    }
+
+    private fun initView() {
+        binding.tabLayout.getTabAt(viewModel.selectedTabPlaceIndex.value)?.select()
+    }
+
+    private fun addListeners() {
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when (tab?.position) {
+                    TAB_ADD_CANDIDATE -> {
+                        viewModel.selectedTabPlaceIndex.value = TAB_ADD_CANDIDATE
+                        navController.navigate(R.id.addCandidatePlaceFragment)
+                    }
+
+                    TAB_DIRECT_INPUT -> {
+                        viewModel.selectedTabPlaceIndex.value = TAB_DIRECT_INPUT
+                        navController.navigate(R.id.directInputPlaceFragment)
+                    }
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+            }
+        })
+
+        binding.btnCreatePromise.setOnClickListener {
+            viewModel.createMeet()
+        }
+
+        binding.btnPrevious.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        binding.navigateUpBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_exit_dialog)
+        }
     }
 
     private fun observer() {
@@ -52,41 +94,33 @@ class CreatePromisePlaceFragment :
                 }
             }
         }
-    }
 
-    private fun addListeners() {
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                when (tab?.position) {
-                    0 -> navController.navigate(R.id.addCandidatePlaceFragment)
-                    1 -> navController.navigate(R.id.directInputPlaceFragment)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isPlaceBtnEnabled.collectLatest { isEnabled ->
+                    binding.btnCreatePromise.isEnabled = isEnabled
                 }
             }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-            }
-        })
-        
-        binding.btnCreatePromise.setOnClickListener {
-            viewModel.createMeet()
         }
 
-        binding.btnPrevious.setOnClickListener {
-            findNavController().navigateUp()
-        }
-
-        binding.navigateUpBtn.setOnClickListener {
-            findNavController().navigateUp()
+        lifecycleScope.launch {
+            viewModel.isAddCandidateBtnClicked.collectLatest { isClicked ->
+                if (isClicked) {
+                    navigateToAddCandidatePlaceDetailFragment()
+                    viewModel.onResetButtonClicked()
+                }
+            }
         }
     }
 
     private fun navigateToInvitationLeaderFragment(meetId: Int) {
-        CreatePromisePlaceFragmentDirections.actionCreatePromisePlaceFragmentToInvitationLeaderFragment(
-            meetId
-        )
+        CreatePromisePlaceFragmentDirections.actionGlobalInvitationLeaderFragment(meetId).apply {
+            findNavController().navigate(this)
+        }
+    }
+
+    private fun navigateToAddCandidatePlaceDetailFragment() {
+        CreatePromisePlaceFragmentDirections.actionCreatePromisePlaceFragmentToAddCandidatePlaceDetailFragment()
             .apply {
                 findNavController().navigate(this)
             }

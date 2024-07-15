@@ -2,7 +2,7 @@ package com.prography.yakgwa.ui.createPromise.createPromiseTime
 
 import android.os.Bundle
 import android.view.View
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 class CreatePromiseTimeFragment :
     BaseFragment<FragmentCreatePromiseTimeBinding>(R.layout.fragment_create_promise_time) {
 
-    private val viewModel: CreatePromiseViewModel by hiltNavGraphViewModels(R.id.create_promise_navigation)
+    private val viewModel: CreatePromiseViewModel by activityViewModels()
     private lateinit var navController: NavController
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,7 +69,7 @@ class CreatePromiseTimeFragment :
         }
 
         binding.navigateUpBtn.setOnClickListener {
-            findNavController().navigateUp()
+            findNavController().navigate(R.id.action_exit_dialog)
         }
     }
 

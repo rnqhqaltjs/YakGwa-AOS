@@ -5,14 +5,14 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.snackbar.Snackbar
+import com.prography.domain.model.response.LocationResponseEntity
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentDirectInputPlaceBinding
-import com.prography.yakgwa.model.SelectedLocationModel
 import com.prography.yakgwa.ui.createPromise.CreatePromiseViewModel
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
@@ -24,10 +24,10 @@ import kotlinx.coroutines.launch
 @SuppressLint("SetTextI18n")
 class DirectInputPlaceFragment :
     BaseFragment<FragmentDirectInputPlaceBinding>(R.layout.fragment_direct_input_place) {
-    private val viewModel: CreatePromiseViewModel by viewModels()
+    private val viewModel: CreatePromiseViewModel by activityViewModels()
 
-    private lateinit var locationListAdapter: LocationListAdapter
-    private lateinit var selectedLocationListAdapter: SelectedLocationListAdapter
+    private lateinit var directLocationListAdapter: DirectLocationListAdapter
+    private lateinit var selectedDirectLocationListAdapter: SelectedDirectLocationListAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,18 +38,18 @@ class DirectInputPlaceFragment :
 
     private fun observer() {
         lifecycleScope.launch {
-            viewModel.selectedLocationsState.collectLatest { selectedLocations ->
-                selectedLocationListAdapter.submitList(selectedLocations)
+            viewModel.selectedDirectLocationState.collectLatest { selectedLocations ->
+                selectedDirectLocationListAdapter.submitList(selectedLocations)
             }
         }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.locationState.collectLatest {
+                viewModel.directLocationState.collectLatest {
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            locationListAdapter.submitList(it.data)
+                            directLocationListAdapter.submitList(it.data)
                         }
 
                         is UiState.Failure -> {
@@ -62,25 +62,37 @@ class DirectInputPlaceFragment :
     }
 
     private fun setupRecyclerView() {
-        locationListAdapter = LocationListAdapter().apply {
+        directLocationListAdapter = DirectLocationListAdapter().apply {
             setOnItemClickListener { selectedLocation ->
-                if (selectedLocationListAdapter.itemCount > MAX_SELECTED_COUNT) {
+                if (selectedDirectLocationListAdapter.itemCount > MAX_SELECTED_COUNT) {
                     Snackbar.make(requireView(), "장소를 더 추가할 수 없어요.", Snackbar.LENGTH_SHORT).show()
                     binding.etSearchLocation.setText("")
                 } else {
-                    viewModel.addLocation(SelectedLocationModel(selectedLocation.title))
+                    viewModel.addDirectLocation(
+                        LocationResponseEntity(
+                            selectedLocation.title,
+                            selectedLocation.link,
+                            selectedLocation.category,
+                            selectedLocation.description,
+                            selectedLocation.telephone,
+                            selectedLocation.address,
+                            selectedLocation.roadAddress,
+                            selectedLocation.mapX,
+                            selectedLocation.mapY
+                        )
+                    )
                     binding.etSearchLocation.setText("")
                 }
             }
         }
-        binding.rvSearchLocation.adapter = locationListAdapter
+        binding.rvSearchLocation.adapter = directLocationListAdapter
 
-        selectedLocationListAdapter = SelectedLocationListAdapter().apply {
+        selectedDirectLocationListAdapter = SelectedDirectLocationListAdapter().apply {
             setOnRemoveClickListener { selectedLocation ->
-                viewModel.removeLocation(selectedLocation)
+                viewModel.removeDirectLocation(selectedLocation)
             }
         }
-        binding.rvSelectedLocation.adapter = selectedLocationListAdapter
+        binding.rvSelectedLocation.adapter = selectedDirectLocationListAdapter
     }
 
     private fun addListeners() {
@@ -90,6 +102,6 @@ class DirectInputPlaceFragment :
     }
 
     companion object {
-        const val MAX_SELECTED_COUNT = 1
+        private const val MAX_SELECTED_COUNT = 0
     }
 }

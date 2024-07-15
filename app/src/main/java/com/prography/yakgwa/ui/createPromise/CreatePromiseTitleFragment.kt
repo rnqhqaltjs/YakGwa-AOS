@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.core.widget.addTextChangedListener
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.prography.yakgwa.R
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class CreatePromiseTitleFragment :
     BaseFragment<FragmentCreatePromiseTitleBinding>(R.layout.fragment_create_promise_title) {
-    private val viewModel: CreatePromiseViewModel by hiltNavGraphViewModels(R.id.create_promise_navigation)
+    private val viewModel: CreatePromiseViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -55,7 +55,7 @@ class CreatePromiseTitleFragment :
         }
 
         binding.navigateUpBtn.setOnClickListener {
-            findNavController().navigateUp()
+            findNavController().navigate(R.id.action_exit_dialog)
         }
     }
 

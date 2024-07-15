@@ -3,7 +3,7 @@ package com.prography.yakgwa.ui.createPromise
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class CreatePromiseThemeFragment :
     BaseFragment<FragmentCreatePromiseThemeBinding>(R.layout.fragment_create_promise_theme) {
-    private val viewModel: CreatePromiseViewModel by hiltNavGraphViewModels(R.id.create_promise_navigation)
+    private val viewModel: CreatePromiseViewModel by activityViewModels()
 
     private lateinit var themeListAdapter: ThemeListAdapter
 
@@ -82,7 +82,7 @@ class CreatePromiseThemeFragment :
         }
 
         binding.navigateUpBtn.setOnClickListener {
-            findNavController().navigateUp()
+            findNavController().navigate(R.id.action_exit_dialog)
         }
     }
 
