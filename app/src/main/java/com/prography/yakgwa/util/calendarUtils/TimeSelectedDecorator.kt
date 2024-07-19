@@ -1,9 +1,7 @@
 package com.prography.yakgwa.util.calendarUtils
 
 import android.content.Context
-import android.os.Build
 import android.text.style.ForegroundColorSpan
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.prography.yakgwa.R
 import com.prography.yakgwa.model.TimeModel
@@ -17,8 +15,6 @@ class TimeSelectedDecorator(
     private val timeSlots: Map<LocalDate, List<TimeModel>>,
     private val selectedDate: LocalDate?
 ) : DayViewDecorator {
-
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun shouldDecorate(day: CalendarDay?): Boolean {
         if (day == null) return false
         val localDate = LocalDate.of(day.year, day.month + 1, day.day)

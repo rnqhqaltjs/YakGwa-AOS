@@ -27,8 +27,6 @@ class AddCandidateTimeFragment :
 
         val (startDate, endDate) = calculateDateRange()
         initCalendarView(startDate, endDate)
-        observer()
-        addListeners()
     }
 
     private fun calculateDateRange(): Pair<CalendarDay, CalendarDay> {
@@ -107,7 +105,7 @@ class AddCandidateTimeFragment :
             if (dates.size > MAX_SELECT_RANGE) {
                 calendarView.clearSelection()
                 viewModel.setSelectedDates(emptyList())
-                Snackbar.make(requireView(), "최대 2주까지만 설정할 수 있어요.", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(requireView(), "최대 2주까지 설정할 수 있어요.", Snackbar.LENGTH_SHORT).show()
             } else {
                 viewModel.setSelectedDates(dates)
             }
@@ -131,12 +129,6 @@ class AddCandidateTimeFragment :
     override fun onResume() {
         super.onResume()
         updateSelectedDatesInCalendar()
-    }
-
-    private fun observer() {
-    }
-
-    private fun addListeners() {
     }
 
     companion object {

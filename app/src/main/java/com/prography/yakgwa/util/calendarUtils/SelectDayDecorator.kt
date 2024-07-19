@@ -12,7 +12,6 @@ class SelectDayDecorator(
     private val minDay: CalendarDay,
     private val maxDay: CalendarDay
 ) : DayViewDecorator {
-
     override fun shouldDecorate(day: CalendarDay?): Boolean {
         day ?: return false
         return day.isWithin(minDay, maxDay)
