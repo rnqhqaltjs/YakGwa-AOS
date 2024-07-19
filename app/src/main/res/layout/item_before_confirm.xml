@@ -19,9 +19,7 @@
             android:layout_marginTop="20dp"
             app:cardCornerRadius="25dp"
             app:cardElevation="0dp"
-            android:layout_marginEnd="2dp"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintEnd_toStartOf="@id/tv_d_day"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:strokeColor="@color/secondary_700"
@@ -52,21 +50,6 @@
         </com.google.android.material.card.MaterialCardView>
 
         <TextView
-            android:id="@+id/tv_d_day"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="D - 6"
-            android:fontFamily="@font/pretendard_semi_bold"
-            android:textColor="@color/secondary_700"
-            android:textSize="21sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/cv_tema"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cv_tema"
-            app:layout_constraintTop_toTopOf="@+id/cv_tema" />
-
-        <TextView
             android:id="@+id/tv_invitation_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -91,106 +74,40 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_invitation_title" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/confirm"
+            android:id="@+id/before_vote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="26dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_invitation_description">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/date_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/iv_clock"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_clock" />
-
-                <TextView
-                    android:id="@+id/tv_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="2024년 5월 4일"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/iv_clock"
-                    app:layout_constraintStart_toEndOf="@+id/iv_clock"
-                    app:layout_constraintTop_toTopOf="@+id/iv_clock" />
-
-                <View
-                    android:id="@+id/view"
-                    android:layout_width="1dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="10dp"
-                    android:background="@color/neutral_300"
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_date"
-                    app:layout_constraintStart_toEndOf="@+id/tv_date"
-                    app:layout_constraintTop_toTopOf="@+id/tv_date" />
-
-                <TextView
-                    android:id="@+id/tv_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="오후 8시"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/view"
-                    app:layout_constraintStart_toEndOf="@+id/view"
-                    app:layout_constraintTop_toTopOf="@+id/view" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-            <ImageView
-                android:id="@+id/iv_location"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/tv_place"
-                app:layout_constraintTop_toBottomOf="@+id/date_time"
-                app:srcCompat="@drawable/ic_location" />
-
             <TextView
-                android:id="@+id/tv_place"
+                android:id="@+id/tv_wait_vote"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="라트라비아타"
+                android:text="투표가 마감되었어요 "
                 android:textColor="@color/black"
-                android:layout_marginStart="10dp"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_location"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/iv_location"
-                app:layout_constraintTop_toTopOf="@+id/iv_location" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/btn_meet_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="14dp"
+                android:layout_marginTop="26dp"
                 android:layout_marginEnd="14dp"
-                android:layout_marginTop="14dp"
                 android:layout_marginBottom="12dp"
                 android:padding="5dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/iv_location"
+                app:layout_constraintTop_toBottomOf="@+id/tv_wait_vote"
                 app:srcCompat="@drawable/img_navigate_meet_detail" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

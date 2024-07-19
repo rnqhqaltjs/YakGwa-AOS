@@ -30,10 +30,18 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_invitationLeaderFragment"
-            app:destination="@id/invitationLeaderFragment" />
+            app:destination="@id/invitationLeaderFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_homeFragment_to_voteCompletionFragment"
-            app:destination="@id/voteCompletionFragment" />
+            app:destination="@id/voteCompletionFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_homeFragment_to_createPromiseTitleFragment"
             app:destination="@id/createPromiseTitleFragment"
@@ -62,6 +70,13 @@
         <argument
             android:name="meetId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_invitationLeaderFragment_to_votePromisePlaceFragment"
+            app:destination="@id/votePromisePlaceFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/invitationMemberFragment"
@@ -83,16 +98,19 @@
         android:name="com.prography.yakgwa.ui.vote.VotePromiseTimeFragment"
         android:label="VotePromiseTimeFragment"
         tools:layout="@layout/fragment_vote_promise_time">
-        <action
-            android:id="@+id/action_votePromiseTimeFragment_to_votePromisePlaceFragment"
-            app:destination="@id/votePromisePlaceFragment"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
         <argument
             android:name="meetId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_votePromiseTimeFragment_to_invitationLeaderFragment"
+            app:destination="@id/invitationLeaderFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/votePromisePlaceFragment"
@@ -103,10 +121,11 @@
             android:name="meetId"
             app:argType="integer" />
         <action
-            android:id="@+id/action_votePromisePlaceFragment_to_voteCompletionFragment"
-            app:destination="@id/voteCompletionFragment"
+            android:id="@+id/action_votePromisePlaceFragment_to_invitationLeaderFragment"
+            app:destination="@id/invitationLeaderFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
+            app:launchSingleTop="true"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right"
             app:popUpTo="@id/homeFragment"
@@ -121,16 +140,6 @@
             android:name="meetId"
             app:argType="integer" />
     </fragment>
-    <fragment
-        android:id="@+id/listFragment"
-        android:name="com.prography.yakgwa.ui.list.ListFragment"
-        android:label="ListFragment"
-        tools:layout="@layout/fragment_list" />
-    <fragment
-        android:id="@+id/locationFragment"
-        android:name="com.prography.yakgwa.ui.location.LocationFragment"
-        android:label="LocationFragment"
-        tools:layout="@layout/fragment_location" />
 
     <fragment
         android:id="@+id/createPromiseTitleFragment"
@@ -183,6 +192,15 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_createPromisePlaceFragment_to_voteCompletionFragment"
+            app:destination="@id/voteCompletionFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/addCandidatePlaceDetailFragment"
