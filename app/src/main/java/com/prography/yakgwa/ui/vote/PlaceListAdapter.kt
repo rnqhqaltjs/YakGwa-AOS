@@ -30,9 +30,8 @@ class PlaceListAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(itemView: PlaceModel) {
-            binding.tvTitle.text = itemView.placeItem.name
-            binding.tvDescription.text = itemView.placeItem.description
-            binding.tvAddress.text = itemView.placeItem.address
+            binding.tvTitle.text = itemView.placeItem.placeName
+            binding.tvAddress.text = itemView.placeItem.placeAddress
 
             binding.cvPlace.isSelected = itemView.isSelected
 
@@ -54,7 +53,7 @@ class PlaceListAdapter :
                     oldItem: PlaceModel,
                     newItem: PlaceModel
                 ): Boolean {
-                    return oldItem.placeItem.candidatePlaceId == newItem.placeItem.candidatePlaceId
+                    return oldItem.placeItem.placeSlotId == newItem.placeItem.placeSlotId
                 }
 
                 override fun areContentsTheSame(
