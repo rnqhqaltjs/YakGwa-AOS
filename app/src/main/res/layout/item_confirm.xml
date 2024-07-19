@@ -100,47 +100,58 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_invitation_description">
 
-            <ImageView
-                android:id="@+id/iv_clock"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/date_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_clock" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/tv_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2024년 5월 4일"
-                android:textColor="@color/black"
-                android:layout_marginStart="10dp"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_clock"
-                app:layout_constraintStart_toEndOf="@+id/iv_clock"
-                app:layout_constraintTop_toTopOf="@+id/iv_clock" />
+                <ImageView
+                    android:id="@+id/iv_clock"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_clock" />
 
-            <View
-                android:id="@+id/view"
-                android:layout_width="1dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="10dp"
-                android:background="@color/neutral_300"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_date"
-                app:layout_constraintStart_toEndOf="@+id/tv_date"
-                app:layout_constraintTop_toTopOf="@+id/tv_date" />
+                <TextView
+                    android:id="@+id/tv_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="2024년 5월 4일"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_clock"
+                    app:layout_constraintStart_toEndOf="@+id/iv_clock"
+                    app:layout_constraintTop_toTopOf="@+id/iv_clock" />
 
-            <TextView
-                android:id="@+id/tv_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="오후 8시"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/view"
-                app:layout_constraintStart_toEndOf="@+id/view"
-                app:layout_constraintTop_toTopOf="@+id/view" />
+                <View
+                    android:id="@+id/view"
+                    android:layout_width="1dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="10dp"
+                    android:background="@color/neutral_300"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_date"
+                    app:layout_constraintStart_toEndOf="@+id/tv_date"
+                    app:layout_constraintTop_toTopOf="@+id/tv_date" />
+
+                <TextView
+                    android:id="@+id/tv_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="오후 8시"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/view"
+                    app:layout_constraintStart_toEndOf="@+id/view"
+                    app:layout_constraintTop_toTopOf="@+id/view" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <ImageView
                 android:id="@+id/iv_location"
@@ -150,7 +161,7 @@
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/tv_place"
-                app:layout_constraintTop_toBottomOf="@+id/tv_date"
+                app:layout_constraintTop_toBottomOf="@+id/date_time"
                 app:srcCompat="@drawable/ic_location" />
 
             <TextView
@@ -167,7 +178,7 @@
                 app:layout_constraintTop_toTopOf="@+id/iv_location" />
 
             <ImageView
-                android:id="@+id/btn_time_place_vote"
+                android:id="@+id/btn_meet_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="14dp"
@@ -180,7 +191,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/iv_location"
-                app:srcCompat="@drawable/img_navigate_time_place_vote" />
+                app:srcCompat="@drawable/img_navigate_meet_detail" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

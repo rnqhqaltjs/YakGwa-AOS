@@ -15,6 +15,7 @@ import com.prography.yakgwa.util.dateTimeUtils.DateTimeUtils.parseTimeFromString
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @AndroidEntryPoint
 class DirectInputTimeFragment :
@@ -29,13 +30,13 @@ class DirectInputTimeFragment :
 
     private fun observer() {
         lifecycleScope.launch {
-            viewModel.selectedDate.collectLatest { date ->
+            viewModel.selectedDirectDate.collectLatest { date ->
                 binding.tvDate.text = date
             }
         }
 
         lifecycleScope.launch {
-            viewModel.selectedTime.collectLatest { time ->
+            viewModel.selectedDirectTime.collectLatest { time ->
                 binding.tvTime.text = time
             }
         }
@@ -43,11 +44,11 @@ class DirectInputTimeFragment :
 
     private fun addListeners() {
         binding.cvDate.setOnClickListener {
-            showDatePickerDialog(viewModel::updateStartDate)
+            showDatePickerDialog(viewModel::updateDirectDate)
         }
 
         binding.cvTime.setOnClickListener {
-            showTimePickerDialog(viewModel::updateStartTime)
+            showTimePickerDialog(viewModel::updateDirectTime)
         }
     }
 
@@ -57,9 +58,15 @@ class DirectInputTimeFragment :
                 updateDate(year, monthOfYear + 1, dayOfMonth)
             }
 
-        val date = parseDateFromString(viewModel.selectedDate.value)
+        val date = if (viewModel.selectedDirectDate.value.isEmpty()) {
+            LocalDate.now()
+        } else {
+            parseDateFromString(viewModel.selectedDirectDate.value)
+        }
+
         DatePickerDialog(
-            requireContext(), dateFromDialog,
+            requireContext(),
+            dateFromDialog,
             date.year,
             date.monthValue - 1,
             date.dayOfMonth
@@ -67,12 +74,16 @@ class DirectInputTimeFragment :
     }
 
     private fun showTimePickerDialog(updateTime: (Int, Int) -> Unit) {
-        val timeFromDialog =
-            TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
-                updateTime(hourOfDay, minute)
-            }
+        val timeFromDialog = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+            updateTime(hourOfDay, minute)
+        }
 
-        val time = parseTimeFromString(viewModel.selectedTime.value ?: DEFAULT_START_TIME)
+        val time = if (viewModel.selectedDirectTime.value.isEmpty()) {
+            parseTimeFromString(DEFAULT_START_TIME)
+        } else {
+            parseTimeFromString(viewModel.selectedDirectTime.value)
+        }
+
         TimePickerDialog(
             requireContext(), timeFromDialog,
             time.hour,

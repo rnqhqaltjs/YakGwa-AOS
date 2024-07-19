@@ -2,26 +2,31 @@ package com.prography.yakgwa.ui.invitation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prography.data.datasource.local.YakGwaLocalDataSource
 import com.prography.domain.model.response.MeetDetailResponseEntity
 import com.prography.domain.model.response.MeetDetailResponseEntity.MeetInfo
+import com.prography.domain.model.response.ParticipantMeetResponseEntity
+import com.prography.domain.model.response.PlaceCandidateResponseEntity
+import com.prography.domain.model.response.TimeCandidateResponseEntity
+import com.prography.domain.model.response.VotePlaceResponseEntity
 import com.prography.domain.usecase.GetMeetInformationDetailUseCase
-import com.prography.domain.usecase.PostMeetParticipantUseCase
+import com.prography.domain.usecase.GetPlaceCandidateInfoUseCase
+import com.prography.domain.usecase.GetUserVotePlaceListUseCase
+import com.prography.domain.usecase.GetVoteTimeCandidateInfoUseCase
+import com.prography.domain.usecase.PostParticipantMeetUseCase
 import com.prography.yakgwa.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class InvitationViewModel @Inject constructor(
-    private val postMeetParticipantUseCase: PostMeetParticipantUseCase,
+    private val postParticipantMeetUseCase: PostParticipantMeetUseCase,
     private val getMeetInformationDetailUseCase: GetMeetInformationDetailUseCase,
-    private val localStorage: YakGwaLocalDataSource
+    private val getVoteTimeCandidateInfoUseCase: GetVoteTimeCandidateInfoUseCase,
+    private val getUserVoteInfoUseCase: GetUserVotePlaceListUseCase,
+    private val getPlaceCandidateInfoUseCase: GetPlaceCandidateInfoUseCase,
 ) : ViewModel() {
 
     private val _detailMeetState =
@@ -29,11 +34,23 @@ class InvitationViewModel @Inject constructor(
     val detailMeetState = _detailMeetState.asStateFlow()
 
     private val _participantMeetState =
-        MutableStateFlow<UiState<Unit>>(UiState.Loading)
+        MutableStateFlow<UiState<ParticipantMeetResponseEntity>>(UiState.Loading)
     val participantMeetState = _participantMeetState.asStateFlow()
+
+    private val _timeCandidateState =
+        MutableStateFlow<UiState<TimeCandidateResponseEntity>>(UiState.Loading)
+    val timeCandidateState = _timeCandidateState.asStateFlow()
 
     private val _meetInfoState = MutableStateFlow<MeetInfo?>(null)
     val meetInfoState = _meetInfoState.asStateFlow()
+
+    private val _votePlaceInfoState =
+        MutableStateFlow<UiState<VotePlaceResponseEntity>>(UiState.Loading)
+    val votePlaceInfoState = _votePlaceInfoState.asStateFlow()
+
+    private val _placeCandidateState =
+        MutableStateFlow<UiState<List<PlaceCandidateResponseEntity>>>(UiState.Loading)
+    val placeCandidateState = _placeCandidateState.asStateFlow()
 
     fun getMeetInformationDetail(meetId: Int) {
         _detailMeetState.value = UiState.Loading
@@ -54,9 +71,7 @@ class InvitationViewModel @Inject constructor(
         _participantMeetState.value = UiState.Loading
 
         viewModelScope.launch {
-            val userId = userId()
-
-            postMeetParticipantUseCase(userId, meetId)
+            postParticipantMeetUseCase(meetId)
                 .onSuccess {
                     _participantMeetState.value = UiState.Success(it)
                 }
@@ -66,9 +81,45 @@ class InvitationViewModel @Inject constructor(
         }
     }
 
-    suspend fun userId(): Int {
-        return withContext(Dispatchers.IO) {
-            localStorage.userId.first()
+    fun getVoteTimeCandidate(meetId: Int) {
+        _timeCandidateState.value = UiState.Loading
+
+        viewModelScope.launch {
+            getVoteTimeCandidateInfoUseCase(meetId)
+                .onSuccess {
+                    _timeCandidateState.value = UiState.Success(it)
+                }
+                .onFailure {
+                    _timeCandidateState.value = UiState.Failure(it.message)
+                }
+        }
+    }
+
+    fun getUserVotePlace(meetId: Int) {
+        _votePlaceInfoState.value = UiState.Loading
+
+        viewModelScope.launch {
+            getUserVoteInfoUseCase(meetId)
+                .onSuccess {
+                    _votePlaceInfoState.value = UiState.Success(it)
+                }
+                .onFailure {
+                    _votePlaceInfoState.value = UiState.Failure(it.message)
+                }
+        }
+    }
+
+    fun getVotePlaceCandidate(meetId: Int) {
+        _placeCandidateState.value = UiState.Loading
+
+        viewModelScope.launch {
+            getPlaceCandidateInfoUseCase(meetId)
+                .onSuccess {
+                    _placeCandidateState.value = UiState.Success(it)
+                }
+                .onFailure {
+                    _placeCandidateState.value = UiState.Failure(it.message)
+                }
         }
     }
 }

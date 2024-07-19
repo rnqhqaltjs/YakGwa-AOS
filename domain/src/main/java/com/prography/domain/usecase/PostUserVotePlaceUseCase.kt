@@ -7,9 +7,8 @@ class PostUserVotePlaceUseCase(
     private val voteRepository: VoteRepository
 ) {
     suspend operator fun invoke(
-        userId: Int,
         meetId: Int,
         votePlaceRequestEntity: VotePlaceRequestEntity
     ): Result<Unit> =
-        voteRepository.votePlace(userId, meetId, votePlaceRequestEntity)
+        voteRepository.votePlace(meetId, votePlaceRequestEntity)
 }

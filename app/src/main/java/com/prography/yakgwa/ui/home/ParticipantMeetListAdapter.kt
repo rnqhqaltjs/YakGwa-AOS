@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.prography.domain.model.response.MeetsResponseEntity
+import com.prography.yakgwa.databinding.ItemBeforeConfirmBinding
 import com.prography.yakgwa.databinding.ItemBeforeVoteBinding
 import com.prography.yakgwa.databinding.ItemConfirmBinding
 import com.prography.yakgwa.databinding.ItemVoteBinding
@@ -34,7 +35,7 @@ class ParticipantMeetListAdapter :
             )
 
             MeetType.BEFORE_CONFIRM.ordinal -> BeforeConfirmViewHolder(
-                ItemConfirmBinding.inflate(
+                ItemBeforeConfirmBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
@@ -69,7 +70,7 @@ class ParticipantMeetListAdapter :
             MeetType.BEFORE_CONFIRM.name -> MeetType.BEFORE_CONFIRM.ordinal
             MeetType.VOTE.name -> MeetType.VOTE.ordinal
             MeetType.BEFORE_VOTE.name -> MeetType.BEFORE_VOTE.ordinal
-            else -> throw IllegalArgumentException("Invalid meet status: " + currentList[position].meetStatus)
+            else -> throw IllegalArgumentException("Invalid meet status: ${currentList[position].meetStatus}")
         }
     }
 
@@ -78,6 +79,10 @@ class ParticipantMeetListAdapter :
         fun bind(itemView: MeetsResponseEntity) {
             binding.tvInvitationTitle.text = itemView.meetInfo.meetTitle
             binding.tvTemaName.text = itemView.meetInfo.meetThemeName
+
+            binding.btnTimePlaceVote.setOnClickListener {
+                onItemClickListener?.invoke(itemView)
+            }
         }
     }
 
@@ -86,14 +91,22 @@ class ParticipantMeetListAdapter :
         fun bind(itemView: MeetsResponseEntity) {
             binding.tvInvitationTitle.text = itemView.meetInfo.meetTitle
             binding.tvTemaName.text = itemView.meetInfo.meetThemeName
+
+            binding.btnMeetDetail.setOnClickListener {
+                onItemClickListener?.invoke(itemView)
+            }
         }
     }
 
-    inner class BeforeConfirmViewHolder(private val binding: ItemConfirmBinding) :
+    inner class BeforeConfirmViewHolder(private val binding: ItemBeforeConfirmBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: MeetsResponseEntity) {
             binding.tvInvitationTitle.text = itemView.meetInfo.meetTitle
             binding.tvTemaName.text = itemView.meetInfo.meetThemeName
+
+            binding.btnMeetDetail.setOnClickListener {
+                onItemClickListener?.invoke(itemView)
+            }
         }
     }
 
@@ -102,7 +115,19 @@ class ParticipantMeetListAdapter :
         fun bind(itemView: MeetsResponseEntity) {
             binding.tvInvitationTitle.text = itemView.meetInfo.meetTitle
             binding.tvTemaName.text = itemView.meetInfo.meetThemeName
+//            binding.tvDDay.text = itemView.meetInfo.meetDateTime
+
+            binding.tvPlace.text = itemView.meetInfo.placeName
+
+            binding.btnMeetDetail.setOnClickListener {
+                onItemClickListener?.invoke(itemView)
+            }
         }
+    }
+
+    private var onItemClickListener: ((MeetsResponseEntity) -> Unit)? = null
+    fun setOnItemClickListener(listener: (MeetsResponseEntity) -> Unit) {
+        onItemClickListener = listener
     }
 
     companion object {

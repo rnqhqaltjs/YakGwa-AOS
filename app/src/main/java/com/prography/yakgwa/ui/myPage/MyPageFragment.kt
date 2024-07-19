@@ -8,12 +8,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import coil.load
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentMyPageBinding
 import com.prography.yakgwa.ui.login.LoginActivity
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -21,12 +23,29 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
     private val viewModel: MyPageViewModel by viewModels()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         observer()
         addListeners()
     }
 
     private fun observer() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.userInfoState.collectLatest {
+                    when (it) {
+                        is UiState.Loading -> {}
+                        is UiState.Success -> {
+                            binding.tvUserName.text = it.data.name
+                            binding.ivProfileImage.load(it.data.imageUrl)
+                        }
+
+                        is UiState.Failure -> {
+                            Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.logoutState.collect {
@@ -46,7 +65,7 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
     }
 
     private fun addListeners() {
-        binding.btnLogout.setOnClickListener {
+        binding.tvLogoutBtn.setOnClickListener {
             viewModel.logout()
         }
     }

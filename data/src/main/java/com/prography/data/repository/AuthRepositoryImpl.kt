@@ -4,6 +4,7 @@ import com.prography.data.datasource.remote.AuthRemoteDataSource
 import com.prography.data.mapper.AuthMapper
 import com.prography.domain.model.request.AuthRequestEntity
 import com.prography.domain.model.response.AuthResponseEntity
+import com.prography.domain.model.response.UserInfoResponseEntity
 import com.prography.domain.repository.AuthRepository
 import javax.inject.Inject
 
@@ -30,6 +31,14 @@ class AuthRepositoryImpl @Inject constructor(
 
         return runCatching {
             response.result
+        }
+    }
+
+    override suspend fun getUserInfo(): Result<UserInfoResponseEntity> {
+        val response = authRemoteDataSource.getUserInfo()
+
+        return runCatching {
+            AuthMapper.mapperToUserInfoResponseEntity(response.result)
         }
     }
 }

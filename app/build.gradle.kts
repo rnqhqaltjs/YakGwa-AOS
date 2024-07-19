@@ -103,4 +103,7 @@ dependencies {
 
     // Material CalendarView
     implementation(libs.material.calendarview)
+
+    // Coil
+    implementation(libs.coil)
 }

@@ -4,11 +4,13 @@ import com.prography.data.model.request.RequestCreateMeetDto
 import com.prography.data.model.response.ResponseCreateMeetDto
 import com.prography.data.model.response.ResponseMeetDetailDto
 import com.prography.data.model.response.ResponseMeetsDto
+import com.prography.data.model.response.ResponseParticipantMeetDto
 import com.prography.data.model.response.ResponseThemesDto
 import com.prography.domain.model.request.CreateMeetRequestEntity
 import com.prography.domain.model.response.CreateMeetResponseEntity
 import com.prography.domain.model.response.MeetDetailResponseEntity
 import com.prography.domain.model.response.MeetsResponseEntity
+import com.prography.domain.model.response.ParticipantMeetResponseEntity
 import com.prography.domain.model.response.ThemesResponseEntity
 
 object MeetMapper {
@@ -99,6 +101,12 @@ object MeetMapper {
                     }
                 }
             )
+        }
+    }
+
+    fun mapperToParticipantMeetResponseEntity(responseParticipantMeetDto: ResponseParticipantMeetDto): ParticipantMeetResponseEntity {
+        return responseParticipantMeetDto.run {
+            ParticipantMeetResponseEntity(this.participantId)
         }
     }
 }

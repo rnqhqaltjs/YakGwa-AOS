@@ -6,6 +6,7 @@ import com.prography.domain.model.request.CreateMeetRequestEntity
 import com.prography.domain.model.response.CreateMeetResponseEntity
 import com.prography.domain.model.response.MeetDetailResponseEntity
 import com.prography.domain.model.response.MeetsResponseEntity
+import com.prography.domain.model.response.ParticipantMeetResponseEntity
 import com.prography.domain.model.response.ThemesResponseEntity
 import com.prography.domain.repository.MeetRepository
 import javax.inject.Inject
@@ -53,11 +54,13 @@ class MeetRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun participantMeet(userId: Int, meetId: Int): Result<Unit> {
-        val response = meetRemoteDataSource.participantMeet(userId, meetId)
+    override suspend fun participantMeet(meetId: Int): Result<ParticipantMeetResponseEntity> {
+        val response = meetRemoteDataSource.participantMeet(meetId)
 
         return runCatching {
-            response.result
+            MeetMapper.mapperToParticipantMeetResponseEntity(
+                response.result
+            )
         }
     }
 }

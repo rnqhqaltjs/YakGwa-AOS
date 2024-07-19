@@ -39,9 +39,7 @@ class InvitationMemberFragment :
     }
 
     private fun initView(meetId: Int) {
-        lifecycleScope.launch {
-            viewModel.getMeetInformationDetail(meetId)
-        }
+        viewModel.getMeetInformationDetail(meetId)
     }
 
     private fun observer(meetId: Int) {

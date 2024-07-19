@@ -1,6 +1,5 @@
 package com.prography.yakgwa.util.dateTimeUtils
 
-import com.prography.yakgwa.ui.vote.VotePromiseTimeFragment
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -10,7 +9,7 @@ import java.time.format.DateTimeFormatter
 object DateTimeUtils {
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private val timeFormatter12Hour = DateTimeFormatter.ofPattern("a hh:mm")
-    private val timeFormatter24Hour = DateTimeFormatter.ofPattern("HH:mm")
+    private val timeFormatter24Hour = DateTimeFormatter.ofPattern("HH:mm:ss")
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
     fun formatDateToString(year: Int, month: Int, day: Int): String {
@@ -51,7 +50,7 @@ object DateTimeUtils {
     fun LocalDate.toCalendarDay(dayOfMonth: Int = this.dayOfMonth): CalendarDay {
         return CalendarDay.from(
             this.year,
-            this.monthValue - VotePromiseTimeFragment.MONTH_OFFSET,
+            this.monthValue - 1,
             dayOfMonth
         )
     }

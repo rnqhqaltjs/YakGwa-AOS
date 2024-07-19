@@ -3,7 +3,7 @@ package com.prography.yakgwa.ui.vote
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 class VotePromisePlaceFragment :
     BaseFragment<FragmentVotePromisePlaceBinding>(R.layout.fragment_vote_promise_place) {
 
-    private val viewModel: VoteViewModel by activityViewModels()
+    private val viewModel: VoteViewModel by viewModels()
     private lateinit var placeListAdapter: PlaceListAdapter
 
     private val args by navArgs<VotePromisePlaceFragmentArgs>()
@@ -30,9 +30,14 @@ class VotePromisePlaceFragment :
         super.onViewCreated(view, savedInstanceState)
         val meetId = args.meetId
 
+        initView(meetId)
         setupRecyclerView()
         observer(meetId)
         addListeners(meetId)
+    }
+
+    private fun initView(meetId: Int) {
+        viewModel.getVotePlaceCandidate(meetId)
     }
 
     private fun setupRecyclerView() {
@@ -47,12 +52,12 @@ class VotePromisePlaceFragment :
     private fun observer(meetId: Int) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.timePlaceState.collectLatest {
+                viewModel.placeCandidateState.collectLatest {
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
                             placeListAdapter.submitList(
-                                it.data.placeItems.map { placeItem ->
+                                it.data.map { placeItem ->
                                     PlaceModel(placeItem)
                                 }
                             )
@@ -68,30 +73,10 @@ class VotePromisePlaceFragment :
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.timeVoteState.collectLatest {
-                    when (it) {
-                        is UiState.Loading -> {}
-                        is UiState.Success -> {
-                            viewModel.votePlace(meetId)
-                        }
-
-                        is UiState.Failure -> {
-                            Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.placeVoteState.collectLatest {
                     when (it) {
                         is UiState.Loading -> {}
-                        is UiState.Success -> {
-                            navigateToVoteCompletionFragment(meetId)
-                        }
-
+                        is UiState.Success -> navigateToInvitationLeaderFragment(meetId)
                         is UiState.Failure -> {
                             Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
                         }
@@ -103,25 +88,25 @@ class VotePromisePlaceFragment :
         lifecycleScope.launch {
             viewModel.selectedPlaceState.collectLatest { selectedPlace ->
                 placeListAdapter.submitList(selectedPlace)
+                binding.btnVoteComplete.isEnabled = !selectedPlace.none { it.isSelected }
             }
         }
     }
 
     private fun addListeners(meetId: Int) {
         binding.btnVoteComplete.setOnClickListener {
-            viewModel.voteTime(meetId)
+            viewModel.votePlace(meetId)
         }
         binding.ivNavigateUpBtn.setOnClickListener {
             findNavController().navigateUp()
         }
     }
 
-    private fun navigateToVoteCompletionFragment(meetId: Int) {
-        VotePromisePlaceFragmentDirections.actionVotePromisePlaceFragmentToVoteCompletionFragment(
+    private fun navigateToInvitationLeaderFragment(meetId: Int) {
+        VotePromisePlaceFragmentDirections.actionVotePromisePlaceFragmentToInvitationLeaderFragment(
             meetId
-        )
-            .apply {
-                findNavController().navigate(this)
-            }
+        ).apply {
+            findNavController().navigate(this)
+        }
     }
 }

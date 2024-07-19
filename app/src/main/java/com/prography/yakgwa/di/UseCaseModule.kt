@@ -1,16 +1,19 @@
 package com.prography.yakgwa.di
 
+import com.prography.domain.repository.AuthRepository
 import com.prography.domain.repository.MeetRepository
 import com.prography.domain.repository.NaverRepository
 import com.prography.domain.repository.VoteRepository
 import com.prography.domain.usecase.GetLocationListUseCase
 import com.prography.domain.usecase.GetMeetInformationDetailUseCase
 import com.prography.domain.usecase.GetParticipantMeetListUseCase
+import com.prography.domain.usecase.GetPlaceCandidateInfoUseCase
 import com.prography.domain.usecase.GetThemeListUseCase
-import com.prography.domain.usecase.GetUserVoteInfoUsecase
-import com.prography.domain.usecase.GetVoteTimePlaceCandidateInfoUseCase
-import com.prography.domain.usecase.PostMeetParticipantUseCase
+import com.prography.domain.usecase.GetUserInformationUseCase
+import com.prography.domain.usecase.GetUserVotePlaceListUseCase
+import com.prography.domain.usecase.GetVoteTimeCandidateInfoUseCase
 import com.prography.domain.usecase.PostNewMeetCreateUseCase
+import com.prography.domain.usecase.PostParticipantMeetUseCase
 import com.prography.domain.usecase.PostUserVotePlaceUseCase
 import com.prography.domain.usecase.PostUserVoteTimeUseCase
 import dagger.Module
@@ -49,13 +52,18 @@ class UseCaseModule {
 
     @Provides
     @Singleton
-    fun providesPostMeetParticipantUseCase(meetRepository: MeetRepository): PostMeetParticipantUseCase =
-        PostMeetParticipantUseCase(meetRepository)
+    fun providesPostParticipantMeetUseCase(meetRepository: MeetRepository): PostParticipantMeetUseCase =
+        PostParticipantMeetUseCase(meetRepository)
 
     @Provides
     @Singleton
-    fun providesGetVoteTimeCandidateInfoUseCase(voteRepository: VoteRepository): GetVoteTimePlaceCandidateInfoUseCase =
-        GetVoteTimePlaceCandidateInfoUseCase(voteRepository)
+    fun providesGetPlaceCandidateInfoUseCase(voteRepository: VoteRepository): GetPlaceCandidateInfoUseCase =
+        GetPlaceCandidateInfoUseCase(voteRepository)
+
+    @Provides
+    @Singleton
+    fun providesGetVoteTimeCandidateInfoUseCase(voteRepository: VoteRepository): GetVoteTimeCandidateInfoUseCase =
+        GetVoteTimeCandidateInfoUseCase(voteRepository)
 
     @Provides
     @Singleton
@@ -69,6 +77,11 @@ class UseCaseModule {
 
     @Provides
     @Singleton
-    fun providesGetUserVoteInfoUseCase(voteRepository: VoteRepository): GetUserVoteInfoUsecase =
-        GetUserVoteInfoUsecase(voteRepository)
+    fun providesGetUserVotePlaceListUseCase(voteRepository: VoteRepository): GetUserVotePlaceListUseCase =
+        GetUserVotePlaceListUseCase(voteRepository)
+
+    @Provides
+    @Singleton
+    fun providesGetUserInformationUseCase(authRepository: AuthRepository): GetUserInformationUseCase =
+        GetUserInformationUseCase(authRepository)
 }

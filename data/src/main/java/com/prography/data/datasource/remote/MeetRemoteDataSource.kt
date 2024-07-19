@@ -5,6 +5,7 @@ import com.prography.data.model.response.BaseResponse
 import com.prography.data.model.response.ResponseCreateMeetDto
 import com.prography.data.model.response.ResponseMeetDetailDto
 import com.prography.data.model.response.ResponseMeetsDto
+import com.prography.data.model.response.ResponseParticipantMeetDto
 import com.prography.data.model.response.ResponseThemesDto
 
 interface MeetRemoteDataSource {
@@ -21,7 +22,6 @@ interface MeetRemoteDataSource {
     ): BaseResponse<ResponseMeetDetailDto>
 
     suspend fun participantMeet(
-        userId: Int,
         meetId: Int
-    ): BaseResponse<Unit>
+    ): BaseResponse<ResponseParticipantMeetDto>
 }

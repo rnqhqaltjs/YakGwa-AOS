@@ -79,18 +79,20 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginTop="10dp"
             app:cardCornerRadius="25dp"
             app:cardElevation="0dp"
+            android:visibility="gone"
+            android:id="@+id/cv_time_slot"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cv_calendar">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
 
                 <TextView
                     android:id="@+id/tv_selected_date"
@@ -107,10 +109,11 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_time"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="26dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
+                    android:clipToPadding="false"
                     android:orientation="horizontal"
+                    android:paddingHorizontal="26dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -132,7 +135,7 @@
                 android:layout_height="match_parent">
 
                 <ImageView
-                    android:id="@+id/btn_vote_next"
+                    android:id="@+id/btn_vote_complete"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:layout_marginStart="16dp"
@@ -144,10 +147,9 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/img_next" />
+                    app:srcCompat="@drawable/selector_vote_complete_button" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

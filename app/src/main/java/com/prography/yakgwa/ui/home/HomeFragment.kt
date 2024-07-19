@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentHomeBinding
+import com.prography.yakgwa.type.MeetType
 import com.prography.yakgwa.ui.createPromise.CreatePromiseViewModel
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
@@ -27,7 +28,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private lateinit var participantMeetListAdapter: ParticipantMeetListAdapter
 
-    private var meetId: Int? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         createPromiseViewModel.clearData()
@@ -58,6 +58,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun setupRecyclerView() {
         participantMeetListAdapter = ParticipantMeetListAdapter().apply {
+            setOnItemClickListener {
+                when (it.meetStatus) {
+                    MeetType.BEFORE_VOTE.name -> navigateToInvitationLeaderFragment(it.meetInfo.meetId)
+                    MeetType.VOTE.name -> navigateToInvitationLeaderFragment(it.meetInfo.meetId)
+                    MeetType.BEFORE_CONFIRM.name -> navigateToVoteCompletionFragment(it.meetInfo.meetId)
+                    MeetType.CONFIRM.name -> navigateToVoteCompletionFragment(it.meetInfo.meetId)
+                }
+            }
         }
 
         val snapHelper = PagerSnapHelper()
@@ -67,10 +75,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun addListeners() {
         binding.btnGoCreatePromise.setOnClickListener {
-            navigateToCreatePromiseTitleFragment()
-        }
-
-        binding.ivAddBtn.setOnClickListener {
             navigateToCreatePromiseTitleFragment()
         }
     }
@@ -89,15 +93,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
     }
 
-    private fun navigateToInvitationLeaderFragment() {
-        HomeFragmentDirections.actionHomeFragmentToInvitationLeaderFragment(meetId!!).apply {
-            findNavController().navigate(this)
-        }
+    private fun navigateToInvitationLeaderFragment(meetId: Int) {
+        HomeFragmentDirections.actionHomeFragmentToInvitationLeaderFragment(meetId)
+            .apply {
+                findNavController().navigate(this)
+            }
     }
 
-    private fun navigateToVoteCompletionFragment() {
-        HomeFragmentDirections.actionHomeFragmentToVoteCompletionFragment(meetId!!).apply {
-            findNavController().navigate(this)
-        }
+    private fun navigateToVoteCompletionFragment(meetId: Int) {
+        HomeFragmentDirections.actionHomeFragmentToVoteCompletionFragment(meetId)
+            .apply {
+                findNavController().navigate(this)
+            }
     }
 }

@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -24,7 +24,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 
@@ -32,8 +31,7 @@ import java.time.format.DateTimeFormatter
 @SuppressLint("DefaultLocale")
 class VotePromiseTimeFragment :
     BaseFragment<FragmentVotePromiseTimeBinding>(R.layout.fragment_vote_promise_time) {
-
-    private val viewModel: VoteViewModel by activityViewModels()
+    private val viewModel: VoteViewModel by viewModels()
 
     private lateinit var timeListAdapter: TimeListAdapter
     private val args by navArgs<VotePromiseTimeFragmentArgs>()
@@ -44,19 +42,17 @@ class VotePromiseTimeFragment :
 
         setupRecyclerView()
         initView(meetId)
-        observer()
+        observer(meetId)
         addListeners(meetId)
     }
 
     private fun initView(meetId: Int) {
-        viewModel.getTimePlaceCandidate(meetId)
+        viewModel.getVoteTimeCandidate(meetId)
     }
 
     private fun initCalendarView(
         startDate: LocalDate,
         endDate: LocalDate,
-        startTime: LocalTime,
-        endTime: LocalTime
     ) {
         binding.calendarView.apply {
             setupTitleFormatter(this)
@@ -66,25 +62,21 @@ class VotePromiseTimeFragment :
             applyCalendarDecorators(this, startDate, endDate, null)
             setupDateChangeListener(this)
         }
-        if (viewModel.timeSlotsState.value.isEmpty()) {
-            viewModel.calculateTimeSlots(startDate, endDate, startTime, endTime)
-        }
+        viewModel.calculateTimeSlots(startDate, endDate)
     }
 
-    private fun observer() {
+    private fun observer(meetId: Int) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.timePlaceState.collectLatest {
+                viewModel.timeCandidateState.collectLatest {
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            val startDate = LocalDate.parse(it.data.timeItems.dateRange.start)
-                            val endDate = LocalDate.parse(it.data.timeItems.dateRange.end)
-                            val startTime = LocalTime.parse(it.data.timeItems.timeRange.start)
-                            val endTime = LocalTime.parse(it.data.timeItems.timeRange.end)
+                            val startDate = LocalDate.parse(it.data.voteDate?.startVoteDate)
+                            val endDate = LocalDate.parse(it.data.voteDate?.endVoteDate)
 
                             viewModel.setDateRange(startDate, endDate)
-                            initCalendarView(startDate, endDate, startTime, endTime)
+                            initCalendarView(startDate, endDate)
                         }
 
                         is UiState.Failure -> {
@@ -96,14 +88,29 @@ class VotePromiseTimeFragment :
         }
 
         lifecycleScope.launch {
-            viewModel.selectedTimeState.collectLatest {
-                timeListAdapter.submitList(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.timeVoteState.collectLatest {
+                    when (it) {
+                        is UiState.Loading -> {}
+                        is UiState.Success -> navigateToInvitationLeaderFragment(meetId)
+                        is UiState.Failure -> {
+                            Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.selectedTimeState.collectLatest { selectedTime ->
+                timeListAdapter.submitList(selectedTime)
+                binding.btnVoteComplete.isEnabled = !selectedTime.none { it.isSelected }
             }
         }
 
         lifecycleScope.launch {
             viewModel.selectedDateState.collectLatest {
-                binding.tvSelectedDate.text = it?.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                binding.tvSelectedDate.text = it?.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
 
                 applyCalendarDecorators(
                     binding.calendarView,
@@ -116,8 +123,8 @@ class VotePromiseTimeFragment :
     }
 
     private fun addListeners(meetId: Int) {
-        binding.btnVoteNext.setOnClickListener {
-            navigateToVotePromisePlaceFragment(meetId)
+        binding.btnVoteComplete.setOnClickListener {
+            viewModel.voteTime(meetId)
         }
         binding.ivNavigateUpBtn.setOnClickListener {
             findNavController().navigateUp()
@@ -137,7 +144,6 @@ class VotePromiseTimeFragment :
 
     private fun configureCalendarView(calendarView: MaterialCalendarView) {
         calendarView.setTopbarVisible(false)
-//        calendarView.isDynamicHeightEnabled = true
     }
 
     private fun applyCalendarDecorators(
@@ -204,25 +210,20 @@ class VotePromiseTimeFragment :
     private fun setupDateChangeListener(calendarView: MaterialCalendarView) {
         calendarView.setOnDateChangedListener { _, date, _ ->
             viewModel.selectedDate(LocalDate.of(date.year, date.month + MONTH_OFFSET, date.day))
+            binding.cvTimeSlot.visibility = View.VISIBLE
         }
     }
 
-    private fun navigateToVotePromisePlaceFragment(meetId: Int) {
-        VotePromiseTimeFragmentDirections.actionVotePromiseTimeFragmentToVotePromisePlaceFragment(
+    private fun navigateToInvitationLeaderFragment(meetId: Int) {
+        VotePromiseTimeFragmentDirections.actionVotePromiseTimeFragmentToInvitationLeaderFragment(
             meetId
-        )
-            .apply {
-                findNavController().navigate(this)
-            }
+        ).apply {
+            findNavController().navigate(this)
+        }
     }
 
     companion object {
-        const val MONTH_OFFSET = 1
-        const val FIRST_DAY_OF_MONTH = 1
+        private const val MONTH_OFFSET = 1
+        private const val FIRST_DAY_OF_MONTH = 1
     }
-
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        viewModel.timeSlotsState.value = emptyMap()
-//    }
 }

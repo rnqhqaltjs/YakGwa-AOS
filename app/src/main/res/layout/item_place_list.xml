@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_marginBottom="5dp"
     app:cardElevation="0dp"
@@ -27,54 +26,34 @@
             app:cardElevation="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-
-            <ImageView
-                android:id="@+id/iv_place"
-                android:layout_width="100dp"
-                android:layout_height="80dp"
-                android:scaleType="fitXY"
-                tools:srcCompat="@tools:sample/avatars" />
-
-        </androidx.cardview.widget.CardView>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_title"
-            android:textSize="15sp"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp"
             android:layout_width="wrap_content"
-            android:textColor="@color/black"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/pretendard_medium"
             android:text="라트라비아타"
-            app:layout_constraintStart_toEndOf="@+id/cv_place_img"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_address"
             android:layout_width="wrap_content"
-            android:textSize="12sp"
-            android:layout_marginTop="5dp"
-            android:layout_marginStart="12dp"
-            android:textColor="@color/neutral_700"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/pretendard_regular"
             android:text="서울시 강남구 강남대로 34길 34 4층"
-            app:layout_constraintStart_toEndOf="@+id/cv_place_img"
+            android:textColor="@color/neutral_700"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
-
-        <TextView
-            android:id="@+id/tv_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginStart="12dp"
-            android:textColor="@color/neutral_500"
-            android:text="장소 설명입니다. 장소 설명입니다."
-            android:textSize="11sp"
-            app:layout_constraintStart_toEndOf="@+id/cv_place_img"
-            app:layout_constraintTop_toBottomOf="@+id/tv_address" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </com.google.android.material.card.MaterialCardView>
