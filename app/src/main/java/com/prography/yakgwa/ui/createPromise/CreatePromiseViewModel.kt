@@ -50,11 +50,11 @@ class CreatePromiseViewModel @Inject constructor(
     private val _textLength80State = MutableStateFlow("")
     val textLength80State = _textLength80State
 
-    private val _selectedDate = MutableStateFlow<String?>(null)
-    val selectedDate = _selectedDate
+    private val _selectedDirectDate = MutableStateFlow("")
+    val selectedDirectDate = _selectedDirectDate
 
-    private val _selectedTime = MutableStateFlow<String?>(null)
-    val selectedTime = _selectedTime
+    private val _selectedDirectTime = MutableStateFlow("")
+    val selectedDirectTime = _selectedDirectTime
 
     private val _searchQueryState = MutableStateFlow("")
 
@@ -73,15 +73,15 @@ class CreatePromiseViewModel @Inject constructor(
         MutableStateFlow<UiState<CreateMeetResponseEntity>>(UiState.Loading)
     val createMeetState = _createMeetState.asStateFlow()
 
-
     private val _directLocationState =
         MutableSharedFlow<UiState<List<LocationResponseEntity>>>()
-    val directLocationState = _directLocationState.onSubscription {
-        getDirectLocations()
-    }.shareIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-    )
+    val directLocationState = _directLocationState
+        .onSubscription {
+            getDirectLocations()
+        }.shareIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+        )
 
     private val _candidateLocationState =
         MutableStateFlow<UiState<List<LocationResponseEntity>>>(UiState.Loading)
@@ -139,12 +139,12 @@ class CreatePromiseViewModel @Inject constructor(
         _textLength80State.value = text
     }
 
-    fun updateStartDate(year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        _selectedDate.value = formatDateToString(year, monthOfYear, dayOfMonth)
+    fun updateDirectDate(year: Int, monthOfYear: Int, dayOfMonth: Int) {
+        _selectedDirectDate.value = formatDateToString(year, monthOfYear, dayOfMonth)
     }
 
-    fun updateStartTime(hourOfDay: Int, minute: Int) {
-        _selectedTime.value = formatTimeToString(hourOfDay, minute)
+    fun updateDirectTime(hourOfDay: Int, minute: Int) {
+        _selectedDirectTime.value = formatTimeToString(hourOfDay, minute)
     }
 
     fun createMeet() {
@@ -183,7 +183,7 @@ class CreatePromiseViewModel @Inject constructor(
         }
 
         val meetTime = if (_selectedTabTimeIndex.value == TAB_DIRECT_INPUT) {
-            "${_selectedDate.value} ${formatTimeTo24Hour(_selectedTime.value!!)}"
+            "${_selectedDirectDate.value} ${formatTimeTo24Hour(_selectedDirectTime.value)}"
         } else {
             null
         }
@@ -191,7 +191,7 @@ class CreatePromiseViewModel @Inject constructor(
         return CreateMeetRequestEntity(
             meetTitle = _textLength20State.value,
             description = _textLength80State.value,
-            meetThemeId = _selectedThemeState.value.find { it.isSelected }?.themesResponseEntity?.themeId!!,
+            meetThemeId = _selectedThemeState.value.find { it.isSelected }!!.themesResponseEntity.themeId,
             confirmPlace = _selectedTabPlaceIndex.value == TAB_DIRECT_INPUT,
             placeInfo = placeInfoList.map { place ->
                 CreateMeetRequestEntity.PlaceInfo(
@@ -302,12 +302,12 @@ class CreatePromiseViewModel @Inject constructor(
     val isTimeBtnEnabled: StateFlow<Boolean> = combine(
         _selectedTabTimeIndex,
         _selectedCalendarDates,
-        _selectedDate,
-        _selectedTime
-    ) { tabIndex, dates, startDate, startTime ->
+        _selectedDirectDate,
+        _selectedDirectTime
+    ) { tabIndex, candidateDates, directDate, directTime ->
         when (tabIndex) {
-            TAB_ADD_CANDIDATE -> dates.isNotEmpty()
-            TAB_DIRECT_INPUT -> startDate != null && startTime != null
+            TAB_ADD_CANDIDATE -> candidateDates.isNotEmpty()
+            TAB_DIRECT_INPUT -> directDate.isNotEmpty() && directTime.isNotEmpty()
             else -> false
         }
     }.stateIn(
@@ -352,8 +352,8 @@ class CreatePromiseViewModel @Inject constructor(
         }
         _selectedTabTimeIndex.value = TAB_ADD_CANDIDATE
         _selectedCalendarDates.value = emptyList()
-        _selectedDate.value = null
-        _selectedTime.value = null
+        _selectedDirectDate.value = ""
+        _selectedDirectTime.value = ""
         _selectedTabPlaceIndex.value = TAB_ADD_CANDIDATE
         _candidateLocationState.value = UiState.Success(emptyList())
         _selectedCandidateLocationState.value = emptyList()
