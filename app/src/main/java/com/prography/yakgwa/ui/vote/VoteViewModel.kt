@@ -1,14 +1,18 @@
 package com.prography.yakgwa.ui.vote
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prography.data.datasource.local.YakGwaLocalDataSource
 import com.prography.domain.model.request.VotePlaceRequestEntity
 import com.prography.domain.model.request.VoteTimeRequestEntity
-import com.prography.domain.model.response.TimePlaceResponseEntity
-import com.prography.domain.model.response.VoteInfoResponseEntity
-import com.prography.domain.usecase.GetUserVoteInfoUsecase
-import com.prography.domain.usecase.GetVoteTimePlaceCandidateInfoUseCase
+import com.prography.domain.model.response.MeetDetailResponseEntity
+import com.prography.domain.model.response.PlaceCandidateResponseEntity
+import com.prography.domain.model.response.TimeCandidateResponseEntity
+import com.prography.domain.model.response.VotePlaceResponseEntity
+import com.prography.domain.usecase.GetMeetInformationDetailUseCase
+import com.prography.domain.usecase.GetPlaceCandidateInfoUseCase
+import com.prography.domain.usecase.GetUserVotePlaceListUseCase
+import com.prography.domain.usecase.GetVoteTimeCandidateInfoUseCase
 import com.prography.domain.usecase.PostUserVotePlaceUseCase
 import com.prography.domain.usecase.PostUserVoteTimeUseCase
 import com.prography.yakgwa.model.PlaceModel
@@ -16,28 +20,32 @@ import com.prography.yakgwa.model.TimeModel
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.dateTimeUtils.DateTimeUtils.formatLocalDateTimeToString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
 class VoteViewModel @Inject constructor(
-    private val getVoteTimePlaceCandidateInfoUseCase: GetVoteTimePlaceCandidateInfoUseCase,
+    private val savedStateHandle: SavedStateHandle,
+    private val getPlaceCandidateInfoUseCase: GetPlaceCandidateInfoUseCase,
+    private val getVoteTimeCandidateInfoUseCase: GetVoteTimeCandidateInfoUseCase,
     private val postUserVoteTimeUseCase: PostUserVoteTimeUseCase,
     private val postUserVotePlaceUseCase: PostUserVotePlaceUseCase,
-    private val getUserVoteInfoUseCase: GetUserVoteInfoUsecase,
-    private val localStorage: YakGwaLocalDataSource
+    private val getUserVoteInfoUseCase: GetUserVotePlaceListUseCase,
+    private val getMeetInformationDetailUseCase: GetMeetInformationDetailUseCase
 ) : ViewModel() {
+    private val meetId: Int = savedStateHandle.get<Int>("meetId") ?: 0
 
-    private val _timePlaceState =
-        MutableStateFlow<UiState<TimePlaceResponseEntity>>(UiState.Loading)
-    val timePlaceState = _timePlaceState.asStateFlow()
+    private val _placeCandidateState =
+        MutableStateFlow<UiState<List<PlaceCandidateResponseEntity>>>(UiState.Loading)
+    val placeCandidateState = _placeCandidateState.asStateFlow()
+
+    private val _timeCandidateState =
+        MutableStateFlow<UiState<TimeCandidateResponseEntity>>(UiState.Loading)
+    val timeCandidateState = _timeCandidateState.asStateFlow()
 
     private val _timeSlotsState = MutableStateFlow<Map<LocalDate, List<TimeModel>>>(emptyMap())
     val timeSlotsState = _timeSlotsState
@@ -54,7 +62,7 @@ class VoteViewModel @Inject constructor(
     private val _endDate = MutableStateFlow<LocalDate?>(null)
     val endDate = _endDate
 
-    private val _selectedPlaceState = MutableStateFlow<List<PlaceModel>?>(null)
+    private val _selectedPlaceState = MutableStateFlow<List<PlaceModel>>(emptyList())
     val selectedPlaceState = _selectedPlaceState
 
     private val _timeVoteState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
@@ -63,38 +71,55 @@ class VoteViewModel @Inject constructor(
     private val _placeVoteState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
     val placeVoteState = _placeVoteState.asStateFlow()
 
-    private val _voteInfoState = MutableStateFlow<UiState<VoteInfoResponseEntity>>(UiState.Loading)
-    val voteInfoState = _voteInfoState.asStateFlow()
+    private val _votePlaceInfoState =
+        MutableStateFlow<UiState<VotePlaceResponseEntity>>(UiState.Loading)
+    val votePlaceInfoState = _votePlaceInfoState.asStateFlow()
 
-    fun getTimePlaceCandidate(meetId: Int) {
-        _timePlaceState.value = UiState.Loading
+    private val _detailMeetState =
+        MutableStateFlow<UiState<MeetDetailResponseEntity>>(UiState.Loading)
+    val detailMeetState = _detailMeetState.asStateFlow()
+
+    fun getVotePlaceCandidate(meetId: Int) {
+        _placeCandidateState.value = UiState.Loading
 
         viewModelScope.launch {
-            getVoteTimePlaceCandidateInfoUseCase(meetId)
+            getPlaceCandidateInfoUseCase(meetId)
                 .onSuccess {
-                    _selectedPlaceState.value = it.placeItems.map { placeEntity ->
+                    _selectedPlaceState.value = it.map { placeEntity ->
                         PlaceModel(placeEntity)
                     }
-                    _timePlaceState.value = UiState.Success(it)
+                    _placeCandidateState.value = UiState.Success(it)
                 }
                 .onFailure {
-                    _timePlaceState.value = UiState.Failure(it.message)
+                    _placeCandidateState.value = UiState.Failure(it.message)
+                }
+        }
+    }
+
+    fun getVoteTimeCandidate(meetId: Int) {
+        _timeCandidateState.value = UiState.Loading
+
+        viewModelScope.launch {
+            getVoteTimeCandidateInfoUseCase(meetId)
+                .onSuccess {
+                    _timeCandidateState.value = UiState.Success(it)
+                }
+                .onFailure {
+                    _timeCandidateState.value = UiState.Failure(it.message)
                 }
         }
     }
 
     fun calculateTimeSlots(
         startDate: LocalDate,
-        endDate: LocalDate,
-        startTime: LocalTime,
-        endTime: LocalTime
+        endDate: LocalDate
     ) {
         val timeSlotsPerDate = mutableMapOf<LocalDate, List<TimeModel>>()
 
         var currentDate = startDate
         while (!currentDate.isAfter(endDate)) {
-            val timeSlots = generateSequence(startTime) { it.plusHours(1) }
-                .takeWhile { !it.isAfter(endTime) }
+            val timeSlots = generateSequence(LocalTime.MIN) { it.plusHours(1) }
+                .takeWhile { !it.isAfter(LocalTime.MAX.minusHours(1)) }
                 .map { TimeModel(it) }
                 .toList()
 
@@ -137,8 +162,12 @@ class VoteViewModel @Inject constructor(
     }
 
     fun singlePlaceSelection(position: Int) {
-        val currentList = _selectedPlaceState.value.orEmpty().mapIndexed { index, item ->
-            item.copy(isSelected = index == position)
+        val currentList = _selectedPlaceState.value.mapIndexed { index, item ->
+            if (index == position) {
+                item.copy(isSelected = !item.isSelected)
+            } else {
+                item
+            }
         }
         _selectedPlaceState.value = currentList
     }
@@ -147,10 +176,9 @@ class VoteViewModel @Inject constructor(
         _timeVoteState.value = UiState.Loading
 
         viewModelScope.launch {
-            val userId = userId()
             val voteTimeRequestEntity = convertTimeModelsToVoteTimeRequest(_timeSlotsState.value)
 
-            postUserVoteTimeUseCase(userId, meetId, voteTimeRequestEntity)
+            postUserVoteTimeUseCase(meetId, voteTimeRequestEntity)
                 .onSuccess {
                     _timeVoteState.value = UiState.Success(it)
                 }
@@ -164,16 +192,14 @@ class VoteViewModel @Inject constructor(
         _placeVoteState.value = UiState.Loading
 
         viewModelScope.launch {
-            val userId = userId()
             val selectedPlaceIds =
                 VotePlaceRequestEntity(
                     _selectedPlaceState.value
-                        .orEmpty()
                         .filter { it.isSelected }
-                        .map { it.placeItem.candidatePlaceId }
+                        .map { it.placeItem.placeSlotId }
                 )
 
-            postUserVotePlaceUseCase(userId, meetId, selectedPlaceIds)
+            postUserVotePlaceUseCase(meetId, selectedPlaceIds)
                 .onSuccess {
                     _placeVoteState.value = UiState.Success(it)
                 }
@@ -183,35 +209,31 @@ class VoteViewModel @Inject constructor(
         }
     }
 
-    fun getVoteInfo(meetId: Int) {
-        _voteInfoState.value = UiState.Loading
+    fun getUserVotePlace(meetId: Int) {
+        _votePlaceInfoState.value = UiState.Loading
 
         viewModelScope.launch {
-            val userId = userId()
-
-            getUserVoteInfoUseCase(userId, meetId)
+            getUserVoteInfoUseCase(meetId)
                 .onSuccess {
-                    _voteInfoState.value = UiState.Success(it)
+                    _votePlaceInfoState.value = UiState.Success(it)
                 }
                 .onFailure {
-                    _voteInfoState.value = UiState.Failure(it.message)
+                    _votePlaceInfoState.value = UiState.Failure(it.message)
                 }
         }
     }
 
     private fun convertTimeModelsToVoteTimeRequest(timeModels: Map<LocalDate, List<TimeModel>>): VoteTimeRequestEntity {
-        val possibleSchedules = mutableListOf<VoteTimeRequestEntity.PossibleSchedule>()
+        val possibleSchedules = mutableListOf<VoteTimeRequestEntity.EnableTimes>()
 
         timeModels.forEach { (date, timeModelList) ->
             timeModelList.filter { it.isSelected }
                 .forEach { selectedTimeModel ->
-                    val startTime = selectedTimeModel.time
-                    val endTime = startTime.plusHours(1)
+                    val enableTime = selectedTimeModel.time
 
                     possibleSchedules.add(
-                        VoteTimeRequestEntity.PossibleSchedule(
-                            possibleStartTime = formatLocalDateTimeToString(date, startTime),
-                            possibleEndTime = formatLocalDateTimeToString(date, endTime)
+                        VoteTimeRequestEntity.EnableTimes(
+                            enableTime = formatLocalDateTimeToString(date, enableTime),
                         )
                     )
                 }
@@ -219,9 +241,17 @@ class VoteViewModel @Inject constructor(
         return VoteTimeRequestEntity(possibleSchedules)
     }
 
-    private suspend fun userId(): Int {
-        return withContext(Dispatchers.IO) {
-            localStorage.userId.first()
+    fun getMeetInformationDetail() {
+        _detailMeetState.value = UiState.Loading
+
+        viewModelScope.launch {
+            getMeetInformationDetailUseCase(meetId)
+                .onSuccess {
+                    _detailMeetState.value = UiState.Success(it)
+                }
+                .onFailure {
+                    _detailMeetState.value = UiState.Failure(it.message)
+                }
         }
     }
 }
