@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.prography.data.datasource.local.YakGwaLocalDataSource
 import com.prography.domain.model.request.AuthRequestEntity
 import com.prography.domain.repository.AuthRepository
+import com.prography.yakgwa.type.LoginType
 import com.prography.yakgwa.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +28,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             authRepository.postLogin(
                 HEADER_BEARER + kakaoAccessToken,
-                AuthRequestEntity(KAKAO)
+                AuthRequestEntity(LoginType.KAKAO.name)
             ).onSuccess { authEntity ->
                 with(localStorage) {
                     saveIsLogin(true)
@@ -43,7 +44,6 @@ class LoginViewModel @Inject constructor(
     }
 
     companion object {
-        const val KAKAO = "KAKAO"
-        const val HEADER_BEARER = "Bearer "
+        private const val HEADER_BEARER = "Bearer "
     }
 }
