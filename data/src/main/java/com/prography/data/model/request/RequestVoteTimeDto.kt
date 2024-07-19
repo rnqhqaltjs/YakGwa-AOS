@@ -6,14 +6,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RequestVoteTimeDto(
-    @SerializedName("possibleSchedules")
-    val possibleSchedules: List<PossibleSchedule>
+    @SerializedName("enableTImes")
+    val enableTimes: List<EnableTimes>
 ) {
     @Serializable
-    data class PossibleSchedule(
-        @SerializedName("possibleStartTime")
-        val possibleStartTime: String,
-        @SerializedName("possibleEndTime")
-        val possibleEndTime: String
+    data class EnableTimes(
+        @SerializedName("enableTime")
+        val enableTime: String
     )
 }

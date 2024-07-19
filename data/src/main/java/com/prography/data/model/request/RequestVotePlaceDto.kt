@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RequestVotePlaceDto(
-    @SerializedName("candidatePlaceIds")
-    val candidatePlaceIds: List<Int>
+    @SerializedName("currentVotePlaceSlotIds")
+    val currentVotePlaceSlotIds: List<Int>
 )

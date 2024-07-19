@@ -2,49 +2,68 @@ package com.prography.data.mapper
 
 import com.prography.data.model.request.RequestVotePlaceDto
 import com.prography.data.model.request.RequestVoteTimeDto
-import com.prography.data.model.response.ResponseTimePlaceDto
-import com.prography.data.model.response.ResponseVoteInfoDto
+import com.prography.data.model.response.ResponsePlaceCandidateDto
+import com.prography.data.model.response.ResponseTimeCandidateDto
+import com.prography.data.model.response.ResponseVotePlaceDto
 import com.prography.domain.model.request.VotePlaceRequestEntity
 import com.prography.domain.model.request.VoteTimeRequestEntity
-import com.prography.domain.model.response.TimePlaceResponseEntity
-import com.prography.domain.model.response.VoteInfoResponseEntity
+import com.prography.domain.model.response.PlaceCandidateResponseEntity
+import com.prography.domain.model.response.TimeCandidateResponseEntity
+import com.prography.domain.model.response.VotePlaceResponseEntity
 
 object VoteMapper {
-    fun mapperToTimePlaceResponseEntity(responseTimePlaceDto: ResponseTimePlaceDto): TimePlaceResponseEntity {
-        return responseTimePlaceDto.run {
-            TimePlaceResponseEntity(
-                placeItems.map { placeItemDto ->
-                    placeItemDto.run {
-                        TimePlaceResponseEntity.PlaceItem(
-                            this.candidatePlaceId,
-                            this.name,
-                            this.address,
-                            this.description
+    fun mapperToPlaceCandidateResponseEntity(responsePlaceCandidateDto: ResponsePlaceCandidateDto): List<PlaceCandidateResponseEntity> {
+        return responsePlaceCandidateDto.run {
+            this.placeSlotOfMeet.map { placeInfo ->
+                placeInfo.run {
+                    PlaceCandidateResponseEntity(
+                        this.placeSlotId,
+                        this.placeName,
+                        this.placeAddress,
+                        this.userInfos?.map { userInfo ->
+                            userInfo.run {
+                                PlaceCandidateResponseEntity.UserInfos(
+                                    this.username,
+                                    this.imageUrl
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    fun mapperToTimeCandidateResponseEntity(responseTimeCandidateDto: ResponseTimeCandidateDto): TimeCandidateResponseEntity {
+        return responseTimeCandidateDto.run {
+            TimeCandidateResponseEntity(
+                this.meetStatus,
+                this.timeInfos?.map { timeInfo ->
+                    timeInfo.run {
+                        TimeCandidateResponseEntity.TimeInfo(
+                            this.timeId,
+                            this.voteTime
                         )
                     }
                 },
-                TimePlaceResponseEntity.TimeItems(
-                    TimePlaceResponseEntity.TimeRange(
-                        this.timeItems.timeRange.start,
-                        this.timeItems.timeRange.end
-                    ),
-                    TimePlaceResponseEntity.DateRange(
-                        this.timeItems.dateRange.start,
-                        this.timeItems.dateRange.end
+                this.voteDate?.run {
+                    TimeCandidateResponseEntity.VoteDate(
+                        this.startVoteDate,
+                        this.endVoteDate
                     )
-                )
+                }
             )
+
         }
     }
 
     fun mapperToRequestVoteTimeDto(voteTimeRequestEntity: VoteTimeRequestEntity): RequestVoteTimeDto {
         return voteTimeRequestEntity.run {
             RequestVoteTimeDto(
-                this.possibleSchedules.map { schedule ->
+                this.enableTimes.map { schedule ->
                     schedule.run {
-                        RequestVoteTimeDto.PossibleSchedule(
-                            this.possibleStartTime,
-                            this.possibleEndTime
+                        RequestVoteTimeDto.EnableTimes(
+                            this.enableTime
                         )
                     }
                 }
@@ -54,27 +73,22 @@ object VoteMapper {
 
     fun mapperToRequestVotePlaceDto(votePlaceRequestEntity: VotePlaceRequestEntity): RequestVotePlaceDto {
         return votePlaceRequestEntity.run {
-            RequestVotePlaceDto(this.candidatePlaceIds)
+            RequestVotePlaceDto(this.currentVotePlaceSlotIds)
         }
     }
 
-    fun mapperToVoteInfoResponseEntity(responseVoteInfoDto: ResponseVoteInfoDto): VoteInfoResponseEntity {
-        return responseVoteInfoDto.run {
-            VoteInfoResponseEntity(
-                this.voteStatus,
-                this.myPlaceVoteInfo.map { placeInfo ->
+    fun mapperToVotePlaceResponseEntity(responseVotePlaceDto: ResponseVotePlaceDto): VotePlaceResponseEntity {
+        return responseVotePlaceDto.run {
+            VotePlaceResponseEntity(
+                this.meetStatus,
+                this.placeInfos?.map { placeInfo ->
                     placeInfo.run {
-                        VoteInfoResponseEntity.MyPlaceVoteInfo(
-                            this.name,
-                            this.address
-                        )
-                    }
-                },
-                this.myTimeVoteInfo.map { timeInfo ->
-                    timeInfo.run {
-                        VoteInfoResponseEntity.MyTimeVoteInfo(
-                            this.start,
-                            this.end
+                        VotePlaceResponseEntity.PlaceInfos(
+                            this.placeId,
+                            this.title,
+                            this.roadAddress,
+                            this.mapx,
+                            this.mapy
                         )
                     }
                 }

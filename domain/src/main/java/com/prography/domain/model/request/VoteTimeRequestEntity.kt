@@ -1,10 +1,9 @@
 package com.prography.domain.model.request
 
 data class VoteTimeRequestEntity(
-    val possibleSchedules: List<PossibleSchedule>
+    val enableTimes: List<EnableTimes>
 ) {
-    data class PossibleSchedule(
-        val possibleStartTime: String,
-        val possibleEndTime: String
+    data class EnableTimes(
+        val enableTime: String
     )
 }

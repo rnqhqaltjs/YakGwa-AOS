@@ -6,6 +6,7 @@ import com.prography.data.model.response.BaseResponse
 import com.prography.data.model.response.ResponseCreateMeetDto
 import com.prography.data.model.response.ResponseMeetDetailDto
 import com.prography.data.model.response.ResponseMeetsDto
+import com.prography.data.model.response.ResponseParticipantMeetDto
 import com.prography.data.model.response.ResponseThemesDto
 import com.prography.data.service.MeetService
 import javax.inject.Inject
@@ -33,7 +34,7 @@ class MeetRemoteDataSourceImpl @Inject constructor(
         return meetService.getMeetInformationDetail(meetId)
     }
 
-    override suspend fun participantMeet(userId: Int, meetId: Int): BaseResponse<Unit> {
-        return meetService.participantMeet(userId, meetId)
+    override suspend fun participantMeet(meetId: Int): BaseResponse<ResponseParticipantMeetDto> {
+        return meetService.participantMeet(meetId)
     }
 }

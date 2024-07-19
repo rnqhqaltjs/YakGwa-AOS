@@ -3,26 +3,25 @@ package com.prography.data.datasource.remote
 import com.prography.data.model.request.RequestVotePlaceDto
 import com.prography.data.model.request.RequestVoteTimeDto
 import com.prography.data.model.response.BaseResponse
-import com.prography.data.model.response.ResponseTimePlaceDto
-import com.prography.data.model.response.ResponseVoteInfoDto
+import com.prography.data.model.response.ResponsePlaceCandidateDto
+import com.prography.data.model.response.ResponseTimeCandidateDto
+import com.prography.data.model.response.ResponseVotePlaceDto
 
 interface VoteRemoteDataSource {
-    suspend fun getTimePlaceCandidate(meetId: Int): BaseResponse<ResponseTimePlaceDto>
+    suspend fun getPlaceCandidate(meetId: Int): BaseResponse<ResponsePlaceCandidateDto>
+    suspend fun getTimeCandidate(meetId: Int): BaseResponse<ResponseTimeCandidateDto>
 
     suspend fun voteTime(
-        userId: Int,
         meetId: Int,
         requestVoteTimeDto: RequestVoteTimeDto
     ): BaseResponse<Unit>
 
     suspend fun votePlace(
-        userId: Int,
         meetId: Int,
         requestVotePlaceDto: RequestVotePlaceDto
     ): BaseResponse<Unit>
 
-    suspend fun getVoteInfo(
-        userId: Int,
+    suspend fun getVotePlace(
         meetId: Int
-    ): BaseResponse<ResponseVoteInfoDto>
+    ): BaseResponse<ResponseVotePlaceDto>
 }

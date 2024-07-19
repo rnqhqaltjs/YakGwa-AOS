@@ -4,29 +4,36 @@ import com.prography.data.datasource.remote.VoteRemoteDataSource
 import com.prography.data.mapper.VoteMapper
 import com.prography.domain.model.request.VotePlaceRequestEntity
 import com.prography.domain.model.request.VoteTimeRequestEntity
-import com.prography.domain.model.response.TimePlaceResponseEntity
-import com.prography.domain.model.response.VoteInfoResponseEntity
+import com.prography.domain.model.response.PlaceCandidateResponseEntity
+import com.prography.domain.model.response.TimeCandidateResponseEntity
+import com.prography.domain.model.response.VotePlaceResponseEntity
 import com.prography.domain.repository.VoteRepository
 import javax.inject.Inject
 
 class VoteRepositoryImpl @Inject constructor(
     private val voteRemoteDataSource: VoteRemoteDataSource
 ) : VoteRepository {
-    override suspend fun getTimePlaceCandidate(meetId: Int): Result<TimePlaceResponseEntity> {
-        val response = voteRemoteDataSource.getTimePlaceCandidate(meetId)
+    override suspend fun getPlaceCandidate(meetId: Int): Result<List<PlaceCandidateResponseEntity>> {
+        val response = voteRemoteDataSource.getPlaceCandidate(meetId)
 
         return runCatching {
-            VoteMapper.mapperToTimePlaceResponseEntity(response.result)
+            VoteMapper.mapperToPlaceCandidateResponseEntity(response.result)
+        }
+    }
+
+    override suspend fun getTimeCandidate(meetId: Int): Result<TimeCandidateResponseEntity> {
+        val response = voteRemoteDataSource.getTimeCandidate(meetId)
+
+        return runCatching {
+            VoteMapper.mapperToTimeCandidateResponseEntity(response.result)
         }
     }
 
     override suspend fun voteTime(
-        userId: Int,
         meetId: Int,
         voteTimeRequestEntity: VoteTimeRequestEntity
     ): Result<Unit> {
         val response = voteRemoteDataSource.voteTime(
-            userId,
             meetId,
             VoteMapper.mapperToRequestVoteTimeDto(voteTimeRequestEntity)
         )
@@ -37,12 +44,10 @@ class VoteRepositoryImpl @Inject constructor(
     }
 
     override suspend fun votePlace(
-        userId: Int,
         meetId: Int,
         votePlaceRequestEntity: VotePlaceRequestEntity
     ): Result<Unit> {
         val response = voteRemoteDataSource.votePlace(
-            userId,
             meetId,
             VoteMapper.mapperToRequestVotePlaceDto(votePlaceRequestEntity)
         )
@@ -52,11 +57,11 @@ class VoteRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getVoteInfo(userId: Int, meetId: Int): Result<VoteInfoResponseEntity> {
-        val response = voteRemoteDataSource.getVoteInfo(userId, meetId)
+    override suspend fun getVotePlace(meetId: Int): Result<VotePlaceResponseEntity> {
+        val response = voteRemoteDataSource.getVotePlace(meetId)
 
         return runCatching {
-            VoteMapper.mapperToVoteInfoResponseEntity(response.result)
+            VoteMapper.mapperToVotePlaceResponseEntity(response.result)
         }
     }
 }
