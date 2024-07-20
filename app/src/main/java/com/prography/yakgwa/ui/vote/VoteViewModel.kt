@@ -3,6 +3,8 @@ package com.prography.yakgwa.ui.vote
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prography.domain.model.request.ConfirmPlaceRequestEntity
+import com.prography.domain.model.request.ConfirmTimeRequestEntity
 import com.prography.domain.model.request.VotePlaceRequestEntity
 import com.prography.domain.model.request.VoteTimeRequestEntity
 import com.prography.domain.model.response.MeetDetailResponseEntity
@@ -13,15 +15,20 @@ import com.prography.domain.usecase.GetMeetInformationDetailUseCase
 import com.prography.domain.usecase.GetPlaceCandidateInfoUseCase
 import com.prography.domain.usecase.GetUserVotePlaceListUseCase
 import com.prography.domain.usecase.GetVoteTimeCandidateInfoUseCase
+import com.prography.domain.usecase.PatchConfirmMeetPlaceUseCase
+import com.prography.domain.usecase.PatchConfirmMeetTimeUseCase
 import com.prography.domain.usecase.PostUserVotePlaceUseCase
 import com.prography.domain.usecase.PostUserVoteTimeUseCase
 import com.prography.yakgwa.model.PlaceModel
 import com.prography.yakgwa.model.TimeModel
+import com.prography.yakgwa.util.DateTimeUtils.formatLocalDateTimeToString
 import com.prography.yakgwa.util.UiState
-import com.prography.yakgwa.util.dateTimeUtils.DateTimeUtils.formatLocalDateTimeToString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -35,17 +42,37 @@ class VoteViewModel @Inject constructor(
     private val postUserVoteTimeUseCase: PostUserVoteTimeUseCase,
     private val postUserVotePlaceUseCase: PostUserVotePlaceUseCase,
     private val getUserVoteInfoUseCase: GetUserVotePlaceListUseCase,
-    private val getMeetInformationDetailUseCase: GetMeetInformationDetailUseCase
+    private val getMeetInformationDetailUseCase: GetMeetInformationDetailUseCase,
+    private val patchConfirmMeetTimeUseCase: PatchConfirmMeetTimeUseCase,
+    private val patchConfirmMeetPlaceUseCase: PatchConfirmMeetPlaceUseCase
 ) : ViewModel() {
-    private val meetId: Int = savedStateHandle.get<Int>("meetId") ?: 0
+    var meetId: Int
+        get() = savedStateHandle.get<Int>(MEET_ID) ?: INVALID_MEET_ID
+        set(value) {
+            savedStateHandle[MEET_ID] = value
+        }
 
     private val _placeCandidateState =
         MutableStateFlow<UiState<List<PlaceCandidateResponseEntity>>>(UiState.Loading)
-    val placeCandidateState = _placeCandidateState.asStateFlow()
+    val placeCandidateState = _placeCandidateState
+        .onSubscription {
+            getVotePlaceCandidate()
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = UiState.Loading
+        )
 
     private val _timeCandidateState =
         MutableStateFlow<UiState<TimeCandidateResponseEntity>>(UiState.Loading)
-    val timeCandidateState = _timeCandidateState.asStateFlow()
+    val timeCandidateState = _timeCandidateState
+        .onSubscription {
+            getVoteTimeCandidate()
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = UiState.Loading
+        )
 
     private val _timeSlotsState = MutableStateFlow<Map<LocalDate, List<TimeModel>>>(emptyMap())
     val timeSlotsState = _timeSlotsState
@@ -73,13 +100,33 @@ class VoteViewModel @Inject constructor(
 
     private val _votePlaceInfoState =
         MutableStateFlow<UiState<VotePlaceResponseEntity>>(UiState.Loading)
-    val votePlaceInfoState = _votePlaceInfoState.asStateFlow()
+    val votePlaceInfoState = _votePlaceInfoState
+        .onSubscription {
+            getUserVotePlace()
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = UiState.Loading
+        )
 
     private val _detailMeetState =
         MutableStateFlow<UiState<MeetDetailResponseEntity>>(UiState.Loading)
-    val detailMeetState = _detailMeetState.asStateFlow()
+    val detailMeetState = _detailMeetState
+        .onSubscription {
+            getMeetInformationDetail()
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = UiState.Loading
+        )
 
-    fun getVotePlaceCandidate(meetId: Int) {
+    private val _confirmTimeState = MutableStateFlow<UiState<String>>(UiState.Loading)
+    val confirmTimeState = _confirmTimeState.asStateFlow()
+
+    private val _confirmPlaceState = MutableStateFlow<UiState<String>>(UiState.Loading)
+    val confirmPlaceState = _confirmPlaceState.asStateFlow()
+
+    private fun getVotePlaceCandidate() {
         _placeCandidateState.value = UiState.Loading
 
         viewModelScope.launch {
@@ -96,7 +143,7 @@ class VoteViewModel @Inject constructor(
         }
     }
 
-    fun getVoteTimeCandidate(meetId: Int) {
+    private fun getVoteTimeCandidate() {
         _timeCandidateState.value = UiState.Loading
 
         viewModelScope.launch {
@@ -172,7 +219,7 @@ class VoteViewModel @Inject constructor(
         _selectedPlaceState.value = currentList
     }
 
-    fun voteTime(meetId: Int) {
+    fun voteTime() {
         _timeVoteState.value = UiState.Loading
 
         viewModelScope.launch {
@@ -188,7 +235,7 @@ class VoteViewModel @Inject constructor(
         }
     }
 
-    fun votePlace(meetId: Int) {
+    fun votePlace() {
         _placeVoteState.value = UiState.Loading
 
         viewModelScope.launch {
@@ -209,7 +256,7 @@ class VoteViewModel @Inject constructor(
         }
     }
 
-    fun getUserVotePlace(meetId: Int) {
+    private fun getUserVotePlace() {
         _votePlaceInfoState.value = UiState.Loading
 
         viewModelScope.launch {
@@ -241,7 +288,7 @@ class VoteViewModel @Inject constructor(
         return VoteTimeRequestEntity(possibleSchedules)
     }
 
-    fun getMeetInformationDetail() {
+    private fun getMeetInformationDetail() {
         _detailMeetState.value = UiState.Loading
 
         viewModelScope.launch {
@@ -253,5 +300,36 @@ class VoteViewModel @Inject constructor(
                     _detailMeetState.value = UiState.Failure(it.message)
                 }
         }
+    }
+
+    fun confirmMeetTime(confirmTimeRequestEntity: ConfirmTimeRequestEntity) {
+        _confirmTimeState.value = UiState.Loading
+
+        viewModelScope.launch {
+            patchConfirmMeetTimeUseCase(meetId, confirmTimeRequestEntity)
+                .onSuccess {
+                    _confirmTimeState.value = UiState.Success(it)
+                }.onFailure {
+                    _confirmTimeState.value = UiState.Failure(it.message)
+                }
+        }
+    }
+
+    fun confirmMeetPlace(confirmPlaceRequestEntity: ConfirmPlaceRequestEntity) {
+        _confirmPlaceState.value = UiState.Loading
+
+        viewModelScope.launch {
+            patchConfirmMeetPlaceUseCase(meetId, confirmPlaceRequestEntity)
+                .onSuccess {
+                    _confirmPlaceState.value = UiState.Success(it)
+                }.onFailure {
+                    _confirmPlaceState.value = UiState.Failure(it.message)
+                }
+        }
+    }
+
+    companion object {
+        const val MEET_ID = "meetId"
+        const val INVALID_MEET_ID = -1
     }
 }
