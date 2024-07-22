@@ -11,6 +11,8 @@ import com.prography.yakgwa.databinding.ItemBeforeVoteBinding
 import com.prography.yakgwa.databinding.ItemConfirmBinding
 import com.prography.yakgwa.databinding.ItemVoteBinding
 import com.prography.yakgwa.type.MeetType
+import com.prography.yakgwa.util.DateTimeUtils.formatIsoDateTimeToKoreanDate
+import com.prography.yakgwa.util.DateTimeUtils.formatIsoDateTimeToKoreanTime
 
 class ParticipantMeetListAdapter :
     ListAdapter<MeetsResponseEntity, RecyclerView.ViewHolder>(
@@ -116,7 +118,8 @@ class ParticipantMeetListAdapter :
             binding.tvInvitationTitle.text = itemView.meetInfo.meetTitle
             binding.tvTemaName.text = itemView.meetInfo.meetThemeName
 //            binding.tvDDay.text = itemView.meetInfo.meetDateTime
-
+            binding.tvDate.text = formatIsoDateTimeToKoreanDate(itemView.meetInfo.meetDateTime!!)
+            binding.tvTime.text = formatIsoDateTimeToKoreanTime(itemView.meetInfo.meetDateTime!!)
             binding.tvPlace.text = itemView.meetInfo.placeName
 
             binding.btnMeetDetail.setOnClickListener {
