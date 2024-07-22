@@ -1,7 +1,13 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
-    <style name="Base.Theme.YakGwa" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Base.Theme.YakGwa" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!--        <item name="colorPrimary">@color/white</item>-->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/neutral_200</item>
+        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:datePickerStyle">@style/SpinnerDatePicker</item>
+        <item name="android:timePickerStyle">@style/SpinnerTimePicker</item>
     </style>
 </resources>

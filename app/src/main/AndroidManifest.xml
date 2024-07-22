@@ -39,6 +39,7 @@
         </activity>
         <activity
             android:name=".ui.login.LoginActivity"
+            android:theme="@style/Theme.YakGwa.Login"
             android:exported="true"
             android:launchMode="singleTask">
 
