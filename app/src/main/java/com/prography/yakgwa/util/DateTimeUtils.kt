@@ -1,4 +1,4 @@
-package com.prography.yakgwa.util.dateTimeUtils
+package com.prography.yakgwa.util
 
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import java.time.LocalDate
@@ -11,6 +11,10 @@ object DateTimeUtils {
     private val timeFormatter12Hour = DateTimeFormatter.ofPattern("a hh:mm")
     private val timeFormatter24Hour = DateTimeFormatter.ofPattern("HH:mm:ss")
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+    private val koreanDateFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일")
+    private val koreanTimeFormatter = DateTimeFormatter.ofPattern("a h시")
+    private val isoDateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+
 
     fun formatDateToString(year: Int, month: Int, day: Int): String {
         val date = LocalDate.of(year, month, day)
@@ -53,5 +57,25 @@ object DateTimeUtils {
             this.monthValue - 1,
             dayOfMonth
         )
+    }
+
+    fun formatDateTimeToKoreanDate(dateTimeString: String): String {
+        val dateTime = LocalDateTime.parse(dateTimeString, dateTimeFormatter)
+        return dateTime.format(koreanDateFormatter)
+    }
+
+    fun formatDateTimeToKoreanTime(dateTimeString: String): String {
+        val dateTime = LocalDateTime.parse(dateTimeString, dateTimeFormatter)
+        return dateTime.format(koreanTimeFormatter)
+    }
+
+    fun formatIsoDateTimeToKoreanDate(dateTimeString: String): String {
+        val dateTime = LocalDateTime.parse(dateTimeString, isoDateTimeFormatter)
+        return dateTime.format(koreanDateFormatter)
+    }
+
+    fun formatIsoDateTimeToKoreanTime(dateTimeString: String): String {
+        val dateTime = LocalDateTime.parse(dateTimeString, isoDateTimeFormatter)
+        return dateTime.format(koreanTimeFormatter)
     }
 }

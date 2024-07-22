@@ -1,5 +1,6 @@
 package com.prography.yakgwa.ui.myPage
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -27,6 +28,7 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
         addListeners()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun observer() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -34,7 +36,7 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            binding.tvUserName.text = it.data.name
+                            binding.tvUserName.text = "${it.data.name}님"
                             binding.ivProfileImage.load(it.data.imageUrl)
                         }
 

@@ -9,16 +9,15 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentVotePromiseTimeBinding
+import com.prography.yakgwa.util.DateTimeUtils.toCalendarDay
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
 import com.prography.yakgwa.util.calendarUtils.MinMaxDecorator
 import com.prography.yakgwa.util.calendarUtils.SelectDayDecorator
 import com.prography.yakgwa.util.calendarUtils.TimeSelectedDecorator
 import com.prography.yakgwa.util.calendarUtils.WeekDayColorFormatter
-import com.prography.yakgwa.util.dateTimeUtils.DateTimeUtils.toCalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -32,22 +31,13 @@ import java.time.format.DateTimeFormatter
 class VotePromiseTimeFragment :
     BaseFragment<FragmentVotePromiseTimeBinding>(R.layout.fragment_vote_promise_time) {
     private val viewModel: VoteViewModel by viewModels()
-
     private lateinit var timeListAdapter: TimeListAdapter
-    private val args by navArgs<VotePromiseTimeFragmentArgs>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val meetId = args.meetId
-
         setupRecyclerView()
-        initView(meetId)
-        observer(meetId)
-        addListeners(meetId)
-    }
-
-    private fun initView(meetId: Int) {
-        viewModel.getVoteTimeCandidate(meetId)
+        observer()
+        addListeners()
     }
 
     private fun initCalendarView(
@@ -65,7 +55,7 @@ class VotePromiseTimeFragment :
         viewModel.calculateTimeSlots(startDate, endDate)
     }
 
-    private fun observer(meetId: Int) {
+    private fun observer() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.timeCandidateState.collectLatest {
@@ -92,7 +82,7 @@ class VotePromiseTimeFragment :
                 viewModel.timeVoteState.collectLatest {
                     when (it) {
                         is UiState.Loading -> {}
-                        is UiState.Success -> navigateToInvitationLeaderFragment(meetId)
+                        is UiState.Success -> navigateToInvitationLeaderFragment()
                         is UiState.Failure -> {
                             Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
                         }
@@ -122,9 +112,9 @@ class VotePromiseTimeFragment :
         }
     }
 
-    private fun addListeners(meetId: Int) {
+    private fun addListeners() {
         binding.btnVoteComplete.setOnClickListener {
-            viewModel.voteTime(meetId)
+            viewModel.voteTime()
         }
         binding.ivNavigateUpBtn.setOnClickListener {
             findNavController().navigateUp()
@@ -214,9 +204,9 @@ class VotePromiseTimeFragment :
         }
     }
 
-    private fun navigateToInvitationLeaderFragment(meetId: Int) {
+    private fun navigateToInvitationLeaderFragment() {
         VotePromiseTimeFragmentDirections.actionVotePromiseTimeFragmentToInvitationLeaderFragment(
-            meetId
+            viewModel.meetId
         ).apply {
             findNavController().navigate(this)
         }

@@ -2,8 +2,6 @@ package com.prography.yakgwa.ui.invitation
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
-import android.content.Context
-import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -12,8 +10,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.RecyclerView
 import com.kakao.sdk.common.util.KakaoCustomTabsClient
 import com.kakao.sdk.share.ShareClient
 import com.kakao.sdk.share.WebSharerClient
@@ -29,6 +25,8 @@ import com.prography.domain.model.response.VotePlaceResponseEntity
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentInvitationLeaderBinding
 import com.prography.yakgwa.type.MeetType
+import com.prography.yakgwa.ui.invitation.InvitationViewModel.Companion.MEET_ID
+import com.prography.yakgwa.util.OverlapDecoration
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,27 +40,15 @@ class InvitationLeaderFragment :
     BaseFragment<FragmentInvitationLeaderBinding>(R.layout.fragment_invitation_leader) {
     private val viewModel: InvitationViewModel by viewModels()
 
-    private val args by navArgs<InvitationLeaderFragmentArgs>()
-
     private lateinit var voteTimeListAdapter: VoteTimeListAdapter
     private lateinit var votePlaceListAdapter: VotePlaceListAdapter
     private lateinit var participantMemberListAdapter: ParticipantMemberListAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val meetId = args.meetId
-
-        initView(meetId)
         setupRecyclerView()
         observer()
-        addListeners(meetId)
-    }
-
-    private fun initView(meetId: Int) {
-        viewModel.getMeetInformationDetail(meetId)
-        viewModel.getVoteTimeCandidate(meetId)
-        viewModel.getUserVotePlace(meetId)
-        viewModel.getVotePlaceCandidate(meetId)
+        addListeners()
     }
 
     private fun observer() {
@@ -125,7 +111,7 @@ class InvitationLeaderFragment :
                         is UiState.Loading -> {}
                         is UiState.Success -> {
                             showMeetDetails(it.data.meetInfo)
-                            participantMemberListAdapter.submitList(it.data.participantInfo)
+                            participantMemberListAdapter.submitList(it.data.participantInfo.reversed())
                         }
 
                         is UiState.Failure -> {
@@ -137,10 +123,6 @@ class InvitationLeaderFragment :
         }
     }
 
-    fun Context.dpToPx(dp: Float): Int {
-        return (dp * resources.displayMetrics.density).toInt()
-    }
-
     private fun setupRecyclerView() {
         voteTimeListAdapter = VoteTimeListAdapter()
         binding.rvVoteTime.adapter = voteTimeListAdapter
@@ -149,25 +131,15 @@ class InvitationLeaderFragment :
         binding.rvVotePlace.adapter = votePlaceListAdapter
 
         participantMemberListAdapter = ParticipantMemberListAdapter()
-        binding.rvParticipantMember.addItemDecoration(object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(
-                outRect: Rect,
-                view: View,
-                parent: RecyclerView,
-                state: RecyclerView.State
-            ) {
-                val position = parent.getChildAdapterPosition(view)
-                if (position != 0) {
-                    outRect.left = requireContext().dpToPx(10f) * -1
-                }
-            }
-        })
-        binding.rvParticipantMember.adapter = participantMemberListAdapter
+        binding.rvParticipantMember.apply {
+            addItemDecoration(OverlapDecoration(requireContext()))
+            adapter = participantMemberListAdapter
+        }
     }
 
-    private fun addListeners(meetId: Int) {
+    private fun addListeners() {
         binding.ivInvitationBtn.setOnClickListener {
-            sendKakaoLink(viewModel.meetInfoState.value!!, meetId)
+            sendKakaoLink(viewModel.meetInfoState.value!!)
         }
 
         binding.ivNavigateUpBtn.setOnClickListener {
@@ -175,16 +147,16 @@ class InvitationLeaderFragment :
         }
 
         binding.btnVoteTime.setOnClickListener {
-            navigateToVotePromiseTimeFragment(meetId)
+            navigateToVotePromiseTimeFragment()
         }
 
         binding.btnVotePlace.setOnClickListener {
-            navigateToVotePromisePlaceFragment(meetId)
+            navigateToVotePromisePlaceFragment()
         }
     }
 
-    private fun sendKakaoLink(meetInfo: MeetInfo, meetId: Int) {
-        val defaultFeed = createKakaoFeedTemplate(meetInfo, meetId)
+    private fun sendKakaoLink(meetInfo: MeetInfo) {
+        val defaultFeed = createKakaoFeedTemplate(meetInfo)
 
         if (ShareClient.instance.isKakaoTalkSharingAvailable(requireActivity())) {
             shareViaKakaoTalk(defaultFeed)
@@ -193,9 +165,9 @@ class InvitationLeaderFragment :
         }
     }
 
-    private fun createKakaoFeedTemplate(meetInfo: MeetInfo, meetId: Int): FeedTemplate {
+    private fun createKakaoFeedTemplate(meetInfo: MeetInfo): FeedTemplate {
         val executionParams = mapOf(
-            MEET_ID to meetId.toString()
+            MEET_ID to viewModel.meetId.toString()
         )
         val link = Link(
             androidExecutionParams = executionParams,
@@ -297,23 +269,19 @@ class InvitationLeaderFragment :
         }
     }
 
-    private fun navigateToVotePromiseTimeFragment(meetId: Int) {
+    private fun navigateToVotePromiseTimeFragment() {
         InvitationLeaderFragmentDirections.actionInvitationLeaderFragmentToVotePromiseTimeFragment(
-            meetId
+            viewModel.meetId
         ).apply {
             findNavController().navigate(this)
         }
     }
 
-    private fun navigateToVotePromisePlaceFragment(meetId: Int) {
+    private fun navigateToVotePromisePlaceFragment() {
         InvitationLeaderFragmentDirections.actionInvitationLeaderFragmentToVotePromisePlaceFragment(
-            meetId
+            viewModel.meetId
         ).apply {
             findNavController().navigate(this)
         }
-    }
-
-    companion object {
-        private const val MEET_ID = "meetId"
     }
 }

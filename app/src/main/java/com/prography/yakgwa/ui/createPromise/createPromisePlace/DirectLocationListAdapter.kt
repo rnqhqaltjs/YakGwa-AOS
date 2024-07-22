@@ -35,7 +35,7 @@ class DirectLocationListAdapter :
     inner class DirectLocationListViewHolder(private val binding: ItemLocationListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: LocationResponseEntity) {
-            binding.tvTitle.text = Html.fromHtml(itemView.title)
+            binding.tvTitle.text = Html.fromHtml(itemView.title).toString()
         }
     }
 

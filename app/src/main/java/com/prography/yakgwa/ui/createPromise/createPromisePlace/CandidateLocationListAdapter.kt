@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.prography.domain.model.response.LocationResponseEntity
-import com.prography.yakgwa.databinding.ItemSelectedLocationListBinding
+import com.prography.yakgwa.databinding.ItemCandidateLocationListBinding
 
 class CandidateLocationListAdapter :
     ListAdapter<LocationResponseEntity, CandidateLocationListAdapter.CandidateLocationListViewHolder>(
@@ -19,7 +19,7 @@ class CandidateLocationListAdapter :
         viewType: Int
     ): CandidateLocationListViewHolder {
         return CandidateLocationListViewHolder(
-            ItemSelectedLocationListBinding.inflate(
+            ItemCandidateLocationListBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -32,7 +32,7 @@ class CandidateLocationListAdapter :
         holder.bind(itemView)
     }
 
-    inner class CandidateLocationListViewHolder(private val binding: ItemSelectedLocationListBinding) :
+    inner class CandidateLocationListViewHolder(private val binding: ItemCandidateLocationListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: LocationResponseEntity) {
             binding.tvSelectedTitle.text = Html.fromHtml(itemView.title)

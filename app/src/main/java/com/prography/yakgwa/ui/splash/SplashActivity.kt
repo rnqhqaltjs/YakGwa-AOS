@@ -26,7 +26,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
-
         processIntent(intent)
     }
 
@@ -92,8 +91,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
     }
 
     companion object {
-        const val SPLASH_SCREEN_DELAY_TIME = 500L
-        const val MEET_ID = "meetId"
-        const val USER_ID = "userId"
+        private const val SPLASH_SCREEN_DELAY_TIME = 500L
+        private const val MEET_ID = "meetId"
+        private const val USER_ID = "userId"
     }
 }

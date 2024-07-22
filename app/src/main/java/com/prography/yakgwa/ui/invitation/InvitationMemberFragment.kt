@@ -13,6 +13,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.prography.domain.model.response.MeetDetailResponseEntity.MeetInfo
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentInvitationMemberBinding
+import com.prography.yakgwa.ui.invitation.InvitationViewModel.Companion.INVALID_MEET_ID
+import com.prography.yakgwa.util.OverlapDecoration
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,27 +24,25 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class InvitationMemberFragment :
     BaseFragment<FragmentInvitationMemberBinding>(R.layout.fragment_invitation_member) {
-
     private val viewModel: InvitationViewModel by viewModels()
+    private lateinit var participantMemberListAdapter: ParticipantMemberListAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val meetId = arguments?.getString("meetId")?.toIntOrNull()
+        initView()
+        setupRecyclerView()
+        observer()
+        addListeners()
+    }
 
-        if (meetId == null) {
+    private fun initView() {
+        if (viewModel.meetId == INVALID_MEET_ID) {
             handleInvalidInvitation()
             return
         }
-
-        initView(meetId)
-        observer(meetId)
-        addListeners(meetId)
     }
 
-    private fun initView(meetId: Int) {
-        viewModel.getMeetInformationDetail(meetId)
-    }
-
-    private fun observer(meetId: Int) {
+    private fun observer() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.detailMeetState.collectLatest {
@@ -50,6 +50,7 @@ class InvitationMemberFragment :
                         is UiState.Loading -> {}
                         is UiState.Success -> {
                             showMeetDetails(it.data.meetInfo)
+                            participantMemberListAdapter.submitList(it.data.participantInfo.reversed())
                         }
 
                         is UiState.Failure -> {
@@ -66,7 +67,7 @@ class InvitationMemberFragment :
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            navigateToInvitationLeaderFragment(meetId)
+                            navigateToInvitationLeaderFragment()
                         }
 
                         is UiState.Failure -> {
@@ -78,9 +79,21 @@ class InvitationMemberFragment :
         }
     }
 
-    private fun addListeners(meetId: Int) {
+    private fun setupRecyclerView() {
+        participantMemberListAdapter = ParticipantMemberListAdapter()
+        binding.rvParticipantMember.apply {
+            addItemDecoration(OverlapDecoration(requireContext()))
+            adapter = participantMemberListAdapter
+        }
+    }
+
+    private fun addListeners() {
         binding.btnInvitationParticipant.setOnClickListener {
-            viewModel.participantMeet(meetId)
+            viewModel.participantMeet()
+        }
+
+        binding.ivCloseBtn.setOnClickListener {
+            findNavController().navigateUp()
         }
     }
 
@@ -105,9 +118,9 @@ class InvitationMemberFragment :
         Snackbar.make(requireView(), "만료되거나 유효하지 않은 초대장입니다.", Snackbar.LENGTH_SHORT).show()
     }
 
-    private fun navigateToInvitationLeaderFragment(meetId: Int) {
+    private fun navigateToInvitationLeaderFragment() {
         InvitationMemberFragmentDirections.actionInvitationMemberFragmentToInvitationLeaderFragment(
-            meetId
+            viewModel.meetId
         )
             .apply {
                 findNavController().navigate(this)

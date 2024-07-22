@@ -2,12 +2,11 @@ package com.prography.yakgwa.ui.createPromise.createPromisePlace
 
 import android.text.Html
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.prography.yakgwa.databinding.ItemSelectedLocationListBinding
+import com.prography.yakgwa.databinding.ItemCandidateDetailLocationListBinding
 import com.prography.yakgwa.model.SelectedLocationModel
 
 class CandidateLocationDetailListAdapter :
@@ -20,7 +19,7 @@ class CandidateLocationDetailListAdapter :
         viewType: Int
     ): CandidateLocationDetailListViewHolder {
         return CandidateLocationDetailListViewHolder(
-            ItemSelectedLocationListBinding.inflate(
+            ItemCandidateDetailLocationListBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -33,12 +32,12 @@ class CandidateLocationDetailListAdapter :
         holder.bind(itemView)
     }
 
-    inner class CandidateLocationDetailListViewHolder(private val binding: ItemSelectedLocationListBinding) :
+    inner class CandidateLocationDetailListViewHolder(private val binding: ItemCandidateDetailLocationListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: SelectedLocationModel) {
-            binding.tvSelectedTitle.text = Html.fromHtml(itemView.locationResponseEntity.title)
+            binding.tvSelectedTitle.text =
+                Html.fromHtml(itemView.locationResponseEntity.title).toString()
             binding.tvSelectedAddress.text = itemView.locationResponseEntity.address
-            binding.ivRemoveBtn.visibility = View.GONE
             binding.cvSearchLocation.isSelected = itemView.isSelected
 
             binding.cvSearchLocation.setOnClickListener {

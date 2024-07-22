@@ -12,6 +12,8 @@ import com.prography.domain.usecase.GetThemeListUseCase
 import com.prography.domain.usecase.GetUserInformationUseCase
 import com.prography.domain.usecase.GetUserVotePlaceListUseCase
 import com.prography.domain.usecase.GetVoteTimeCandidateInfoUseCase
+import com.prography.domain.usecase.PatchConfirmMeetPlaceUseCase
+import com.prography.domain.usecase.PatchConfirmMeetTimeUseCase
 import com.prography.domain.usecase.PostNewMeetCreateUseCase
 import com.prography.domain.usecase.PostParticipantMeetUseCase
 import com.prography.domain.usecase.PostUserVotePlaceUseCase
@@ -84,4 +86,15 @@ class UseCaseModule {
     @Singleton
     fun providesGetUserInformationUseCase(authRepository: AuthRepository): GetUserInformationUseCase =
         GetUserInformationUseCase(authRepository)
+
+    @Provides
+    @Singleton
+    fun providesPatchConfirmMeetTimeUseCase(voteRepository: VoteRepository): PatchConfirmMeetTimeUseCase =
+        PatchConfirmMeetTimeUseCase(voteRepository)
+
+    @Provides
+    @Singleton
+    fun providesPatchConfirmMeetPlaceUseCase(voteRepository: VoteRepository): PatchConfirmMeetPlaceUseCase =
+        PatchConfirmMeetPlaceUseCase(voteRepository)
+
 }

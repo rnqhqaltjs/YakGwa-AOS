@@ -1,5 +1,7 @@
 package com.prography.data.service
 
+import com.prography.data.model.request.RequestConfirmPlaceDto
+import com.prography.data.model.request.RequestConfirmTimeDto
 import com.prography.data.model.request.RequestVotePlaceDto
 import com.prography.data.model.request.RequestVoteTimeDto
 import com.prography.data.model.response.BaseResponse
@@ -8,6 +10,7 @@ import com.prography.data.model.response.ResponseTimeCandidateDto
 import com.prography.data.model.response.ResponseVotePlaceDto
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -34,4 +37,16 @@ interface VoteService {
     suspend fun getVotePlace(
         @Path("meetId") meetId: Int
     ): BaseResponse<ResponseVotePlaceDto>
+
+    @PATCH("/api/v1/meets/{meetId}/times/confirm")
+    suspend fun confirmMeetTime(
+        @Path("meetId") meetId: Int,
+        @Body requestConfirmTimeDto: RequestConfirmTimeDto
+    ): BaseResponse<String>
+
+    @PATCH("/api/v1/meets/{meetId}/places/confirm")
+    suspend fun confirmMeetPlace(
+        @Path("meetId") meetId: Int,
+        @Body requestConfirmPlaceDto: RequestConfirmPlaceDto
+    ): BaseResponse<String>
 }
