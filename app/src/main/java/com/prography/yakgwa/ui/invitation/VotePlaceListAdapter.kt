@@ -45,7 +45,7 @@ class VotePlaceListAdapter :
                     oldItem: PlaceInfos,
                     newItem: PlaceInfos
                 ): Boolean {
-                    return oldItem.placeId == newItem.placeId
+                    return oldItem.placeSlotId == newItem.placeSlotId
                 }
 
                 override fun areContentsTheSame(
