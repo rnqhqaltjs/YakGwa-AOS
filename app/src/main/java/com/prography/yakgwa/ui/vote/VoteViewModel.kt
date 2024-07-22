@@ -19,6 +19,8 @@ import com.prography.domain.usecase.PatchConfirmMeetPlaceUseCase
 import com.prography.domain.usecase.PatchConfirmMeetTimeUseCase
 import com.prography.domain.usecase.PostUserVotePlaceUseCase
 import com.prography.domain.usecase.PostUserVoteTimeUseCase
+import com.prography.yakgwa.model.ConfirmPlaceModel
+import com.prography.yakgwa.model.ConfirmTimeModel
 import com.prography.yakgwa.model.PlaceModel
 import com.prography.yakgwa.model.TimeModel
 import com.prography.yakgwa.util.DateTimeUtils.formatLocalDateTimeToString
@@ -126,6 +128,12 @@ class VoteViewModel @Inject constructor(
     private val _confirmPlaceState = MutableStateFlow<UiState<String>>(UiState.Loading)
     val confirmPlaceState = _confirmPlaceState.asStateFlow()
 
+    private val _selectedConfirmPlaceState = MutableStateFlow<List<ConfirmPlaceModel>>(emptyList())
+    val selectedConfirmPlaceState = _selectedConfirmPlaceState
+
+    private val _selectedConfirmTimeState = MutableStateFlow<List<ConfirmTimeModel>>(emptyList())
+    val selectedConfirmTimeState = _selectedConfirmTimeState
+
     private fun getVotePlaceCandidate() {
         _placeCandidateState.value = UiState.Loading
 
@@ -143,13 +151,22 @@ class VoteViewModel @Inject constructor(
         }
     }
 
-    private fun getVoteTimeCandidate() {
+    fun getVoteTimeCandidate() {
         _timeCandidateState.value = UiState.Loading
 
         viewModelScope.launch {
             getVoteTimeCandidateInfoUseCase(meetId)
                 .onSuccess {
                     _timeCandidateState.value = UiState.Success(it)
+                    val confirmTimeModels = it.timeInfos?.mapIndexed { index, placeInfo ->
+                        ConfirmTimeModel(placeInfo).apply {
+                            if (index == 0) {
+                                isSelected = true
+                            }
+                        }
+                    } ?: emptyList()
+
+                    _selectedConfirmTimeState.value = confirmTimeModels
                 }
                 .onFailure {
                     _timeCandidateState.value = UiState.Failure(it.message)
@@ -256,13 +273,22 @@ class VoteViewModel @Inject constructor(
         }
     }
 
-    private fun getUserVotePlace() {
+    fun getUserVotePlace() {
         _votePlaceInfoState.value = UiState.Loading
 
         viewModelScope.launch {
             getUserVoteInfoUseCase(meetId)
                 .onSuccess {
                     _votePlaceInfoState.value = UiState.Success(it)
+                    val confirmPlaceModels = it.placeInfos?.mapIndexed { index, placeInfo ->
+                        ConfirmPlaceModel(placeInfo).apply {
+                            if (index == 0) {
+                                isSelected = true
+                            }
+                        }
+                    } ?: emptyList()
+
+                    _selectedConfirmPlaceState.value = confirmPlaceModels
                 }
                 .onFailure {
                     _votePlaceInfoState.value = UiState.Failure(it.message)
@@ -302,8 +328,15 @@ class VoteViewModel @Inject constructor(
         }
     }
 
-    fun confirmMeetTime(confirmTimeRequestEntity: ConfirmTimeRequestEntity) {
+    fun confirmMeetTime() {
         _confirmTimeState.value = UiState.Loading
+
+        val confirmTimeRequestEntity =
+            ConfirmTimeRequestEntity(
+                _selectedConfirmTimeState.value
+                    .find { it.isSelected }!!
+                    .timeInfo.timeId
+            )
 
         viewModelScope.launch {
             patchConfirmMeetTimeUseCase(meetId, confirmTimeRequestEntity)
@@ -315,8 +348,15 @@ class VoteViewModel @Inject constructor(
         }
     }
 
-    fun confirmMeetPlace(confirmPlaceRequestEntity: ConfirmPlaceRequestEntity) {
+    fun confirmMeetPlace() {
         _confirmPlaceState.value = UiState.Loading
+
+        val confirmPlaceRequestEntity =
+            ConfirmPlaceRequestEntity(
+                _selectedConfirmPlaceState.value
+                    .find { it.isSelected }!!
+                    .placeInfos.placeSlotId
+            )
 
         viewModelScope.launch {
             patchConfirmMeetPlaceUseCase(meetId, confirmPlaceRequestEntity)
@@ -326,6 +366,20 @@ class VoteViewModel @Inject constructor(
                     _confirmPlaceState.value = UiState.Failure(it.message)
                 }
         }
+    }
+
+    fun singleConfirmTimeSelection(position: Int) {
+        val currentList = _selectedConfirmTimeState.value.mapIndexed { index, item ->
+            item.copy(isSelected = index == position)
+        }
+        _selectedConfirmTimeState.value = currentList
+    }
+
+    fun singleConfirmPlaceSelection(position: Int) {
+        val currentList = _selectedConfirmPlaceState.value.mapIndexed { index, item ->
+            item.copy(isSelected = index == position)
+        }
+        _selectedConfirmPlaceState.value = currentList
     }
 
     companion object {

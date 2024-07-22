@@ -8,7 +8,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentVotePromisePlaceBinding
 import com.prography.yakgwa.model.PlaceModel
@@ -21,23 +20,14 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class VotePromisePlaceFragment :
     BaseFragment<FragmentVotePromisePlaceBinding>(R.layout.fragment_vote_promise_place) {
-
     private val viewModel: VoteViewModel by viewModels()
     private lateinit var placeListAdapter: PlaceListAdapter
 
-    private val args by navArgs<VotePromisePlaceFragmentArgs>()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val meetId = args.meetId
-
-        initView(meetId)
         setupRecyclerView()
-        observer(meetId)
-        addListeners(meetId)
-    }
-
-    private fun initView(meetId: Int) {
-        viewModel.getVotePlaceCandidate(meetId)
+        observer()
+        addListeners()
     }
 
     private fun setupRecyclerView() {
@@ -49,7 +39,7 @@ class VotePromisePlaceFragment :
         binding.rvPlace.adapter = placeListAdapter
     }
 
-    private fun observer(meetId: Int) {
+    private fun observer() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.placeCandidateState.collectLatest {
@@ -76,7 +66,7 @@ class VotePromisePlaceFragment :
                 viewModel.placeVoteState.collectLatest {
                     when (it) {
                         is UiState.Loading -> {}
-                        is UiState.Success -> navigateToInvitationLeaderFragment(meetId)
+                        is UiState.Success -> navigateToInvitationLeaderFragment()
                         is UiState.Failure -> {
                             Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
                         }
@@ -93,18 +83,18 @@ class VotePromisePlaceFragment :
         }
     }
 
-    private fun addListeners(meetId: Int) {
+    private fun addListeners() {
         binding.btnVoteComplete.setOnClickListener {
-            viewModel.votePlace(meetId)
+            viewModel.votePlace()
         }
         binding.ivNavigateUpBtn.setOnClickListener {
             findNavController().navigateUp()
         }
     }
 
-    private fun navigateToInvitationLeaderFragment(meetId: Int) {
+    private fun navigateToInvitationLeaderFragment() {
         VotePromisePlaceFragmentDirections.actionVotePromisePlaceFragmentToInvitationLeaderFragment(
-            meetId
+            viewModel.meetId
         ).apply {
             findNavController().navigate(this)
         }
