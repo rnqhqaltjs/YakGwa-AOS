@@ -57,7 +57,6 @@ object VoteMapper {
                     )
                 }
             )
-
         }
     }
 
@@ -88,7 +87,7 @@ object VoteMapper {
                 this.placeInfos?.map { placeInfo ->
                     placeInfo.run {
                         VotePlaceResponseEntity.PlaceInfos(
-                            this.placeId,
+                            this.placeSlotId,
                             this.title,
                             this.roadAddress,
                             this.mapx,

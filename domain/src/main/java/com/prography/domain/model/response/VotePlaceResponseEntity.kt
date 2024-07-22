@@ -5,7 +5,7 @@ data class VotePlaceResponseEntity(
     val placeInfos: List<PlaceInfos>?,
 ) {
     data class PlaceInfos(
-        val placeId: Int,
+        val placeSlotId: Int,
         val title: String,
         val roadAddress: String,
         val mapX: String,

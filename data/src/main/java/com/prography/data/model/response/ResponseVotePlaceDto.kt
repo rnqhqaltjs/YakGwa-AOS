@@ -13,8 +13,8 @@ data class ResponseVotePlaceDto(
 ) {
     @Serializable
     data class PlaceInfos(
-        @SerializedName("placeId")
-        val placeId: Int,
+        @SerializedName("placeSlotId")
+        val placeSlotId: Int,
         @SerializedName("title")
         val title: String,
         @SerializedName("roadAddress")
