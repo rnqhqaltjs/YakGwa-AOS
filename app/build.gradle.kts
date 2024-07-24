@@ -88,6 +88,7 @@ dependencies {
     // Kakao
     implementation(libs.v2.user)
     implementation(libs.v2.share)
+    implementation(libs.v2.navi)
 
     // Timber
     implementation(libs.timber)
@@ -106,4 +107,9 @@ dependencies {
 
     // Coil
     implementation(libs.coil)
+
+    // Room DB
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 }

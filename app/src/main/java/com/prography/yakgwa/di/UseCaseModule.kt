@@ -3,11 +3,14 @@ package com.prography.yakgwa.di
 import com.prography.domain.repository.AuthRepository
 import com.prography.domain.repository.MeetRepository
 import com.prography.domain.repository.NaverRepository
+import com.prography.domain.repository.PromiseRepository
 import com.prography.domain.repository.VoteRepository
+import com.prography.domain.usecase.AddPromiseHistoryUseCase
 import com.prography.domain.usecase.GetLocationListUseCase
 import com.prography.domain.usecase.GetMeetInformationDetailUseCase
 import com.prography.domain.usecase.GetParticipantMeetListUseCase
 import com.prography.domain.usecase.GetPlaceCandidateInfoUseCase
+import com.prography.domain.usecase.GetPromiseHistoryListUseCase
 import com.prography.domain.usecase.GetThemeListUseCase
 import com.prography.domain.usecase.GetUserInformationUseCase
 import com.prography.domain.usecase.GetUserVotePlaceListUseCase
@@ -96,5 +99,15 @@ class UseCaseModule {
     @Singleton
     fun providesPatchConfirmMeetPlaceUseCase(voteRepository: VoteRepository): PatchConfirmMeetPlaceUseCase =
         PatchConfirmMeetPlaceUseCase(voteRepository)
+
+    @Provides
+    @Singleton
+    fun providesAddPromiseHistoryUseCase(promiseRepository: PromiseRepository): AddPromiseHistoryUseCase =
+        AddPromiseHistoryUseCase(promiseRepository)
+
+    @Provides
+    @Singleton
+    fun providesGetPromiseHistoryListUseCase(promiseRepository: PromiseRepository): GetPromiseHistoryListUseCase =
+        GetPromiseHistoryListUseCase(promiseRepository)
 
 }
