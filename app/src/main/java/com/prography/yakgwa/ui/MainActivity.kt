@@ -49,7 +49,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
                 destination.id == R.id.votePromisePlaceFragment ||
                 destination.id == R.id.voteCompletionFragment ||
                 destination.id == R.id.exitDialogFragment ||
-                destination.id == R.id.addCandidatePlaceDetailFragment
+                destination.id == R.id.addCandidatePlaceDetailFragment ||
+                destination.id == R.id.promiseHistoryFragment
             ) {
                 binding.navView.visibility = View.GONE
             } else {

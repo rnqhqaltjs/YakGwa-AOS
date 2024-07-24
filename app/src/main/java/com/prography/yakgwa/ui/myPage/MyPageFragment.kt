@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import coil.load
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentMyPageBinding
@@ -70,12 +71,22 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
         binding.tvLogoutBtn.setOnClickListener {
             viewModel.logout()
         }
+
+        binding.cvPromiseHistory.setOnClickListener {
+            navigateToPromiseHistoryFragment()
+        }
     }
 
     private fun navigateToAuth() {
         Intent(requireContext(), LoginActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(this)
+        }
+    }
+
+    private fun navigateToPromiseHistoryFragment() {
+        MyPageFragmentDirections.actionMyPageFragmentToPromiseHistoryFragment().apply {
+            findNavController().navigate(this)
         }
     }
 }
