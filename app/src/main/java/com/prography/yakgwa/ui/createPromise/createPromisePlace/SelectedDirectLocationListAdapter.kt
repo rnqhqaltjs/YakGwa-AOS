@@ -36,6 +36,7 @@ class SelectedDirectLocationListAdapter :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: LocationResponseEntity) {
             binding.tvSelectedTitle.text = Html.fromHtml(itemView.title).toString()
+            binding.tvSelectedAddress.text = itemView.roadAddress
 
             binding.ivRemoveBtn.setOnClickListener {
                 onRemoveClickListener?.invoke(itemView)
@@ -55,7 +56,7 @@ class SelectedDirectLocationListAdapter :
                     oldItem: LocationResponseEntity,
                     newItem: LocationResponseEntity
                 ): Boolean {
-                    return oldItem.address == newItem.address
+                    return oldItem.roadAddress == newItem.roadAddress
                 }
 
                 override fun areContentsTheSame(

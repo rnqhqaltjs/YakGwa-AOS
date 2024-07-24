@@ -51,7 +51,7 @@ class DirectLocationListAdapter :
                     oldItem: LocationResponseEntity,
                     newItem: LocationResponseEntity
                 ): Boolean {
-                    return oldItem.address == newItem.address
+                    return oldItem.roadAddress == newItem.roadAddress
                 }
 
                 override fun areContentsTheSame(

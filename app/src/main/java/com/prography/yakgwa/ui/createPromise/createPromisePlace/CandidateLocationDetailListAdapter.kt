@@ -37,7 +37,7 @@ class CandidateLocationDetailListAdapter :
         fun bind(itemView: SelectedLocationModel) {
             binding.tvSelectedTitle.text =
                 Html.fromHtml(itemView.locationResponseEntity.title).toString()
-            binding.tvSelectedAddress.text = itemView.locationResponseEntity.address
+            binding.tvSelectedAddress.text = itemView.locationResponseEntity.roadAddress
             binding.cvSearchLocation.isSelected = itemView.isSelected
 
             binding.cvSearchLocation.setOnClickListener {
@@ -58,7 +58,7 @@ class CandidateLocationDetailListAdapter :
                     oldItem: SelectedLocationModel,
                     newItem: SelectedLocationModel
                 ): Boolean {
-                    return oldItem.locationResponseEntity.address == newItem.locationResponseEntity.address
+                    return oldItem.locationResponseEntity.roadAddress == newItem.locationResponseEntity.roadAddress
                 }
 
                 override fun areContentsTheSame(
