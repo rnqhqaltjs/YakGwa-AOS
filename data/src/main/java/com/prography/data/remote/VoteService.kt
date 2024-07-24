@@ -1,4 +1,4 @@
-package com.prography.data.service
+package com.prography.data.remote
 
 import com.prography.data.model.request.RequestConfirmPlaceDto
 import com.prography.data.model.request.RequestConfirmTimeDto

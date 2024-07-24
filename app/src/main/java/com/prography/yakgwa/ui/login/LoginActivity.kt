@@ -7,7 +7,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.prography.data.service.KakaoAuthService
+import com.prography.data.remote.KakaoAuthService
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.ActivityLoginBinding
 import com.prography.yakgwa.ui.MainActivity

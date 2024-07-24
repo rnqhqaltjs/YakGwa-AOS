@@ -8,7 +8,7 @@ import com.prography.data.model.response.ResponseMeetDetailDto
 import com.prography.data.model.response.ResponseMeetsDto
 import com.prography.data.model.response.ResponseParticipantMeetDto
 import com.prography.data.model.response.ResponseThemesDto
-import com.prography.data.service.MeetService
+import com.prography.data.remote.MeetService
 import javax.inject.Inject
 
 class MeetRemoteDataSourceImpl @Inject constructor(

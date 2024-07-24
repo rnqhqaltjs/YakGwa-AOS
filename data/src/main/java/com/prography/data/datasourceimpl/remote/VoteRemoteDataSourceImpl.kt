@@ -9,7 +9,7 @@ import com.prography.data.model.response.BaseResponse
 import com.prography.data.model.response.ResponsePlaceCandidateDto
 import com.prography.data.model.response.ResponseTimeCandidateDto
 import com.prography.data.model.response.ResponseVotePlaceDto
-import com.prography.data.service.VoteService
+import com.prography.data.remote.VoteService
 import javax.inject.Inject
 
 class VoteRemoteDataSourceImpl @Inject constructor(
