@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "88988189468",
+    "project_id": "yakgwa-b6d9f",
+    "storage_bucket": "yakgwa-b6d9f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:88988189468:android:e6b8224fd33bf83caef0d9",
+        "android_client_info": {
+          "package_name": "com.prography.yakgwa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfA1w_Q0TSEM1rUHFxwRbzGh2ndRkUi8A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
