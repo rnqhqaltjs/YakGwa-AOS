@@ -1,13 +1,19 @@
 package com.prography.yakgwa.ui.splash
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDeepLinkBuilder
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.normal.TedPermission
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.ActivitySplashBinding
 import com.prography.yakgwa.ui.MainActivity
@@ -18,15 +24,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @SuppressLint("CustomSplashScreen")
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @AndroidEntryPoint
 class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_splash) {
-
     private val viewModel: SplashViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
-        processIntent(intent)
+        requestPermission {
+            viewModel.getDeviceToken()
+            processIntent(intent)
+        }
     }
 
     private fun processIntent(intent: Intent?) {
@@ -88,6 +97,28 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
             startActivity(this)
         }
         finish()
+    }
+
+    private fun requestPermission(logic: () -> Unit) {
+        TedPermission.create()
+            .setPermissionListener(object : PermissionListener {
+                override fun onPermissionGranted() {
+                    logic()
+                }
+
+                override fun onPermissionDenied(deniedPermissions: List<String>) {
+                    Toast.makeText(
+                        this@SplashActivity,
+                        "권한 거부\n$deniedPermissions",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    logic()
+                }
+            })
+            .setPermissions(
+                Manifest.permission.POST_NOTIFICATIONS,
+            )
+            .check()
     }
 
     companion object {
