@@ -1,6 +1,5 @@
 package com.prography.yakgwa.ui.vote
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -9,12 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.prography.yakgwa.databinding.ItemPlaceListBinding
 import com.prography.yakgwa.model.PlaceModel
 
-@SuppressLint("SetTextI18n")
 class PlaceListAdapter :
     ListAdapter<PlaceModel, PlaceListAdapter.PlaceListViewHolder>(
         PlaceDiffCallback
     ) {
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceListViewHolder {
         return PlaceListViewHolder(
             ItemPlaceListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -30,10 +27,12 @@ class PlaceListAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(itemView: PlaceModel) {
+            val votePlaceMemberListAdapter = VotePlaceMemberListAdapter()
             binding.tvTitle.text = itemView.placeItem.placeName
             binding.tvAddress.text = itemView.placeItem.placeAddress
-
             binding.cvPlace.isSelected = itemView.isSelected
+
+            votePlaceMemberListAdapter.submitList(itemView.placeItem.userInfos)
 
             binding.cvPlace.setOnClickListener {
                 onItemClickListener?.invoke(adapterPosition)
