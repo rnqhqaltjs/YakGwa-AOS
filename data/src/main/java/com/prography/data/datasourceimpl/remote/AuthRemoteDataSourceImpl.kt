@@ -2,6 +2,7 @@ package com.prography.data.datasourceimpl.remote
 
 import com.prography.data.datasource.remote.AuthRemoteDataSource
 import com.prography.data.model.request.RequestAuthDto
+import com.prography.data.model.request.RequestUserImageDto
 import com.prography.data.model.response.BaseResponse
 import com.prography.data.model.response.ResponseAuthDto
 import com.prography.data.model.response.ResponseUserInfoDto
@@ -24,5 +25,9 @@ class AuthRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getUserInfo(): BaseResponse<ResponseUserInfoDto> {
         return authService.getUserInfo()
+    }
+
+    override suspend fun updateUserImage(requestUserImageDto: RequestUserImageDto): BaseResponse<Unit> {
+        return authService.updateUserImage(requestUserImageDto)
     }
 }
