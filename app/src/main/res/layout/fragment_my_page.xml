@@ -41,7 +41,7 @@
                     app:srcCompat="@drawable/ic_profile" />
 
                 <ImageView
-                    android:id="@+id/ic_profile_edit"
+                    android:id="@+id/iv_profile_edit"
                     android:layout_width="26dp"
                     android:layout_height="26dp"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_profile_image"
