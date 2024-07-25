@@ -19,7 +19,6 @@ import javax.inject.Singleton
 class YakGwaLocalDataSourceImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) : YakGwaLocalDataSource {
-
     override val accessToken: Flow<String> = dataStore.data
         .catch { exception ->
             if (exception is IOException) {
@@ -56,6 +55,18 @@ class YakGwaLocalDataSourceImpl @Inject constructor(
             preferences[USER_ID] ?: -1
         }
 
+    override val deviceToken: Flow<String> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[DEVICE_TOKEN_KEY] ?: ""
+        }
+
     override val isLogin: Flow<Boolean> = dataStore.data
         .catch { exception ->
             if (exception is IOException) {
@@ -86,6 +97,12 @@ class YakGwaLocalDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun saveDeviceToken(deviceToken: String) {
+        dataStore.edit { preferences ->
+            preferences[DEVICE_TOKEN_KEY] = deviceToken
+        }
+    }
+
     override suspend fun saveIsLogin(isLogin: Boolean) {
         dataStore.edit { preferences ->
             preferences[IS_LOGIN_KEY] = isLogin
@@ -102,6 +119,7 @@ class YakGwaLocalDataSourceImpl @Inject constructor(
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("ACCESS_TOKEN")
         private val REFRESH_TOKEN_KEY = stringPreferencesKey("REFRESH_TOKEN")
         private val USER_ID = intPreferencesKey("USER_ID")
+        private val DEVICE_TOKEN_KEY = stringPreferencesKey("DEVICE_TOKEN")
         private val IS_LOGIN_KEY = booleanPreferencesKey("IS_LOGIN")
     }
 }
