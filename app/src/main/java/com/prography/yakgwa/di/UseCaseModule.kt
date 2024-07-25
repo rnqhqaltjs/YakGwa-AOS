@@ -17,6 +17,7 @@ import com.prography.domain.usecase.GetUserVotePlaceListUseCase
 import com.prography.domain.usecase.GetVoteTimeCandidateInfoUseCase
 import com.prography.domain.usecase.PatchConfirmMeetPlaceUseCase
 import com.prography.domain.usecase.PatchConfirmMeetTimeUseCase
+import com.prography.domain.usecase.PatchUpdateUserImageUseCase
 import com.prography.domain.usecase.PostNewMeetCreateUseCase
 import com.prography.domain.usecase.PostParticipantMeetUseCase
 import com.prography.domain.usecase.PostUserVotePlaceUseCase
@@ -107,7 +108,11 @@ class UseCaseModule {
 
     @Provides
     @Singleton
-    fun providesGetPromiseHistoryListUseCase(promiseRepository: PromiseRepository): GetPromiseHistoryListUseCase =
-        GetPromiseHistoryListUseCase(promiseRepository)
+    fun providesGetPromiseHistoryListUseCase(meetRepository: MeetRepository): GetPromiseHistoryListUseCase =
+        GetPromiseHistoryListUseCase(meetRepository)
 
+    @Provides
+    @Singleton
+    fun providesPatchUpdateUserImageUseCase(authRepository: AuthRepository): PatchUpdateUserImageUseCase =
+        PatchUpdateUserImageUseCase(authRepository)
 }

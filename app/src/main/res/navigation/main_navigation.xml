@@ -54,7 +54,15 @@
         android:id="@+id/myPageFragment"
         android:name="com.prography.yakgwa.ui.myPage.MyPageFragment"
         android:label="MyPageFragment"
-        tools:layout="@layout/fragment_my_page" />
+        tools:layout="@layout/fragment_my_page">
+        <action
+            android:id="@+id/action_myPageFragment_to_promiseHistoryFragment"
+            app:destination="@id/promiseHistoryFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
     <fragment
         android:id="@+id/invitationLeaderFragment"
         android:name="com.prography.yakgwa.ui.invitation.InvitationLeaderFragment"
@@ -229,4 +237,24 @@
         app:popExitAnim="@android:anim/slide_out_right"
         app:popUpTo="@id/homeFragment"
         app:popUpToInclusive="false" />
+    <fragment
+        android:id="@+id/promiseHistoryFragment"
+        android:name="com.prography.yakgwa.ui.promiseHistory.PromiseHistoryFragment"
+        android:label="PromiseHistoryFragment"
+        tools:layout="@layout/fragment_promise_history">
+        <action
+            android:id="@+id/action_promiseHistoryFragment_to_createPromiseTitleFragment"
+            app:destination="@id/createPromiseTitleFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_promiseHistoryFragment_to_voteCompletionFragment"
+            app:destination="@id/voteCompletionFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
 </navigation>

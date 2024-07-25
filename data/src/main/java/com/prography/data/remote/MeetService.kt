@@ -6,6 +6,7 @@ import com.prography.data.model.response.ResponseCreateMeetDto
 import com.prography.data.model.response.ResponseMeetDetailDto
 import com.prography.data.model.response.ResponseMeetsDto
 import com.prography.data.model.response.ResponseParticipantMeetDto
+import com.prography.data.model.response.ResponsePromiseHistoryDto
 import com.prography.data.model.response.ResponseThemesDto
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -33,4 +34,7 @@ interface MeetService {
     suspend fun participantMeet(
         @Path("meetId") meetId: Int
     ): BaseResponse<ResponseParticipantMeetDto>
+
+    @GET("/api/v1/meets/record")
+    suspend fun getPromiseHistory(): BaseResponse<ResponsePromiseHistoryDto>
 }

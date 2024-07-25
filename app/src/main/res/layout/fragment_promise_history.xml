@@ -35,9 +35,11 @@
             app:srcCompat="@drawable/img_promise_history_title" />
 
         <LinearLayout
+            android:id="@+id/go_make_promise"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -62,6 +64,20 @@
                 android:layout_marginTop="30dp"
                 app:srcCompat="@drawable/img_go_create_promise" />
         </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_promise_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_promise_history"
+            tools:itemCount="3"
+            android:clipToPadding="false"
+            android:paddingBottom="100dp"
+            tools:listitem="@layout/item_promise_history_list" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

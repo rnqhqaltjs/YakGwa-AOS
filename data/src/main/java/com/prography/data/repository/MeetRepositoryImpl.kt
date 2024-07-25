@@ -7,6 +7,7 @@ import com.prography.domain.model.response.CreateMeetResponseEntity
 import com.prography.domain.model.response.MeetDetailResponseEntity
 import com.prography.domain.model.response.MeetsResponseEntity
 import com.prography.domain.model.response.ParticipantMeetResponseEntity
+import com.prography.domain.model.response.PromiseHistoryResponseEntity
 import com.prography.domain.model.response.ThemesResponseEntity
 import com.prography.domain.repository.MeetRepository
 import javax.inject.Inject
@@ -61,6 +62,14 @@ class MeetRepositoryImpl @Inject constructor(
             MeetMapper.mapperToParticipantMeetResponseEntity(
                 response.result
             )
+        }
+    }
+
+    override suspend fun getPromiseHistory(): Result<List<PromiseHistoryResponseEntity>> {
+        val response = meetRemoteDataSource.getPromiseHistory()
+
+        return runCatching {
+            MeetMapper.mapperToPromiseHistoryResponseEntity(response.result)
         }
     }
 }
