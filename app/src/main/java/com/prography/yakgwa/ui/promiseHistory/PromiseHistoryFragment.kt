@@ -52,7 +52,7 @@ class PromiseHistoryFragment :
     private fun setupRecyclerView() {
         promiseHistoryListAdapter = PromiseHistoryListAdapter().apply {
             setOnItemClickListener {
-                navigateToVoteCompletionFragment(it)
+                navigateToVoteResultFragment(it)
             }
         }
         binding.rvPromiseHistory.adapter = promiseHistoryListAdapter
@@ -83,8 +83,8 @@ class PromiseHistoryFragment :
             }
     }
 
-    private fun navigateToVoteCompletionFragment(meetId: Int) {
-        PromiseHistoryFragmentDirections.actionPromiseHistoryFragmentToVoteCompletionFragment(meetId)
+    private fun navigateToVoteResultFragment(meetId: Int) {
+        PromiseHistoryFragmentDirections.actionPromiseHistoryFragmentToVoteResultFragment(meetId)
             .apply {
                 findNavController().navigate(this)
             }
