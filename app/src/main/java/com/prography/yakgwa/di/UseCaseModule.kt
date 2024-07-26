@@ -20,6 +20,7 @@ import com.prography.domain.usecase.PatchConfirmMeetTimeUseCase
 import com.prography.domain.usecase.PatchUpdateUserImageUseCase
 import com.prography.domain.usecase.PostNewMeetCreateUseCase
 import com.prography.domain.usecase.PostParticipantMeetUseCase
+import com.prography.domain.usecase.PostPlaceCandidateInfoUseCase
 import com.prography.domain.usecase.PostUserVotePlaceUseCase
 import com.prography.domain.usecase.PostUserVoteTimeUseCase
 import dagger.Module
@@ -115,4 +116,9 @@ class UseCaseModule {
     @Singleton
     fun providesPatchUpdateUserImageUseCase(authRepository: AuthRepository): PatchUpdateUserImageUseCase =
         PatchUpdateUserImageUseCase(authRepository)
+
+    @Provides
+    @Singleton
+    fun providesPostPlaceCandidateInfoUseCase(voteRepository: VoteRepository): PostPlaceCandidateInfoUseCase =
+        PostPlaceCandidateInfoUseCase(voteRepository)
 }

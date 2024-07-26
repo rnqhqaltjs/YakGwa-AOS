@@ -2,6 +2,7 @@ package com.prography.domain.repository
 
 import com.prography.domain.model.request.ConfirmPlaceRequestEntity
 import com.prography.domain.model.request.ConfirmTimeRequestEntity
+import com.prography.domain.model.request.PlaceCandidateRequestEntity
 import com.prography.domain.model.request.VotePlaceRequestEntity
 import com.prography.domain.model.request.VoteTimeRequestEntity
 import com.prography.domain.model.response.PlaceCandidateResponseEntity
@@ -32,4 +33,9 @@ interface VoteRepository {
         meetId: Int,
         confirmPlaceRequestEntity: ConfirmPlaceRequestEntity
     ): Result<String>
+
+    suspend fun addPlaceCandidate(
+        meetId: Int,
+        placeCandidateRequestEntity: PlaceCandidateRequestEntity
+    ): Result<Unit>
 }

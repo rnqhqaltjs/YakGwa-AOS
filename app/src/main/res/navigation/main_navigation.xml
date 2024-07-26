@@ -36,8 +36,8 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
-            android:id="@+id/action_homeFragment_to_voteCompletionFragment"
-            app:destination="@id/voteCompletionFragment"
+            android:id="@+id/action_homeFragment_to_voteResultFragment"
+            app:destination="@id/voteResultFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
@@ -138,12 +138,19 @@
             app:popExitAnim="@android:anim/slide_out_right"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_votePromisePlaceFragment_to_addCandidatePlaceVoteFragment"
+            app:destination="@id/addCandidatePlaceVoteFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
-        android:id="@+id/voteCompletionFragment"
-        android:name="com.prography.yakgwa.ui.vote.VoteCompletionFragment"
-        android:label="VoteCompletionFragment"
-        tools:layout="@layout/fragment_vote_completion">
+        android:id="@+id/voteResultFragment"
+        android:name="com.prography.yakgwa.ui.voteResult.VoteResultFragment"
+        android:label="VoteResultFragment"
+        tools:layout="@layout/fragment_vote_result">
         <argument
             android:name="meetId"
             app:argType="integer" />
@@ -201,8 +208,8 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
-            android:id="@+id/action_createPromisePlaceFragment_to_voteCompletionFragment"
-            app:destination="@id/voteCompletionFragment"
+            android:id="@+id/action_createPromisePlaceFragment_to_voteResultFragment"
+            app:destination="@id/voteResultFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
@@ -250,11 +257,30 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
-            android:id="@+id/action_promiseHistoryFragment_to_voteCompletionFragment"
-            app:destination="@id/voteCompletionFragment"
+            android:id="@+id/action_promiseHistoryFragment_to_voteResultFragment"
+            app:destination="@id/voteResultFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/addCandidatePlaceVoteFragment"
+        android:name="com.prography.yakgwa.ui.vote.AddCandidatePlaceVoteFragment"
+        android:label="AddCandidatePlaceVoteFragment"
+        tools:layout="@layout/fragment_add_candidate_place_vote">
+        <argument
+            android:name="meetId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_addCandidatePlaceVoteFragment_to_votePromisePlaceFragment"
+            app:destination="@id/votePromisePlaceFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/votePromisePlaceFragment"
+            app:popUpToInclusive="false" />
     </fragment>
 </navigation>

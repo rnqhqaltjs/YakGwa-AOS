@@ -4,6 +4,7 @@ import com.prography.data.datasource.remote.VoteRemoteDataSource
 import com.prography.data.mapper.VoteMapper
 import com.prography.domain.model.request.ConfirmPlaceRequestEntity
 import com.prography.domain.model.request.ConfirmTimeRequestEntity
+import com.prography.domain.model.request.PlaceCandidateRequestEntity
 import com.prography.domain.model.request.VotePlaceRequestEntity
 import com.prography.domain.model.request.VoteTimeRequestEntity
 import com.prography.domain.model.response.PlaceCandidateResponseEntity
@@ -84,6 +85,20 @@ class VoteRepositoryImpl @Inject constructor(
 
         return runCatching {
             response.result
+        }
+    }
+
+    override suspend fun addPlaceCandidate(
+        meetId: Int,
+        placeCandidateRequestEntity: PlaceCandidateRequestEntity
+    ): Result<Unit> {
+        val response = voteRemoteDataSource.addPlaceCandidate(
+            meetId,
+            VoteMapper.mapperToRequestPlaceCandidateDto(placeCandidateRequestEntity)
+        )
+
+        return runCatching {
+            response
         }
     }
 
