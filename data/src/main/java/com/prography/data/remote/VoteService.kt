@@ -1,7 +1,8 @@
-package com.prography.data.service
+package com.prography.data.remote
 
 import com.prography.data.model.request.RequestConfirmPlaceDto
 import com.prography.data.model.request.RequestConfirmTimeDto
+import com.prography.data.model.request.RequestPlaceCandidateDto
 import com.prography.data.model.request.RequestVotePlaceDto
 import com.prography.data.model.request.RequestVoteTimeDto
 import com.prography.data.model.response.BaseResponse
@@ -49,4 +50,10 @@ interface VoteService {
         @Path("meetId") meetId: Int,
         @Body requestConfirmPlaceDto: RequestConfirmPlaceDto
     ): BaseResponse<String>
+
+    @POST("/api/v1/meets/{meetId}/placeslots")
+    suspend fun addPlaceCandidate(
+        @Path("meetId") meetId: Int,
+        @Body requestPlaceCandidateDto: RequestPlaceCandidateDto
+    ): BaseResponse<Unit>
 }

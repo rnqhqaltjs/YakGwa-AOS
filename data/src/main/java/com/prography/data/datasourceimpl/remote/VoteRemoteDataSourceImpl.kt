@@ -3,13 +3,14 @@ package com.prography.data.datasourceimpl.remote
 import com.prography.data.datasource.remote.VoteRemoteDataSource
 import com.prography.data.model.request.RequestConfirmPlaceDto
 import com.prography.data.model.request.RequestConfirmTimeDto
+import com.prography.data.model.request.RequestPlaceCandidateDto
 import com.prography.data.model.request.RequestVotePlaceDto
 import com.prography.data.model.request.RequestVoteTimeDto
 import com.prography.data.model.response.BaseResponse
 import com.prography.data.model.response.ResponsePlaceCandidateDto
 import com.prography.data.model.response.ResponseTimeCandidateDto
 import com.prography.data.model.response.ResponseVotePlaceDto
-import com.prography.data.service.VoteService
+import com.prography.data.remote.VoteService
 import javax.inject.Inject
 
 class VoteRemoteDataSourceImpl @Inject constructor(
@@ -49,6 +50,13 @@ class VoteRemoteDataSourceImpl @Inject constructor(
         requestConfirmPlaceDto: RequestConfirmPlaceDto
     ): BaseResponse<String> {
         return voteService.confirmMeetPlace(meetId, requestConfirmPlaceDto)
+    }
+
+    override suspend fun addPlaceCandidate(
+        meetId: Int,
+        requestPlaceCandidateDto: RequestPlaceCandidateDto
+    ): BaseResponse<Unit> {
+        return voteService.addPlaceCandidate(meetId, requestPlaceCandidateDto)
     }
 
     override suspend fun getVotePlace(meetId: Int): BaseResponse<ResponseVotePlaceDto> {

@@ -15,13 +15,11 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
-
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setupJetpackNavigation()
         addListeners()
     }
@@ -47,9 +45,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
                 destination.id == R.id.invitationMemberFragment ||
                 destination.id == R.id.votePromiseTimeFragment ||
                 destination.id == R.id.votePromisePlaceFragment ||
-                destination.id == R.id.voteCompletionFragment ||
+                destination.id == R.id.voteResultFragment ||
                 destination.id == R.id.exitDialogFragment ||
-                destination.id == R.id.addCandidatePlaceDetailFragment
+                destination.id == R.id.addCandidatePlaceDetailFragment ||
+                destination.id == R.id.promiseHistoryFragment ||
+                destination.id == R.id.addCandidatePlaceVoteFragment
             ) {
                 binding.navView.visibility = View.GONE
             } else {

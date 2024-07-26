@@ -2,6 +2,7 @@ package com.prography.data.mapper
 
 import com.prography.data.model.request.RequestConfirmPlaceDto
 import com.prography.data.model.request.RequestConfirmTimeDto
+import com.prography.data.model.request.RequestPlaceCandidateDto
 import com.prography.data.model.request.RequestVotePlaceDto
 import com.prography.data.model.request.RequestVoteTimeDto
 import com.prography.data.model.response.ResponsePlaceCandidateDto
@@ -9,6 +10,7 @@ import com.prography.data.model.response.ResponseTimeCandidateDto
 import com.prography.data.model.response.ResponseVotePlaceDto
 import com.prography.domain.model.request.ConfirmPlaceRequestEntity
 import com.prography.domain.model.request.ConfirmTimeRequestEntity
+import com.prography.domain.model.request.PlaceCandidateRequestEntity
 import com.prography.domain.model.request.VotePlaceRequestEntity
 import com.prography.domain.model.request.VoteTimeRequestEntity
 import com.prography.domain.model.response.PlaceCandidateResponseEntity
@@ -108,6 +110,24 @@ object VoteMapper {
     fun mapperToRequestConfirmPlaceDto(confirmPlaceRequestEntity: ConfirmPlaceRequestEntity): RequestConfirmPlaceDto {
         return confirmPlaceRequestEntity.run {
             RequestConfirmPlaceDto(this.confirmPlaceSlotId)
+        }
+    }
+
+    fun mapperToRequestPlaceCandidateDto(placeCandidateRequestEntity: PlaceCandidateRequestEntity): RequestPlaceCandidateDto {
+        return placeCandidateRequestEntity.run {
+            RequestPlaceCandidateDto(
+                RequestPlaceCandidateDto.PlaceInfo(
+                    this.title,
+                    this.link,
+                    this.category,
+                    this.description,
+                    this.telephone,
+                    this.address,
+                    this.roadAddress,
+                    this.mapx,
+                    this.mapy
+                )
+            )
         }
     }
 }

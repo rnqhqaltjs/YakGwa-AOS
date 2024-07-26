@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/neutral_200"
-        tools:context=".ui.vote.VoteCompletionFragment">
+        tools:context=".ui.voteResult.VoteResultFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -37,6 +37,16 @@
                 app:layout_constraintStart_toEndOf="@+id/iv_navigate_up_btn"
                 app:layout_constraintTop_toTopOf="@+id/iv_navigate_up_btn"
                 app:srcCompat="@drawable/img_promise_detail_title" />
+
+            <ImageView
+                android:id="@+id/iv_save"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_promise_detail_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_promise_detail_title"
+                app:srcCompat="@drawable/ic_save" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"

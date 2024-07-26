@@ -8,9 +8,12 @@ import com.prography.domain.repository.AuthRepository
 import com.prography.yakgwa.type.LoginType
 import com.prography.yakgwa.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,7 +31,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             authRepository.postLogin(
                 HEADER_BEARER + kakaoAccessToken,
-                AuthRequestEntity(LoginType.KAKAO.name)
+                AuthRequestEntity(LoginType.KAKAO.name, getDeviceToken())
             ).onSuccess { authEntity ->
                 with(localStorage) {
                     saveIsLogin(true)
@@ -40,6 +43,12 @@ class LoginViewModel @Inject constructor(
             }.onFailure {
                 _loginState.value = UiState.Failure(it.message)
             }
+        }
+    }
+
+    private suspend fun getDeviceToken(): String {
+        return withContext(Dispatchers.IO) {
+            localStorage.deviceToken.first()
         }
     }
 

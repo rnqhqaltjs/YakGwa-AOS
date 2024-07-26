@@ -6,5 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RequestAuthDto(
     @SerialName("loginType")
-    val loginType: String
+    val loginType: String,
+    @SerialName("fcmToken")
+    val fcmToken: String
 )

@@ -1,6 +1,5 @@
-package com.prography.data.service
+package com.prography.data.remote
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient

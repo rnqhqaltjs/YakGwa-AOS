@@ -114,20 +114,20 @@ class CreatePromisePlaceFragment :
         if (viewModel.selectedTabPlaceIndex.value == TAB_DIRECT_INPUT &&
             viewModel.selectedTabTimeIndex.value == TAB_DIRECT_INPUT
         ) {
-            navigateToVoteCompletionFragment(meetId)
+            navigateToVoteResultFragment(meetId)
         } else {
             navigateToInvitationLeaderFragment(meetId)
         }
     }
-    
+
     private fun navigateToInvitationLeaderFragment(meetId: Int) {
         CreatePromisePlaceFragmentDirections.actionGlobalInvitationLeaderFragment(meetId).apply {
             findNavController().navigate(this)
         }
     }
 
-    private fun navigateToVoteCompletionFragment(meetId: Int) {
-        CreatePromisePlaceFragmentDirections.actionCreatePromisePlaceFragmentToVoteCompletionFragment(
+    private fun navigateToVoteResultFragment(meetId: Int) {
+        CreatePromisePlaceFragmentDirections.actionCreatePromisePlaceFragmentToVoteResultFragment(
             meetId
         ).apply {
             findNavController().navigate(this)

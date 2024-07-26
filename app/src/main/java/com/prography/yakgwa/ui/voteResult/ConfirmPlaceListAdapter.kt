@@ -1,4 +1,4 @@
-package com.prography.yakgwa.ui.vote
+package com.prography.yakgwa.ui.voteResult
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

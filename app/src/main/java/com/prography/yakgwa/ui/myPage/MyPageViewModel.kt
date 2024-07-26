@@ -3,9 +3,11 @@ package com.prography.yakgwa.ui.myPage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prography.data.datasource.local.YakGwaLocalDataSource
+import com.prography.domain.model.request.UserImageRequestEntity
 import com.prography.domain.model.response.UserInfoResponseEntity
 import com.prography.domain.repository.AuthRepository
 import com.prography.domain.usecase.GetUserInformationUseCase
+import com.prography.domain.usecase.PatchUpdateUserImageUseCase
 import com.prography.yakgwa.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +22,8 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val localStorage: YakGwaLocalDataSource,
-    private val getUserInformationUseCase: GetUserInformationUseCase
+    private val getUserInformationUseCase: GetUserInformationUseCase,
+    private val patchUpdateUserImageUseCase: PatchUpdateUserImageUseCase
 ) : ViewModel() {
 
     private val _logoutState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
@@ -36,6 +39,9 @@ class MyPageViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = UiState.Loading
         )
+
+    private val _userImageState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
+    val userImageState = _userImageState.asStateFlow()
 
     fun logout() {
         _logoutState.value = UiState.Loading
@@ -60,6 +66,19 @@ class MyPageViewModel @Inject constructor(
                     _userInfoState.value = UiState.Success(it)
                 }.onFailure {
                     _userInfoState.value = UiState.Failure(it.message)
+                }
+        }
+    }
+
+    fun updateUserImage(userImageRequestEntity: UserImageRequestEntity) {
+        _userImageState.value = UiState.Loading
+
+        viewModelScope.launch {
+            patchUpdateUserImageUseCase(userImageRequestEntity)
+                .onSuccess {
+                    _userImageState.value = UiState.Success(it)
+                }.onFailure {
+                    _userImageState.value = UiState.Failure(it.message)
                 }
         }
     }
