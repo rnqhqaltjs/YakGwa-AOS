@@ -3,37 +3,26 @@ package com.prography.yakgwa.ui.vote
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prography.domain.model.Promise
-import com.prography.domain.model.request.ConfirmPlaceRequestEntity
-import com.prography.domain.model.request.ConfirmTimeRequestEntity
+import com.prography.domain.model.request.PlaceCandidateRequestEntity
 import com.prography.domain.model.request.VotePlaceRequestEntity
 import com.prography.domain.model.request.VoteTimeRequestEntity
-import com.prography.domain.model.response.MeetDetailResponseEntity
+import com.prography.domain.model.response.LocationResponseEntity
 import com.prography.domain.model.response.PlaceCandidateResponseEntity
 import com.prography.domain.model.response.TimeCandidateResponseEntity
-import com.prography.domain.model.response.VotePlaceResponseEntity
-import com.prography.domain.usecase.AddPromiseHistoryUseCase
-import com.prography.domain.usecase.GetMeetInformationDetailUseCase
+import com.prography.domain.usecase.GetLocationListUseCase
 import com.prography.domain.usecase.GetPlaceCandidateInfoUseCase
-import com.prography.domain.usecase.GetUserVotePlaceListUseCase
 import com.prography.domain.usecase.GetVoteTimeCandidateInfoUseCase
-import com.prography.domain.usecase.PatchConfirmMeetPlaceUseCase
-import com.prography.domain.usecase.PatchConfirmMeetTimeUseCase
+import com.prography.domain.usecase.PostPlaceCandidateInfoUseCase
 import com.prography.domain.usecase.PostUserVotePlaceUseCase
 import com.prography.domain.usecase.PostUserVoteTimeUseCase
-import com.prography.yakgwa.model.ConfirmPlaceModel
-import com.prography.yakgwa.model.ConfirmTimeModel
-import com.prography.yakgwa.model.NaviModel
 import com.prography.yakgwa.model.PlaceModel
+import com.prography.yakgwa.model.SelectedLocationModel
 import com.prography.yakgwa.model.TimeModel
-import com.prography.yakgwa.type.NaviType
 import com.prography.yakgwa.util.DateTimeUtils.formatLocalDateTimeToString
 import com.prography.yakgwa.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.stateIn
@@ -49,11 +38,8 @@ class VoteViewModel @Inject constructor(
     private val getVoteTimeCandidateInfoUseCase: GetVoteTimeCandidateInfoUseCase,
     private val postUserVoteTimeUseCase: PostUserVoteTimeUseCase,
     private val postUserVotePlaceUseCase: PostUserVotePlaceUseCase,
-    private val getUserVoteInfoUseCase: GetUserVotePlaceListUseCase,
-    private val getMeetInformationDetailUseCase: GetMeetInformationDetailUseCase,
-    private val patchConfirmMeetTimeUseCase: PatchConfirmMeetTimeUseCase,
-    private val patchConfirmMeetPlaceUseCase: PatchConfirmMeetPlaceUseCase,
-    private val addPromiseHistoryUseCase: AddPromiseHistoryUseCase
+    private val getLocationListUseCase: GetLocationListUseCase,
+    private val postPlaceCandidateInfoUseCase: PostPlaceCandidateInfoUseCase
 ) : ViewModel() {
     var meetId: Int
         get() = savedStateHandle.get<Int>(MEET_ID) ?: INVALID_MEET_ID
@@ -107,50 +93,18 @@ class VoteViewModel @Inject constructor(
     private val _placeVoteState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
     val placeVoteState = _placeVoteState.asStateFlow()
 
-    private val _votePlaceInfoState =
-        MutableStateFlow<UiState<VotePlaceResponseEntity>>(UiState.Loading)
-    val votePlaceInfoState = _votePlaceInfoState
-        .onSubscription {
-            getUserVotePlace()
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = UiState.Loading
-        )
+    private val _candidateLocationState =
+        MutableStateFlow<UiState<List<LocationResponseEntity>>>(UiState.Loading)
+    val candidateLocationState = _candidateLocationState.asStateFlow()
 
-    private val _detailMeetState =
-        MutableStateFlow<UiState<MeetDetailResponseEntity>>(UiState.Loading)
-    val detailMeetState = _detailMeetState
-        .onSubscription {
-            getMeetInformationDetail()
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = UiState.Loading
-        )
+    private val _selectedCandidateLocationState =
+        MutableStateFlow<List<SelectedLocationModel>>(emptyList())
+    val selectedCandidateLocationState = _selectedCandidateLocationState
 
-    private val _confirmTimeState = MutableStateFlow<UiState<String>>(UiState.Loading)
-    val confirmTimeState = _confirmTimeState.asStateFlow()
+    private val _addPlaceState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
+    val addPlaceState = _addPlaceState.asStateFlow()
 
-    private val _confirmPlaceState = MutableStateFlow<UiState<String>>(UiState.Loading)
-    val confirmPlaceState = _confirmPlaceState.asStateFlow()
-
-    private val _selectedConfirmPlaceState = MutableStateFlow<List<ConfirmPlaceModel>>(emptyList())
-    val selectedConfirmPlaceState = _selectedConfirmPlaceState
-
-    private val _selectedConfirmTimeState = MutableStateFlow<List<ConfirmTimeModel>>(emptyList())
-    val selectedConfirmTimeState = _selectedConfirmTimeState
-
-    private val _participantInfoState =
-        MutableStateFlow<List<MeetDetailResponseEntity.ParticipantInfo>>(emptyList())
-    val participantInfoState = _participantInfoState
-
-    private val _naviInfoState = MutableStateFlow<NaviModel?>(null)
-
-    private val _naviActionState = MutableSharedFlow<Pair<NaviType, NaviModel>>()
-    val naviActionState = _naviActionState.asSharedFlow()
-
-    private fun getVotePlaceCandidate() {
+    fun getVotePlaceCandidate() {
         _placeCandidateState.value = UiState.Loading
 
         viewModelScope.launch {
@@ -167,22 +121,13 @@ class VoteViewModel @Inject constructor(
         }
     }
 
-    fun getVoteTimeCandidate() {
+    private fun getVoteTimeCandidate() {
         _timeCandidateState.value = UiState.Loading
 
         viewModelScope.launch {
             getVoteTimeCandidateInfoUseCase(meetId)
                 .onSuccess {
                     _timeCandidateState.value = UiState.Success(it)
-                    val confirmTimeModels = it.timeInfos?.mapIndexed { index, placeInfo ->
-                        ConfirmTimeModel(placeInfo).apply {
-                            if (index == 0) {
-                                isSelected = true
-                            }
-                        }
-                    } ?: emptyList()
-
-                    _selectedConfirmTimeState.value = confirmTimeModels
                 }
                 .onFailure {
                     _timeCandidateState.value = UiState.Failure(it.message)
@@ -289,36 +234,6 @@ class VoteViewModel @Inject constructor(
         }
     }
 
-    fun getUserVotePlace() {
-        _votePlaceInfoState.value = UiState.Loading
-
-        viewModelScope.launch {
-            getUserVoteInfoUseCase(meetId)
-                .onSuccess {
-                    _votePlaceInfoState.value = UiState.Success(it)
-                    val confirmPlaceModels = it.placeInfos?.mapIndexed { index, placeInfo ->
-                        ConfirmPlaceModel(placeInfo).apply {
-                            if (index == 0) {
-                                isSelected = true
-                            }
-                        }
-                    } ?: emptyList()
-
-                    _selectedConfirmPlaceState.value = confirmPlaceModels
-                    _naviInfoState.value = it.placeInfos?.firstOrNull()?.let { placeInfo ->
-                        NaviModel(
-                            placeInfo.mapX,
-                            placeInfo.mapY,
-                            placeInfo.roadAddress
-                        )
-                    }
-                }
-                .onFailure {
-                    _votePlaceInfoState.value = UiState.Failure(it.message)
-                }
-        }
-    }
-
     private fun convertTimeModelsToVoteTimeRequest(timeModels: Map<LocalDate, List<TimeModel>>): VoteTimeRequestEntity {
         val possibleSchedules = mutableListOf<VoteTimeRequestEntity.EnableTimes>()
 
@@ -337,85 +252,56 @@ class VoteViewModel @Inject constructor(
         return VoteTimeRequestEntity(possibleSchedules)
     }
 
-    private fun getMeetInformationDetail() {
-        _detailMeetState.value = UiState.Loading
+    fun getCandidateLocations(query: String) {
+        _candidateLocationState.value = UiState.Loading
 
         viewModelScope.launch {
-            getMeetInformationDetailUseCase(meetId)
-                .onSuccess {
-                    _detailMeetState.value = UiState.Success(it)
-                    _participantInfoState.value = it.participantInfo
+            runCatching {
+                getLocationListUseCase(query).collect {
+                    _selectedCandidateLocationState.value = it.map { locationEntity ->
+                        SelectedLocationModel(locationEntity)
+                    }
+                    _candidateLocationState.value = UiState.Success(it)
                 }
-                .onFailure {
-                    _detailMeetState.value = UiState.Failure(it.message)
-                }
+            }.onFailure {
+                _candidateLocationState.value = UiState.Failure(it.message)
+            }
         }
     }
 
-    fun confirmMeetTime() {
-        _confirmTimeState.value = UiState.Loading
-
-        val confirmTimeRequestEntity =
-            ConfirmTimeRequestEntity(
-                _selectedConfirmTimeState.value
-                    .find { it.isSelected }!!
-                    .timeInfo.timeId
-            )
-
-        viewModelScope.launch {
-            patchConfirmMeetTimeUseCase(meetId, confirmTimeRequestEntity)
-                .onSuccess {
-                    _confirmTimeState.value = UiState.Success(it)
-                }.onFailure {
-                    _confirmTimeState.value = UiState.Failure(it.message)
-                }
-        }
-    }
-
-    fun confirmMeetPlace() {
-        _confirmPlaceState.value = UiState.Loading
-
-        val confirmPlaceRequestEntity =
-            ConfirmPlaceRequestEntity(
-                _selectedConfirmPlaceState.value
-                    .find { it.isSelected }!!
-                    .placeInfos.placeSlotId
-            )
-
-        viewModelScope.launch {
-            patchConfirmMeetPlaceUseCase(meetId, confirmPlaceRequestEntity)
-                .onSuccess {
-                    _confirmPlaceState.value = UiState.Success(it)
-                }.onFailure {
-                    _confirmPlaceState.value = UiState.Failure(it.message)
-                }
-        }
-    }
-
-    fun singleConfirmTimeSelection(position: Int) {
-        val currentList = _selectedConfirmTimeState.value.mapIndexed { index, item ->
+    fun singleCandidateLocationSelection(position: Int) {
+        val currentList = _selectedCandidateLocationState.value.mapIndexed { index, item ->
             item.copy(isSelected = index == position)
         }
-        _selectedConfirmTimeState.value = currentList
+        _selectedCandidateLocationState.value = currentList
     }
 
-    fun singleConfirmPlaceSelection(position: Int) {
-        val currentList = _selectedConfirmPlaceState.value.mapIndexed { index, item ->
-            item.copy(isSelected = index == position)
-        }
-        _selectedConfirmPlaceState.value = currentList
-    }
+    fun addPlaceCandidate() {
+        _addPlaceState.value = UiState.Loading
 
-    fun addPromiseHistory(promise: Promise) {
-        viewModelScope.launch {
-            addPromiseHistoryUseCase(promise)
-        }
-    }
+        val selectedLocation =
+            _selectedCandidateLocationState.value.find { it.isSelected }?.locationResponseEntity
+        selectedLocation?.let { location ->
+            val requestEntity = PlaceCandidateRequestEntity(
+                location.title,
+                location.link,
+                location.category,
+                location.description,
+                location.telephone,
+                location.address,
+                location.roadAddress,
+                location.mapX,
+                location.mapY
+            )
 
-    fun onNaviAction(naviType: NaviType) {
-        viewModelScope.launch {
-            _naviInfoState.value?.let { naviInfo ->
-                _naviActionState.emit(Pair(naviType, naviInfo))
+            viewModelScope.launch {
+                postPlaceCandidateInfoUseCase(meetId, requestEntity)
+                    .onSuccess {
+                        _addPlaceState.value = UiState.Success(it)
+                    }
+                    .onFailure {
+                        _addPlaceState.value = UiState.Failure(it.message)
+                    }
             }
         }
     }

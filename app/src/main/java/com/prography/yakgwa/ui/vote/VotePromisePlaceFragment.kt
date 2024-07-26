@@ -13,6 +13,7 @@ import com.prography.yakgwa.databinding.FragmentVotePromisePlaceBinding
 import com.prography.yakgwa.model.PlaceModel
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
+import com.prography.yakgwa.util.extensions.getNavResult
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -28,6 +29,7 @@ class VotePromisePlaceFragment :
         setupRecyclerView()
         observer()
         addListeners()
+        setupSavedStateHandleObserver()
     }
 
     private fun setupRecyclerView() {
@@ -63,7 +65,7 @@ class VotePromisePlaceFragment :
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.placeVoteState.collectLatest {
+                viewModel.placeVoteState.collect {
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> navigateToInvitationLeaderFragment()
@@ -87,13 +89,32 @@ class VotePromisePlaceFragment :
         binding.btnVoteComplete.setOnClickListener {
             viewModel.votePlace()
         }
+        binding.cvAddCandidate.setOnClickListener {
+            navigateToAddCandidatePlaceVoteFragment()
+        }
         binding.ivNavigateUpBtn.setOnClickListener {
             findNavController().navigateUp()
         }
     }
 
+    private fun setupSavedStateHandleObserver() {
+        getNavResult<Boolean>(R.id.votePromisePlaceFragment) { result ->
+            if (result == true) {
+                viewModel.getVotePlaceCandidate()
+            }
+        }
+    }
+
     private fun navigateToInvitationLeaderFragment() {
         VotePromisePlaceFragmentDirections.actionVotePromisePlaceFragmentToInvitationLeaderFragment(
+            viewModel.meetId
+        ).apply {
+            findNavController().navigate(this)
+        }
+    }
+
+    private fun navigateToAddCandidatePlaceVoteFragment() {
+        VotePromisePlaceFragmentDirections.actionVotePromisePlaceFragmentToAddCandidatePlaceVoteFragment(
             viewModel.meetId
         ).apply {
             findNavController().navigate(this)
