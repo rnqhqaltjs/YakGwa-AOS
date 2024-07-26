@@ -1,4 +1,4 @@
-package com.prography.yakgwa.ui.vote
+package com.prography.yakgwa.ui.voteResult
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -17,12 +17,11 @@ import com.kakao.sdk.navi.NaviClient
 import com.kakao.sdk.navi.model.CoordType
 import com.kakao.sdk.navi.model.Location
 import com.kakao.sdk.navi.model.NaviOption
-import com.prography.domain.model.Promise
 import com.prography.domain.model.response.MeetDetailResponseEntity.MeetInfo
 import com.prography.domain.model.response.TimeCandidateResponseEntity
 import com.prography.domain.model.response.VotePlaceResponseEntity
 import com.prography.yakgwa.R
-import com.prography.yakgwa.databinding.FragmentVoteCompletionBinding
+import com.prography.yakgwa.databinding.FragmentVoteResultBinding
 import com.prography.yakgwa.model.ConfirmPlaceModel
 import com.prography.yakgwa.model.ConfirmTimeModel
 import com.prography.yakgwa.model.NaviModel
@@ -40,9 +39,9 @@ import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class VoteCompletionFragment :
-    BaseFragment<FragmentVoteCompletionBinding>(R.layout.fragment_vote_completion) {
-    private val viewModel: VoteViewModel by viewModels()
+class VoteResultFragment :
+    BaseFragment<FragmentVoteResultBinding>(R.layout.fragment_vote_result) {
+    private val viewModel: VoteResultViewModel by viewModels()
     private lateinit var participantMemberListAdapter: ParticipantMemberListAdapter
     private lateinit var confirmPlaceListAdapter: ConfirmPlaceListAdapter
     private lateinit var confirmTimeListAdapter: ConfirmTimeListAdapter
@@ -300,27 +299,6 @@ class VoteCompletionFragment :
         }
 
         binding.ivSave.setOnClickListener {
-            viewModel.addPromiseHistory(
-                Promise(
-                    viewModel.meetId,
-                    binding.tvInvitationTitle.text.toString(),
-                    binding.tvInvitationDescription.text.toString(),
-                    binding.tvTemaName.text.toString(),
-                    viewModel.participantInfoState.value.map {
-                        Promise.UserInfo(it.participantId, it.meetRole, it.imageUrl!!)
-                    },
-                    Promise.TimeInfo(
-                        binding.tvPromiseDate.text.toString(),
-                        binding.tvPromiseTime.text.toString()
-                    ),
-                    Promise.PlaceInfo(
-                        binding.tvTitle.text.toString(),
-                        binding.tvAddress.text.toString(),
-                        "30",
-                        "30"
-                    )
-                )
-            )
         }
     }
 }

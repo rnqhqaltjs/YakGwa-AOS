@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val homeViewModel: HomeViewModel by viewModels()
     private val createPromiseViewModel: CreatePromiseViewModel by activityViewModels()
-
     private lateinit var participantMeetListAdapter: ParticipantMeetListAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,8 +61,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 when (it.meetStatus) {
                     MeetType.BEFORE_VOTE.name -> navigateToInvitationLeaderFragment(it.meetInfo.meetId)
                     MeetType.VOTE.name -> navigateToInvitationLeaderFragment(it.meetInfo.meetId)
-                    MeetType.BEFORE_CONFIRM.name -> navigateToVoteCompletionFragment(it.meetInfo.meetId)
-                    MeetType.CONFIRM.name -> navigateToVoteCompletionFragment(it.meetInfo.meetId)
+                    MeetType.BEFORE_CONFIRM.name -> navigateToVoteResultFragment(it.meetInfo.meetId)
+                    MeetType.CONFIRM.name -> navigateToVoteResultFragment(it.meetInfo.meetId)
                 }
             }
         }
@@ -100,8 +99,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }
     }
 
-    private fun navigateToVoteCompletionFragment(meetId: Int) {
-        HomeFragmentDirections.actionHomeFragmentToVoteCompletionFragment(meetId)
+    private fun navigateToVoteResultFragment(meetId: Int) {
+        HomeFragmentDirections.actionHomeFragmentToVoteResultFragment(meetId)
             .apply {
                 findNavController().navigate(this)
             }
