@@ -87,7 +87,7 @@
                 android:id="@+id/tv_before_vote"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="아직 투표 전이에요"
+                android:text="아직 투표 전이에요."
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -87,7 +87,7 @@
                 android:id="@+id/tv_wait_vote"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="친구들의 투표를 기다리고 있어요"
+                android:text="친구들의 투표를 기다리고 있어요."
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
