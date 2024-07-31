@@ -55,4 +55,13 @@
     <style name="CustomSearchView" parent="Widget.AppCompat.SearchView">
         <item name="android:textSize">15sp</item>
     </style>
+
+    <!-- res/values/styles.xml -->
+    <style name="BottomSheetTheme" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
 </resources>

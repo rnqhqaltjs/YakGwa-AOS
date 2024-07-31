@@ -99,6 +99,10 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
             navigateToPromiseHistoryFragment()
         }
 
+        binding.cvMyPlace.setOnClickListener {
+            navigateToMyPlaceFragment()
+        }
+
         binding.ivProfileEdit.setOnClickListener {
             launchNewPhotoPicker()
         }
@@ -113,6 +117,12 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
 
     private fun navigateToPromiseHistoryFragment() {
         MyPageFragmentDirections.actionMyPageFragmentToPromiseHistoryFragment().apply {
+            findNavController().navigate(this)
+        }
+    }
+
+    private fun navigateToMyPlaceFragment() {
+        MyPageFragmentDirections.actionMyPageFragmentToMyPlaceFragment().apply {
             findNavController().navigate(this)
         }
     }

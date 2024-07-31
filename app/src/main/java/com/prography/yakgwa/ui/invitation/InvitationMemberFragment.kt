@@ -50,6 +50,7 @@ class InvitationMemberFragment :
                         is UiState.Loading -> {}
                         is UiState.Success -> {
                             showMeetDetails(it.data.meetInfo)
+                            viewModel.setParticipantInfo(it.data.participantInfo)
                             participantMemberListAdapter.submitList(it.data.participantInfo.reversed())
                         }
 
@@ -92,6 +93,12 @@ class InvitationMemberFragment :
             viewModel.participantMeet()
         }
 
+        binding.tvShowEntire.setOnClickListener {
+            if (findNavController().currentDestination?.id == R.id.invitationMemberFragment) {
+                navigateToParticipantMemberFragment()
+            }
+        }
+
         binding.ivCloseBtn.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -125,6 +132,14 @@ class InvitationMemberFragment :
             .apply {
                 findNavController().navigate(this)
             }
+    }
+
+    private fun navigateToParticipantMemberFragment() {
+        InvitationMemberFragmentDirections.actionInvitationMemberFragmentToParticipantMemberFragment(
+            viewModel.participantInfo.value
+        ).apply {
+            findNavController().navigate(this)
+        }
     }
 
     companion object {

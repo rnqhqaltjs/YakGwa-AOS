@@ -83,7 +83,10 @@ class CreatePromisePlaceFragment :
                 viewModel.createMeetState.collect {
                     when (it) {
                         is UiState.Loading -> {}
-                        is UiState.Success -> handleCreateMeet(it.data.meetId)
+                        is UiState.Success -> {
+                            handleCreateMeet(it.data.meetId)
+                        }
+
                         is UiState.Failure -> {
                             Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
                         }
@@ -121,16 +124,22 @@ class CreatePromisePlaceFragment :
     }
 
     private fun navigateToInvitationLeaderFragment(meetId: Int) {
-        CreatePromisePlaceFragmentDirections.actionGlobalInvitationLeaderFragment(meetId).apply {
-            findNavController().navigate(this)
+        if (findNavController().currentDestination?.id == R.id.createPromisePlaceFragment) {
+            CreatePromisePlaceFragmentDirections.actionCreatePromisePlaceFragmentToInvitationLeaderFragment(
+                meetId
+            ).apply {
+                findNavController().navigate(this)
+            }
         }
     }
 
     private fun navigateToVoteResultFragment(meetId: Int) {
-        CreatePromisePlaceFragmentDirections.actionCreatePromisePlaceFragmentToVoteResultFragment(
-            meetId
-        ).apply {
-            findNavController().navigate(this)
+        if (findNavController().currentDestination?.id == R.id.createPromisePlaceFragment) {
+            CreatePromisePlaceFragmentDirections.actionCreatePromisePlaceFragmentToVoteResultFragment(
+                meetId
+            ).apply {
+                findNavController().navigate(this)
+            }
         }
     }
 

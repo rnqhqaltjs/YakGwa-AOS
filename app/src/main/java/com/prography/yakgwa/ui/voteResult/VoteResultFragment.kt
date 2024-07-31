@@ -2,6 +2,7 @@ package com.prography.yakgwa.ui.voteResult
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import coil.load
 import com.google.android.material.snackbar.Snackbar
 import com.kakao.sdk.navi.Constants
 import com.kakao.sdk.navi.NaviClient
@@ -20,6 +22,8 @@ import com.kakao.sdk.navi.model.NaviOption
 import com.prography.domain.model.response.MeetDetailResponseEntity.MeetInfo
 import com.prography.domain.model.response.TimeCandidateResponseEntity
 import com.prography.domain.model.response.VotePlaceResponseEntity
+import com.prography.yakgwa.BuildConfig.NAVER_CLIENT_ID
+import com.prography.yakgwa.BuildConfig.NAVER_CLIENT_SECRET
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentVoteResultBinding
 import com.prography.yakgwa.model.ConfirmPlaceModel
@@ -36,6 +40,7 @@ import com.prography.yakgwa.util.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -117,6 +122,7 @@ class VoteResultFragment :
                         is UiState.Loading -> {}
                         is UiState.Success -> {
                             showMeetDetails(it.data.meetInfo)
+                            viewModel.setParticipantInfo(it.data.participantInfo)
                             participantMemberListAdapter.submitList(it.data.participantInfo.reversed())
                         }
 
@@ -209,9 +215,9 @@ class VoteResultFragment :
                 binding.cvPromiseTime.visibility = View.VISIBLE
                 binding.cvVoteTimeResult.visibility = View.GONE
                 binding.tvPromiseDate.text =
-                    formatDateTimeToKoreanDate(timeInfo.timeInfos?.get(0)!!.voteTime)
+                    formatDateTimeToKoreanDate(timeInfo.timeInfos!!.first().voteTime)
                 binding.tvPromiseTime.text =
-                    formatDateTimeToKoreanTime(timeInfo.timeInfos?.get(0)!!.voteTime)
+                    formatDateTimeToKoreanTime(timeInfo.timeInfos!!.first().voteTime)
             }
         }
     }
@@ -226,8 +232,21 @@ class VoteResultFragment :
             MeetType.CONFIRM.name -> {
                 binding.cvPromisePlace.visibility = View.VISIBLE
                 binding.cvVotePlaceResult.visibility = View.GONE
-                binding.tvTitle.text = voteInfo.placeInfos?.get(0)!!.title
-                binding.tvAddress.text = voteInfo.placeInfos?.get(0)!!.roadAddress
+
+                val placeInfo = voteInfo.placeInfos!!.first()
+                binding.tvTitle.text = placeInfo.title
+                binding.tvAddress.text = placeInfo.roadAddress
+
+                val geocoder = geoCoding(placeInfo.roadAddress)
+                val mapUrl =
+                    "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster?w=760&h=300" +
+                            "&center=${geocoder.longitude},${geocoder.latitude}" +
+                            "&level=12" +
+                            "&markers=type:d|size:mid|pos:${geocoder.longitude}%20${geocoder.latitude}" +
+                            "&X-NCP-APIGW-API-KEY-ID=${NAVER_CLIENT_ID}" +
+                            "&X-NCP-APIGW-API-KEY=${NAVER_CLIENT_SECRET}"
+
+                binding.ivPromisePlaceMap.load(mapUrl)
             }
         }
     }
@@ -235,7 +254,11 @@ class VoteResultFragment :
     private fun handleNaverMap(naviModel: NaviModel) {
         try {
             val url =
-                "nmap://navigation?dlat=${naviModel.mapx}&dlng=${naviModel.mapy}&dname=${naviModel.address}&appname=com.prography.yakgwa"
+                "nmap://navigation?dlat=${geoCoding(naviModel.address).latitude}&dlng=${
+                    geoCoding(
+                        naviModel.address
+                    ).longitude
+                }&dname=${naviModel.address}&appname=com.prography.yakgwa"
 
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             intent.addCategory(Intent.CATEGORY_BROWSABLE)
@@ -256,8 +279,8 @@ class VoteResultFragment :
                 NaviClient.instance.navigateIntent(
                     Location(
                         naviModel.address,
-                        naviModel.mapy,
-                        naviModel.mapx
+                        geoCoding(naviModel.address).longitude.toString(),
+                        geoCoding(naviModel.address).latitude.toString()
                     ),
                     NaviOption(coordType = CoordType.WGS84)
                 )
@@ -298,7 +321,38 @@ class VoteResultFragment :
             findNavController().navigateUp()
         }
 
+        binding.tvShowEntire.setOnClickListener {
+            if (findNavController().currentDestination?.id == R.id.voteResultFragment) {
+                navigateToParticipantMemberFragment()
+            }
+        }
+
         binding.ivSave.setOnClickListener {
+        }
+    }
+
+    private fun geoCoding(address: String): android.location.Location {
+        return try {
+            Geocoder(requireContext(), Locale.KOREA).getFromLocationName(address, 1)?.let {
+                android.location.Location("").apply {
+                    latitude = it[0].latitude
+                    longitude = it[0].longitude
+                }
+            } ?: android.location.Location("").apply {
+                latitude = 0.0
+                longitude = 0.0
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            geoCoding(address)
+        }
+    }
+
+    private fun navigateToParticipantMemberFragment() {
+        VoteResultFragmentDirections.actionVoteResultFragmentToParticipantMemberFragment(
+            viewModel.participantInfo.value
+        ).apply {
+            findNavController().navigate(this)
         }
     }
 }

@@ -62,6 +62,13 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_myPageFragment_to_myPlaceFragment"
+            app:destination="@id/myPlaceFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/invitationLeaderFragment"
@@ -85,6 +92,9 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_invitationLeaderFragment_to_participantMemberFragment"
+            app:destination="@id/participantMemberFragment" />
     </fragment>
     <fragment
         android:id="@+id/invitationMemberFragment"
@@ -100,6 +110,9 @@
             app:popExitAnim="@android:anim/slide_out_right"
             app:popUpTo="@+id/homeFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_invitationMemberFragment_to_participantMemberFragment"
+            app:destination="@id/participantMemberFragment" />
     </fragment>
     <fragment
         android:id="@+id/votePromiseTimeFragment"
@@ -154,6 +167,9 @@
         <argument
             android:name="meetId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_voteResultFragment_to_participantMemberFragment"
+            app:destination="@id/participantMemberFragment" />
     </fragment>
 
     <fragment
@@ -216,6 +232,15 @@
             app:popExitAnim="@android:anim/slide_out_right"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_createPromisePlaceFragment_to_invitationLeaderFragment"
+            app:destination="@id/invitationLeaderFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/addCandidatePlaceDetailFragment"
@@ -235,15 +260,6 @@
         app:exitAnim="@android:anim/slide_out_right"
         app:popEnterAnim="@android:anim/slide_in_left"
         app:popExitAnim="@android:anim/slide_out_right" />
-    <action
-        android:id="@+id/action_global_invitationLeaderFragment"
-        app:destination="@id/invitationLeaderFragment"
-        app:enterAnim="@android:anim/slide_in_left"
-        app:exitAnim="@android:anim/slide_out_right"
-        app:popEnterAnim="@android:anim/slide_in_left"
-        app:popExitAnim="@android:anim/slide_out_right"
-        app:popUpTo="@id/homeFragment"
-        app:popUpToInclusive="false" />
     <fragment
         android:id="@+id/promiseHistoryFragment"
         android:name="com.prography.yakgwa.ui.promiseHistory.PromiseHistoryFragment"
@@ -272,15 +288,19 @@
         <argument
             android:name="meetId"
             app:argType="integer" />
-        <action
-            android:id="@+id/action_addCandidatePlaceVoteFragment_to_votePromisePlaceFragment"
-            app:destination="@id/votePromisePlaceFragment"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"
-            app:launchSingleTop="true"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"
-            app:popUpTo="@id/votePromisePlaceFragment"
-            app:popUpToInclusive="false" />
     </fragment>
+    <dialog
+        android:id="@+id/participantMemberFragment"
+        android:name="com.prography.yakgwa.ui.invitation.ParticipantMemberFragment"
+        android:label="ParticipantMemberFragment"
+        tools:layout="@layout/dialog_participant_member_modal">
+        <argument
+            android:name="participantInfo"
+            app:argType="com.prography.domain.model.response.MeetDetailResponseEntity$ParticipantInfo[]" />
+    </dialog>
+    <fragment
+        android:id="@+id/myPlaceFragment"
+        android:name="com.prography.yakgwa.ui.myPlace.MyPlaceFragment"
+        android:label="MyPlaceFragment"
+        tools:layout="@layout/fragment_my_place" />
 </navigation>

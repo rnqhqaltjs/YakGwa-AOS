@@ -116,7 +116,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/cv_within_20" />
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cd_within_80"
+                android:id="@+id/cv_within_80"
                 android:layout_width="match_parent"
                 android:layout_height="110dp"
                 android:layout_marginStart="20dp"

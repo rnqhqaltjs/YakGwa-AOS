@@ -70,15 +70,18 @@ class DirectInputPlaceFragment :
                 } else {
                     viewModel.addDirectLocation(
                         LocationResponseEntity(
-                            selectedLocation.title,
-                            selectedLocation.link,
-                            selectedLocation.category,
-                            selectedLocation.description,
-                            selectedLocation.telephone,
-                            selectedLocation.address,
-                            selectedLocation.roadAddress,
-                            selectedLocation.mapX,
-                            selectedLocation.mapY
+                            LocationResponseEntity.PlaceInfoEntity(
+                                selectedLocation.placeInfoEntity.title,
+                                selectedLocation.placeInfoEntity.link,
+                                selectedLocation.placeInfoEntity.category,
+                                selectedLocation.placeInfoEntity.description,
+                                selectedLocation.placeInfoEntity.telephone,
+                                selectedLocation.placeInfoEntity.address,
+                                selectedLocation.placeInfoEntity.roadAddress,
+                                selectedLocation.placeInfoEntity.mapx,
+                                selectedLocation.placeInfoEntity.mapy
+                            ),
+                            selectedLocation.isUserLike
                         )
                     )
                     binding.etSearchLocation.setText("")

@@ -2,12 +2,13 @@ package com.prography.yakgwa.di
 
 import com.prography.domain.repository.AuthRepository
 import com.prography.domain.repository.MeetRepository
-import com.prography.domain.repository.NaverRepository
+import com.prography.domain.repository.PlaceRepository
 import com.prography.domain.repository.PromiseRepository
 import com.prography.domain.repository.VoteRepository
 import com.prography.domain.usecase.AddPromiseHistoryUseCase
 import com.prography.domain.usecase.GetLocationListUseCase
 import com.prography.domain.usecase.GetMeetInformationDetailUseCase
+import com.prography.domain.usecase.GetMyPlaceListUseCase
 import com.prography.domain.usecase.GetParticipantMeetListUseCase
 import com.prography.domain.usecase.GetPlaceCandidateInfoUseCase
 import com.prography.domain.usecase.GetPromiseHistoryListUseCase
@@ -18,6 +19,7 @@ import com.prography.domain.usecase.GetVoteTimeCandidateInfoUseCase
 import com.prography.domain.usecase.PatchConfirmMeetPlaceUseCase
 import com.prography.domain.usecase.PatchConfirmMeetTimeUseCase
 import com.prography.domain.usecase.PatchUpdateUserImageUseCase
+import com.prography.domain.usecase.PostMyPlaceUseCase
 import com.prography.domain.usecase.PostNewMeetCreateUseCase
 import com.prography.domain.usecase.PostParticipantMeetUseCase
 import com.prography.domain.usecase.PostPlaceCandidateInfoUseCase
@@ -49,8 +51,8 @@ class UseCaseModule {
 
     @Provides
     @Singleton
-    fun providesGetLocationListUseCase(naverRepository: NaverRepository): GetLocationListUseCase =
-        GetLocationListUseCase(naverRepository)
+    fun providesGetLocationListUseCase(placeRepository: PlaceRepository): GetLocationListUseCase =
+        GetLocationListUseCase(placeRepository)
 
     @Provides
     @Singleton
@@ -121,4 +123,14 @@ class UseCaseModule {
     @Singleton
     fun providesPostPlaceCandidateInfoUseCase(voteRepository: VoteRepository): PostPlaceCandidateInfoUseCase =
         PostPlaceCandidateInfoUseCase(voteRepository)
+
+    @Provides
+    @Singleton
+    fun providesGetMyPlaceListUseCase(placeRepository: PlaceRepository): GetMyPlaceListUseCase =
+        GetMyPlaceListUseCase(placeRepository)
+
+    @Provides
+    @Singleton
+    fun providesPostMyPlaceUseCase(placeRepository: PlaceRepository): PostMyPlaceUseCase =
+        PostMyPlaceUseCase(placeRepository)
 }

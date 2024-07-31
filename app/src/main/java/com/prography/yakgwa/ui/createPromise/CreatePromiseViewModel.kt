@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -43,7 +44,6 @@ class CreatePromiseViewModel @Inject constructor(
     private val postNewMeetCreateUseCase: PostNewMeetCreateUseCase,
     private val getLocationListUseCase: GetLocationListUseCase
 ) : ViewModel() {
-
     private val _textLength20State = MutableStateFlow("")
     val textLength20State = _textLength20State
 
@@ -70,8 +70,8 @@ class CreatePromiseViewModel @Inject constructor(
         )
 
     private val _createMeetState =
-        MutableStateFlow<UiState<CreateMeetResponseEntity>>(UiState.Loading)
-    val createMeetState = _createMeetState.asStateFlow()
+        MutableSharedFlow<UiState<CreateMeetResponseEntity>>()
+    val createMeetState = _createMeetState.asSharedFlow()
 
     private val _directLocationState =
         MutableSharedFlow<UiState<List<LocationResponseEntity>>>()
@@ -148,17 +148,16 @@ class CreatePromiseViewModel @Inject constructor(
     }
 
     fun createMeet() {
-        _createMeetState.value = UiState.Loading
-
         viewModelScope.launch {
-            val createMeetRequestEntity = buildCreateMeetRequestEntity()
+            _createMeetState.emit(UiState.Loading)
 
+            val createMeetRequestEntity = buildCreateMeetRequestEntity()
             postNewMeetCreateUseCase(createMeetRequestEntity)
                 .onSuccess {
-                    _createMeetState.value = UiState.Success(it)
+                    _createMeetState.emit(UiState.Success(it))
                 }
                 .onFailure {
-                    _createMeetState.value = UiState.Failure(it.message)
+                    _createMeetState.emit(UiState.Failure(it.message))
                 }
         }
     }
@@ -193,17 +192,17 @@ class CreatePromiseViewModel @Inject constructor(
             description = _textLength80State.value,
             meetThemeId = _selectedThemeState.value.find { it.isSelected }!!.themesResponseEntity.themeId,
             confirmPlace = _selectedTabPlaceIndex.value == TAB_DIRECT_INPUT,
-            placeInfo = placeInfoList.map { place ->
+            placeInfo = placeInfoList.map {
                 CreateMeetRequestEntity.PlaceInfo(
-                    title = place.title,
-                    link = place.link,
-                    category = place.category,
-                    description = place.description,
-                    telephone = place.telephone,
-                    address = place.address,
-                    roadAddress = place.roadAddress,
-                    mapx = place.mapX,
-                    mapy = place.mapY
+                    title = it.placeInfoEntity.title,
+                    link = it.placeInfoEntity.link,
+                    category = it.placeInfoEntity.category,
+                    description = it.placeInfoEntity.description,
+                    telephone = it.placeInfoEntity.telephone,
+                    address = it.placeInfoEntity.address,
+                    roadAddress = it.placeInfoEntity.roadAddress,
+                    mapx = it.placeInfoEntity.mapx,
+                    mapy = it.placeInfoEntity.mapy
                 )
             },
             voteDate = voteDate,

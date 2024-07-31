@@ -57,6 +57,11 @@ class CreatePromiseTitleFragment :
         binding.navigateUpBtn.setOnClickListener {
             findNavController().navigate(R.id.action_exit_dialog)
         }
+
+        binding.cvWithin80.setOnClickListener {
+            binding.etWithin80Msg.requestFocus()
+            binding.etWithin80Msg.performClick()
+        }
     }
 
     private fun navigateToCreatePromiseThemeFragment() {

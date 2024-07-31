@@ -98,7 +98,7 @@ class VoteRepositoryImpl @Inject constructor(
         )
 
         return runCatching {
-            response
+            response.result
         }
     }
 

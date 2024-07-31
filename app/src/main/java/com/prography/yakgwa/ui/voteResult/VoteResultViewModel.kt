@@ -91,6 +91,10 @@ class VoteResultViewModel @Inject constructor(
     private val _naviActionState = MutableSharedFlow<Pair<NaviType, NaviModel>>()
     val naviActionState = _naviActionState.asSharedFlow()
 
+    private val _participantInfo =
+        MutableStateFlow<Array<MeetDetailResponseEntity.ParticipantInfo>>(emptyArray())
+    val participantInfo = _participantInfo
+
     fun getVoteTimeCandidate() {
         _timeCandidateState.value = UiState.Loading
 
@@ -218,6 +222,10 @@ class VoteResultViewModel @Inject constructor(
                 _naviActionState.emit(Pair(naviType, naviInfo))
             }
         }
+    }
+
+    fun setParticipantInfo(participants: List<MeetDetailResponseEntity.ParticipantInfo>) {
+        _participantInfo.value = participants.toTypedArray()
     }
 
     companion object {
