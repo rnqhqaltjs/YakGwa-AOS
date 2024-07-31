@@ -21,7 +21,6 @@ class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val localStorage: YakGwaLocalDataSource
 ) : ViewModel() {
-
     private val _loginState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
     val loginState = _loginState.asStateFlow()
 
