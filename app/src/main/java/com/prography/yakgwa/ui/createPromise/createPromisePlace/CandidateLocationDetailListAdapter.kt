@@ -1,6 +1,5 @@
 package com.prography.yakgwa.ui.createPromise.createPromisePlace
 
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -35,9 +34,9 @@ class CandidateLocationDetailListAdapter :
     inner class CandidateLocationDetailListViewHolder(private val binding: ItemCandidateDetailLocationListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: SelectedLocationModel) {
-            binding.tvSelectedTitle.text =
-                Html.fromHtml(itemView.locationResponseEntity.title).toString()
-            binding.tvSelectedAddress.text = itemView.locationResponseEntity.roadAddress
+            binding.tvSelectedTitle.text = itemView.locationResponseEntity.placeInfoEntity.title
+            binding.tvSelectedAddress.text =
+                itemView.locationResponseEntity.placeInfoEntity.roadAddress
             binding.cvSearchLocation.isSelected = itemView.isSelected
 
             binding.cvSearchLocation.setOnClickListener {
@@ -58,7 +57,7 @@ class CandidateLocationDetailListAdapter :
                     oldItem: SelectedLocationModel,
                     newItem: SelectedLocationModel
                 ): Boolean {
-                    return oldItem.locationResponseEntity.roadAddress == newItem.locationResponseEntity.roadAddress
+                    return oldItem.locationResponseEntity.placeInfoEntity.address == newItem.locationResponseEntity.placeInfoEntity.address
                 }
 
                 override fun areContentsTheSame(

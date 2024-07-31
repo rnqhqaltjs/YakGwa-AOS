@@ -1,6 +1,5 @@
 package com.prography.yakgwa.ui.createPromise.createPromisePlace
 
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -35,8 +34,8 @@ class SelectedDirectLocationListAdapter :
     inner class SelectedLocationListViewHolder(private val binding: ItemDirectLocationListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: LocationResponseEntity) {
-            binding.tvSelectedTitle.text = Html.fromHtml(itemView.title).toString()
-            binding.tvSelectedAddress.text = itemView.roadAddress
+            binding.tvSelectedTitle.text = itemView.placeInfoEntity.title
+            binding.tvSelectedAddress.text = itemView.placeInfoEntity.roadAddress
 
             binding.ivRemoveBtn.setOnClickListener {
                 onRemoveClickListener?.invoke(itemView)
@@ -56,7 +55,7 @@ class SelectedDirectLocationListAdapter :
                     oldItem: LocationResponseEntity,
                     newItem: LocationResponseEntity
                 ): Boolean {
-                    return oldItem.roadAddress == newItem.roadAddress
+                    return oldItem.placeInfoEntity.address == newItem.placeInfoEntity.address
                 }
 
                 override fun areContentsTheSame(

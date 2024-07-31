@@ -2,7 +2,7 @@ package com.prography.yakgwa.di
 
 import com.prography.data.remote.AuthService
 import com.prography.data.remote.MeetService
-import com.prography.data.remote.NaverService
+import com.prography.data.remote.PlaceService
 import com.prography.data.remote.VoteService
 import dagger.Module
 import dagger.Provides
@@ -31,7 +31,7 @@ object ServiceModule {
 
     @Provides
     @Singleton
-    fun providesNaverService(@NetworkModule.NAVER retrofit: Retrofit): NaverService =
-        retrofit.create(NaverService::class.java)
+    fun providesPlaceService(@NetworkModule.YAKGWA retrofit: Retrofit): PlaceService =
+        retrofit.create(PlaceService::class.java)
 
 }
