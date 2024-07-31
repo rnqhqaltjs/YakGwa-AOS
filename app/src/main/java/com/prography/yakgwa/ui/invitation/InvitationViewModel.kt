@@ -93,6 +93,10 @@ class InvitationViewModel @Inject constructor(
             initialValue = UiState.Loading
         )
 
+    private val _participantInfo =
+        MutableStateFlow<Array<MeetDetailResponseEntity.ParticipantInfo>>(emptyArray())
+    val participantInfo = _participantInfo
+
     private fun getMeetInformationDetail() {
         _detailMeetState.value = UiState.Loading
 
@@ -162,6 +166,10 @@ class InvitationViewModel @Inject constructor(
                     _placeCandidateState.value = UiState.Failure(it.message)
                 }
         }
+    }
+
+    fun setParticipantInfo(participants: List<MeetDetailResponseEntity.ParticipantInfo>) {
+        _participantInfo.value = participants.toTypedArray()
     }
 
     companion object {

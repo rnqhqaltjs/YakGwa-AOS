@@ -111,6 +111,7 @@ class InvitationLeaderFragment :
                         is UiState.Loading -> {}
                         is UiState.Success -> {
                             showMeetDetails(it.data.meetInfo)
+                            viewModel.setParticipantInfo(it.data.participantInfo)
                             participantMemberListAdapter.submitList(it.data.participantInfo.reversed())
                         }
 
@@ -144,6 +145,12 @@ class InvitationLeaderFragment :
 
         binding.ivNavigateUpBtn.setOnClickListener {
             findNavController().navigateUp()
+        }
+
+        binding.tvShowEntire.setOnClickListener {
+            if (findNavController().currentDestination?.id == R.id.invitationLeaderFragment) {
+                navigateToParticipantMemberFragment()
+            }
         }
 
         binding.btnVoteTime.setOnClickListener {
@@ -280,6 +287,14 @@ class InvitationLeaderFragment :
     private fun navigateToVotePromisePlaceFragment() {
         InvitationLeaderFragmentDirections.actionInvitationLeaderFragmentToVotePromisePlaceFragment(
             viewModel.meetId
+        ).apply {
+            findNavController().navigate(this)
+        }
+    }
+
+    private fun navigateToParticipantMemberFragment() {
+        InvitationLeaderFragmentDirections.actionInvitationLeaderFragmentToParticipantMemberFragment(
+            viewModel.participantInfo.value
         ).apply {
             findNavController().navigate(this)
         }
