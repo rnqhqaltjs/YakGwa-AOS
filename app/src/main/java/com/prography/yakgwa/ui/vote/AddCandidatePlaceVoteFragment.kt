@@ -78,7 +78,7 @@ class AddCandidatePlaceVoteFragment :
                         is UiState.Loading -> {}
                         is UiState.Success -> {
                             setNavResult(RESULT_KEY, true)
-                            navigateToVotePromisePlaceFragment()
+                            findNavController().navigateUp()
                         }
 
                         is UiState.Failure -> {
@@ -108,14 +108,6 @@ class AddCandidatePlaceVoteFragment :
 
         binding.ivCloseBtn.setOnClickListener {
             findNavController().navigateUp()
-        }
-    }
-
-    private fun navigateToVotePromisePlaceFragment() {
-        AddCandidatePlaceVoteFragmentDirections.actionAddCandidatePlaceVoteFragmentToVotePromisePlaceFragment(
-            viewModel.meetId
-        ).apply {
-            findNavController().navigate(this)
         }
     }
 }

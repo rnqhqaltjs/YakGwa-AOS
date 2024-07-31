@@ -101,13 +101,13 @@ class VotePromiseTimeFragment :
         lifecycleScope.launch {
             viewModel.selectedDateState.collectLatest {
                 binding.tvSelectedDate.text = it?.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
-
                 applyCalendarDecorators(
                     binding.calendarView,
                     viewModel.startDate.value,
                     viewModel.endDate.value,
                     it
                 )
+                binding.cvTimeSlot.visibility = View.VISIBLE
             }
         }
     }
@@ -200,7 +200,6 @@ class VotePromiseTimeFragment :
     private fun setupDateChangeListener(calendarView: MaterialCalendarView) {
         calendarView.setOnDateChangedListener { _, date, _ ->
             viewModel.selectedDate(LocalDate.of(date.year, date.month + MONTH_OFFSET, date.day))
-            binding.cvTimeSlot.visibility = View.VISIBLE
         }
     }
 

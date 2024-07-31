@@ -21,8 +21,10 @@ import com.prography.yakgwa.model.TimeModel
 import com.prography.yakgwa.util.DateTimeUtils.formatLocalDateTimeToString
 import com.prography.yakgwa.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.stateIn
@@ -101,8 +103,8 @@ class VoteViewModel @Inject constructor(
         MutableStateFlow<List<SelectedLocationModel>>(emptyList())
     val selectedCandidateLocationState = _selectedCandidateLocationState
 
-    private val _addPlaceState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
-    val addPlaceState = _addPlaceState.asStateFlow()
+    private val _addPlaceState = MutableSharedFlow<UiState<Unit>>()
+    val addPlaceState = _addPlaceState.asSharedFlow()
 
     fun getVotePlaceCandidate() {
         _placeCandidateState.value = UiState.Loading
@@ -277,30 +279,30 @@ class VoteViewModel @Inject constructor(
     }
 
     fun addPlaceCandidate() {
-        _addPlaceState.value = UiState.Loading
-
         val selectedLocation =
             _selectedCandidateLocationState.value.find { it.isSelected }?.locationResponseEntity
-        selectedLocation?.let { location ->
+        selectedLocation?.let {
             val requestEntity = PlaceCandidateRequestEntity(
-                location.title,
-                location.link,
-                location.category,
-                location.description,
-                location.telephone,
-                location.address,
-                location.roadAddress,
-                location.mapX,
-                location.mapY
+                it.placeInfoEntity.title,
+                it.placeInfoEntity.link,
+                it.placeInfoEntity.category,
+                it.placeInfoEntity.description,
+                it.placeInfoEntity.telephone,
+                it.placeInfoEntity.address,
+                it.placeInfoEntity.roadAddress,
+                it.placeInfoEntity.mapx,
+                it.placeInfoEntity.mapy
             )
 
             viewModelScope.launch {
+                _addPlaceState.emit(UiState.Loading)
+
                 postPlaceCandidateInfoUseCase(meetId, requestEntity)
                     .onSuccess {
-                        _addPlaceState.value = UiState.Success(it)
+                        _addPlaceState.emit(UiState.Success(it))
                     }
                     .onFailure {
-                        _addPlaceState.value = UiState.Failure(it.message)
+                        _addPlaceState.emit(UiState.Failure(it.message))
                     }
             }
         }

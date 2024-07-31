@@ -106,10 +106,12 @@ class VotePromisePlaceFragment :
     }
 
     private fun navigateToInvitationLeaderFragment() {
-        VotePromisePlaceFragmentDirections.actionVotePromisePlaceFragmentToInvitationLeaderFragment(
-            viewModel.meetId
-        ).apply {
-            findNavController().navigate(this)
+        if (findNavController().currentDestination?.id == R.id.votePromisePlaceFragment) {
+            VotePromisePlaceFragmentDirections.actionVotePromisePlaceFragmentToInvitationLeaderFragment(
+                viewModel.meetId
+            ).apply {
+                findNavController().navigate(this)
+            }
         }
     }
 
