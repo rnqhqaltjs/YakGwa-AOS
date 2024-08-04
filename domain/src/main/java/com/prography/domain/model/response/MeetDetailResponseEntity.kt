@@ -9,6 +9,7 @@ data class MeetDetailResponseEntity(
 ) {
     data class MeetInfo(
         val meetTitle: String,
+        val description: String,
         val themeName: String,
     )
 
@@ -16,6 +17,6 @@ data class MeetDetailResponseEntity(
     data class ParticipantInfo(
         val meetRole: String,
         val imageUrl: String?,
-        val participantId: Int,
+        val name: String
     ) : Parcelable
 }

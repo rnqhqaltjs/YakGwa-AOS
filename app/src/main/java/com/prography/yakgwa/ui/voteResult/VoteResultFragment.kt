@@ -241,7 +241,7 @@ class VoteResultFragment :
                 val mapUrl =
                     "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster?w=760&h=300" +
                             "&center=${geocoder.longitude},${geocoder.latitude}" +
-                            "&level=12" +
+                            "&level=17" +
                             "&markers=type:d|size:mid|pos:${geocoder.longitude}%20${geocoder.latitude}" +
                             "&X-NCP-APIGW-API-KEY-ID=${NAVER_CLIENT_ID}" +
                             "&X-NCP-APIGW-API-KEY=${NAVER_CLIENT_SECRET}"
@@ -298,6 +298,7 @@ class VoteResultFragment :
     private fun showMeetDetails(meetInfo: MeetInfo) {
         binding.tvTemaName.text = meetInfo.themeName
         binding.tvInvitationTitle.text = meetInfo.meetTitle
+        binding.tvInvitationDescription.text = meetInfo.description
     }
 
     private fun addListeners() {

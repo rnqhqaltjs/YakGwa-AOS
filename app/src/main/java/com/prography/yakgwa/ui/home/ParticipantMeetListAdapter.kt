@@ -11,6 +11,7 @@ import com.prography.yakgwa.databinding.ItemBeforeVoteBinding
 import com.prography.yakgwa.databinding.ItemConfirmBinding
 import com.prography.yakgwa.databinding.ItemVoteBinding
 import com.prography.yakgwa.type.MeetType
+import com.prography.yakgwa.util.DateTimeUtils.calculateDDay
 import com.prography.yakgwa.util.DateTimeUtils.formatIsoDateTimeToKoreanDate
 import com.prography.yakgwa.util.DateTimeUtils.formatIsoDateTimeToKoreanTime
 
@@ -81,6 +82,7 @@ class ParticipantMeetListAdapter :
         fun bind(itemView: MeetsResponseEntity) {
             binding.tvInvitationTitle.text = itemView.meetInfo.meetTitle
             binding.tvTemaName.text = itemView.meetInfo.meetThemeName
+            binding.tvInvitationDescription.text = itemView.meetInfo.description
 
             binding.btnTimePlaceVote.setOnClickListener {
                 onItemClickListener?.invoke(itemView)
@@ -93,6 +95,7 @@ class ParticipantMeetListAdapter :
         fun bind(itemView: MeetsResponseEntity) {
             binding.tvInvitationTitle.text = itemView.meetInfo.meetTitle
             binding.tvTemaName.text = itemView.meetInfo.meetThemeName
+            binding.tvInvitationDescription.text = itemView.meetInfo.description
 
             binding.btnMeetDetail.setOnClickListener {
                 onItemClickListener?.invoke(itemView)
@@ -105,6 +108,7 @@ class ParticipantMeetListAdapter :
         fun bind(itemView: MeetsResponseEntity) {
             binding.tvInvitationTitle.text = itemView.meetInfo.meetTitle
             binding.tvTemaName.text = itemView.meetInfo.meetThemeName
+            binding.tvInvitationDescription.text = itemView.meetInfo.description
 
             binding.btnMeetDetail.setOnClickListener {
                 onItemClickListener?.invoke(itemView)
@@ -117,7 +121,8 @@ class ParticipantMeetListAdapter :
         fun bind(itemView: MeetsResponseEntity) {
             binding.tvInvitationTitle.text = itemView.meetInfo.meetTitle
             binding.tvTemaName.text = itemView.meetInfo.meetThemeName
-//            binding.tvDDay.text = itemView.meetInfo.meetDateTime
+            binding.tvInvitationDescription.text = itemView.meetInfo.description
+            binding.tvDDay.text = calculateDDay(itemView.meetInfo.meetDateTime!!)
             binding.tvDate.text = formatIsoDateTimeToKoreanDate(itemView.meetInfo.meetDateTime!!)
             binding.tvTime.text = formatIsoDateTimeToKoreanTime(itemView.meetInfo.meetDateTime!!)
             binding.tvPlace.text = itemView.meetInfo.placeName
