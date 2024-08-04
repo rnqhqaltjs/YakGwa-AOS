@@ -2,6 +2,7 @@ package com.prography.yakgwa.ui.createPromise.createPromisePlace
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -36,6 +37,7 @@ class SelectedDirectLocationListAdapter :
         fun bind(itemView: LocationResponseEntity) {
             binding.tvSelectedTitle.text = itemView.placeInfoEntity.title
             binding.tvSelectedAddress.text = itemView.placeInfoEntity.roadAddress
+            binding.ivLike.isVisible = itemView.isUserLike
 
             binding.ivRemoveBtn.setOnClickListener {
                 onRemoveClickListener?.invoke(itemView)

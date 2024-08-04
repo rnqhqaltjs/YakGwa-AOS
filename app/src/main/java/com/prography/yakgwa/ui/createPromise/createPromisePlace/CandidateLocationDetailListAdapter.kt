@@ -2,6 +2,7 @@ package com.prography.yakgwa.ui.createPromise.createPromisePlace
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -38,6 +39,7 @@ class CandidateLocationDetailListAdapter :
             binding.tvSelectedAddress.text =
                 itemView.locationResponseEntity.placeInfoEntity.roadAddress
             binding.cvSearchLocation.isSelected = itemView.isSelected
+            binding.ivLike.isVisible = itemView.locationResponseEntity.isUserLike
 
             binding.cvSearchLocation.setOnClickListener {
                 onItemClickListener?.invoke(adapterPosition)
