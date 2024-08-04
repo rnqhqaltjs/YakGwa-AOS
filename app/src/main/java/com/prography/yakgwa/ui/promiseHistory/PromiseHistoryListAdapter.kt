@@ -38,6 +38,7 @@ class PromiseHistoryListAdapter :
         fun bind(itemView: PromiseHistoryResponseEntity) {
             binding.tvTitle.text = itemView.meetInfo.meetTitle
             binding.tvTemaName.text = itemView.meetInfo.meetThemeName
+            binding.tvDescription.text = itemView.description
             binding.tvDate.text = formatIsoDateTimeToKoreanDate(itemView.meetInfo.meetDateTime)
             binding.tvTime.text = formatIsoDateTimeToKoreanTime(itemView.meetInfo.meetDateTime)
             binding.tvPlace.text = itemView.meetInfo.placeName

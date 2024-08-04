@@ -29,5 +29,7 @@ data class ResponseMeetsDto(
         val meetTitle: String,
         @SerializedName("meetId")
         val meetId: Int,
+        @SerializedName("description")
+        val description: String?
     )
 }

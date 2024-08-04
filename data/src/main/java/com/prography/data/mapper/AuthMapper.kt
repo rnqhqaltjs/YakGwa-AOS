@@ -1,11 +1,9 @@
 package com.prography.data.mapper
 
 import com.prography.data.model.request.RequestAuthDto
-import com.prography.data.model.request.RequestUserImageDto
 import com.prography.data.model.response.ResponseAuthDto
 import com.prography.data.model.response.ResponseUserInfoDto
 import com.prography.domain.model.request.AuthRequestEntity
-import com.prography.domain.model.request.UserImageRequestEntity
 import com.prography.domain.model.response.AuthResponseEntity
 import com.prography.domain.model.response.UserInfoResponseEntity
 
@@ -24,8 +22,8 @@ object AuthMapper {
             AuthResponseEntity(
                 this.tokenSet.accessToken,
                 this.tokenSet.refreshToken,
-                this.userId,
-                this.isNew
+                this.isNew,
+                this.role
             )
         }
     }
@@ -35,14 +33,6 @@ object AuthMapper {
             UserInfoResponseEntity(
                 this.name,
                 this.imageUrl
-            )
-        }
-    }
-
-    fun mapperToRequestUserImageDto(userImageRequestEntity: UserImageRequestEntity): RequestUserImageDto {
-        return userImageRequestEntity.run {
-            RequestUserImageDto(
-                this.userImage
             )
         }
     }

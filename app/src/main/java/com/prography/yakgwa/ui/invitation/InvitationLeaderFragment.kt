@@ -59,7 +59,11 @@ class InvitationLeaderFragment :
                         is UiState.Loading -> {}
                         is UiState.Success -> {
                             handleTimeCandidate(it.data)
-                            voteTimeListAdapter.submitList(it.data.timeInfos)
+                            voteTimeListAdapter.submitList(
+                                it.data.timeInfos?.sortedBy { timeInfo ->
+                                    timeInfo.voteTime
+                                }
+                            )
                         }
 
                         is UiState.Failure -> {
@@ -183,7 +187,7 @@ class InvitationLeaderFragment :
         return FeedTemplate(
             content = Content(
                 title = meetInfo.meetTitle,
-                description = meetInfo.meetTitle,
+                description = meetInfo.description,
                 imageUrl = "http://k.kakaocdn.net/dn/bp2Qmz/btsHbRn5Auu/I4MY1Ks8YoU2npkzSr7WT0/kakaolink40_original.png",
                 link = link
             ),
@@ -240,9 +244,7 @@ class InvitationLeaderFragment :
         with(binding) {
             tvTemaName.text = meetInfo.themeName
             tvInvitationTitle.text = meetInfo.meetTitle
-//            tvInvitationDescription.text = meetInfo.meetDescription
-//            val hours = parseHourFromTimeString(meetInfo.leftInviteTime)
-//            tvInvitationEnd.text = "${hours}시간 뒤 초대 마감"
+            tvInvitationDescription.text = meetInfo.description
         }
     }
 

@@ -27,11 +27,12 @@ class PlaceListAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(itemView: PlaceModel) {
-            val votePlaceMemberListAdapter = VotePlaceMemberListAdapter()
             binding.tvTitle.text = itemView.placeItem.placeName
             binding.tvAddress.text = itemView.placeItem.placeAddress
             binding.cvPlace.isSelected = itemView.isSelected
 
+            val votePlaceMemberListAdapter = VotePlaceMemberListAdapter()
+            binding.rvParticipantMember.adapter = votePlaceMemberListAdapter
             votePlaceMemberListAdapter.submitList(itemView.placeItem.userInfos)
 
             binding.cvPlace.setOnClickListener {

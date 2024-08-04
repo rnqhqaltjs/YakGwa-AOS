@@ -38,6 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
+            android:fontFamily="@font/pretendard_regular"
             android:textColor="@color/neutral_700"
             android:text="000님이 약속에 초대했어요"
             android:layout_marginStart="30dp"
@@ -89,7 +90,8 @@
                             android:paddingBottom="4dp"
                             android:text="테마명"
                             android:textColor="@color/secondary_700"
-                            android:textSize="13sp"
+                            android:fontFamily="@font/pretendard_semi_bold"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -106,6 +108,7 @@
                     android:layout_marginTop="10dp"
                     android:text="약과장의 약과모임"
                     android:textColor="@color/black"
+                    android:fontFamily="@font/pretendard_semi_bold"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -117,29 +120,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="10dp"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/pretendard_regular"
                     android:text="모임 설명입니다. 모임 설명입니다."
                     android:textColor="@color/neutral_500"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_invitation_title" />
 
-                <TextView
-                    android:id="@+id/tv_invitation_end"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="18dp"
-                    android:text="N시간 뒤 초대 마감"
-                    android:fontFamily="@font/pretendard_semi_bold"
-                    android:textColor="@color/primary_800"
-                    android:textSize="15sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_invitation_description" />
-
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cv_participant_person"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="20dp"
                     android:backgroundTint="@color/neutral_200"
                     app:cardCornerRadius="15dp"
                     app:cardElevation="0dp"
@@ -147,7 +139,7 @@
                     android:layout_marginEnd="20dp"
                     android:layout_marginBottom="13dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_invitation_end">
+                    app:layout_constraintTop_toBottomOf="@+id/tv_invitation_description">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"

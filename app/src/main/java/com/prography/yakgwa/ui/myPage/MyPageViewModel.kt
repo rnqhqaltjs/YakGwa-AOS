@@ -1,9 +1,9 @@
 package com.prography.yakgwa.ui.myPage
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prography.data.datasource.local.YakGwaLocalDataSource
-import com.prography.domain.model.request.UserImageRequestEntity
 import com.prography.domain.model.response.UserInfoResponseEntity
 import com.prography.domain.repository.AuthRepository
 import com.prography.domain.usecase.GetUserInformationUseCase
@@ -70,11 +70,11 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
-    fun updateUserImage(userImageRequestEntity: UserImageRequestEntity) {
+    fun updateUserImage(imageUri: Uri) {
         _userImageState.value = UiState.Loading
 
         viewModelScope.launch {
-            patchUpdateUserImageUseCase(userImageRequestEntity)
+            patchUpdateUserImageUseCase(imageUri)
                 .onSuccess {
                     _userImageState.value = UiState.Success(it)
                 }.onFailure {

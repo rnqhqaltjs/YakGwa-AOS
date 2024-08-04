@@ -76,7 +76,8 @@ object MeetMapper {
                             this.meetDateTime,
                             this.placeName,
                             this.meetTitle,
-                            this.meetId
+                            this.meetId,
+                            this.description
                         )
                     }
                 )
@@ -90,6 +91,7 @@ object MeetMapper {
                 this.meetInfo.run {
                     MeetDetailResponseEntity.MeetInfo(
                         this.meetTitle,
+                        this.description,
                         this.themeName,
                     )
                 },
@@ -98,7 +100,7 @@ object MeetMapper {
                         MeetDetailResponseEntity.ParticipantInfo(
                             this.meetRole,
                             this.imageUrl,
-                            this.participantId
+                            this.name
                         )
                     }
                 }
@@ -125,7 +127,8 @@ object MeetMapper {
                             this.meetTitle,
                             this.meetId
                         )
-                    })
+                    }, this.description
+                )
             }
         }
     }

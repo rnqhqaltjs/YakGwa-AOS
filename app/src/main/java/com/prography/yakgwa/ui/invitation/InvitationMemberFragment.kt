@@ -10,9 +10,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.prography.domain.model.response.MeetDetailResponseEntity.MeetInfo
+import com.prography.domain.model.response.MeetDetailResponseEntity
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentInvitationMemberBinding
+import com.prography.yakgwa.type.RoleType
 import com.prography.yakgwa.ui.invitation.InvitationViewModel.Companion.INVALID_MEET_ID
 import com.prography.yakgwa.util.OverlapDecoration
 import com.prography.yakgwa.util.UiState
@@ -49,7 +50,7 @@ class InvitationMemberFragment :
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            showMeetDetails(it.data.meetInfo)
+                            showMeetDetails(it.data)
                             viewModel.setParticipantInfo(it.data.participantInfo)
                             participantMemberListAdapter.submitList(it.data.participantInfo.reversed())
                         }
@@ -105,18 +106,13 @@ class InvitationMemberFragment :
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showMeetDetails(meetInfo: MeetInfo) {
+    private fun showMeetDetails(item: MeetDetailResponseEntity) {
         with(binding) {
-            tvTemaName.text = meetInfo.themeName
-            tvInvitationTitle.text = meetInfo.meetTitle
-//            tvInvitationDescription.text = meetInfo.meetDescription
-
-//            val hours = parseHourFromTimeString(meetInfo.leftInviteTime)
-//            tvInvitationEnd.text = "${hours}시간 뒤 초대 마감"
-//
-//            if (hours == EXPIRED_INVITATION_HOUR) {
-//                handleInvalidInvitation()
-//            }
+            tvTemaName.text = item.meetInfo.themeName
+            tvInvitationTitle.text = item.meetInfo.meetTitle
+            tvInvitationDescription.text = item.meetInfo.description
+            tvParticipantDescription.text =
+                "${item.participantInfo.find { it.meetRole == RoleType.LEADER.name }?.name}님이 약속에 초대했어요"
         }
     }
 
@@ -140,9 +136,5 @@ class InvitationMemberFragment :
         ).apply {
             findNavController().navigate(this)
         }
-    }
-
-    companion object {
-        private const val EXPIRED_INVITATION_HOUR = 0
     }
 }

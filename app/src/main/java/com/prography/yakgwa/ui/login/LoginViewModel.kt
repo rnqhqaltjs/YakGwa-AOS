@@ -36,7 +36,6 @@ class LoginViewModel @Inject constructor(
                     saveIsLogin(true)
                     saveAccessToken(HEADER_BEARER + authEntity.accessToken)
                     saveRefreshToken(HEADER_BEARER + authEntity.refreshToken)
-                    saveUserId(authEntity.userId)
                 }
                 _loginState.value = UiState.Success(Unit)
             }.onFailure {

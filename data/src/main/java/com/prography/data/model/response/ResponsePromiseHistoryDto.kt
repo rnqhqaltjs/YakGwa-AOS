@@ -14,7 +14,9 @@ data class ResponsePromiseHistoryDto(
         @SerializedName("meetStatus")
         val meetStatus: String,
         @SerializedName("meetInfo")
-        val meetInfo: MeetInfo
+        val meetInfo: MeetInfo,
+        @SerializedName("description")
+        val description: String
     )
 
     @Serializable

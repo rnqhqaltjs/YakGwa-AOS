@@ -59,7 +59,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_yakgwa" />
+                    app:srcCompat="@drawable/ic_theme" />
 
                 <TextView
                     android:id="@+id/tv_no_promise"

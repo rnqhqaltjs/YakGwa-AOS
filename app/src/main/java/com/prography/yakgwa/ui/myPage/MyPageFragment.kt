@@ -14,7 +14,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.google.android.material.snackbar.Snackbar
-import com.prography.domain.model.request.UserImageRequestEntity
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentMyPageBinding
 import com.prography.yakgwa.ui.login.LoginActivity
@@ -130,8 +129,8 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
     private val newPiker =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
-                viewModel.updateUserImage(UserImageRequestEntity(uri.toString()))
                 Timber.tag("PhotoPicker").d("Selected URI: $uri")
+                viewModel.updateUserImage(uri)
             } else {
                 Timber.tag("PhotoPicker").d("No media selected")
             }

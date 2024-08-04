@@ -47,6 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="23dp"
                 android:layout_marginTop="43dp"
+                android:fontFamily="@font/pretendard_medium"
                 android:text="약속의 목적이 무엇인가요?"
                 android:textColor="@color/black"
                 android:textSize="15sp"

@@ -10,5 +10,6 @@ data class MeetsResponseEntity(
         val placeName: String?,
         val meetTitle: String?,
         val meetId: Int,
+        val description: String?
     )
 }

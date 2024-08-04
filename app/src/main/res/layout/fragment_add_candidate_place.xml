@@ -26,6 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="23dp"
+                android:fontFamily="@font/pretendard_medium"
                 android:layout_marginTop="20dp"
                 android:text="약속 장소 후보를 추가해주세요"
                 android:textColor="@color/black"
@@ -41,6 +42,7 @@
                 android:text="최대 3개 추가 가능"
                 android:textColor="@color/neutral_600"
                 android:textSize="12sp"
+                android:fontFamily="@font/pretendard_regular"
                 app:layout_constraintStart_toStartOf="@+id/tv_where_meet"
                 app:layout_constraintTop_toBottomOf="@+id/tv_where_meet" />
 

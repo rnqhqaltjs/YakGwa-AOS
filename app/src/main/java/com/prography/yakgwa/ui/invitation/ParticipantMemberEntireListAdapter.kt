@@ -1,8 +1,8 @@
 package com.prography.yakgwa.ui.invitation
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -39,13 +39,11 @@ class ParticipantMemberEntireListAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(itemView: ParticipantInfo) {
+            binding.tvMemberName.text = itemView.name
+            binding.ivLeader.isVisible = itemView.meetRole == RoleType.LEADER.name
             binding.ivParticipantMember.load(itemView.imageUrl) {
                 placeholder(R.drawable.ic_profile)
                 error(R.drawable.ic_profile)
-            }
-
-            if (itemView.meetRole == RoleType.LEADER.name) {
-                binding.ivLeader.visibility = View.VISIBLE
             }
         }
     }
@@ -57,7 +55,7 @@ class ParticipantMemberEntireListAdapter :
                     oldItem: ParticipantInfo,
                     newItem: ParticipantInfo
                 ): Boolean {
-                    return oldItem.participantId == newItem.participantId
+                    return oldItem.name == newItem.name
                 }
 
                 override fun areContentsTheSame(
