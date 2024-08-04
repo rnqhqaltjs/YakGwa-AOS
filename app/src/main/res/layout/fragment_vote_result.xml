@@ -121,9 +121,9 @@
                                     android:paddingEnd="12dp"
                                     android:paddingBottom="4dp"
                                     android:text="테마명"
+                                    android:fontFamily="@font/pretendard_semi_bold"
                                     android:textColor="@color/secondary_700"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold"
+                                    android:textSize="14sp"
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintStart_toStartOf="parent"
@@ -140,7 +140,7 @@
                             android:text="약과장의 약과모임"
                             android:textColor="@color/black"
                             android:textSize="18sp"
-                            android:textStyle="bold"
+                            android:fontFamily="@font/pretendard_semi_bold"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
@@ -150,7 +150,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
                             android:layout_marginTop="10dp"
+                            android:textSize="14sp"
                             android:text="모임 설명입니다. 모임 설명입니다."
+                            android:fontFamily="@font/pretendard_regular"
                             android:textColor="@color/neutral_500"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tv_invitation_title" />

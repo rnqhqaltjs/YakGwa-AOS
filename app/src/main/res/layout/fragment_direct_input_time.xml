@@ -21,6 +21,7 @@
             android:text="정해진 약속 시간을 입력해주세요"
             android:layout_marginTop="20dp"
             android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_medium"
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -51,6 +52,7 @@
                     android:layout_marginBottom="16dp"
                     android:background="@android:color/transparent"
                     android:hint="날짜를 입력해주세요"
+                    android:fontFamily="@font/pretendard_regular"
                     android:textColorHint="@color/neutral_500"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -100,6 +102,7 @@
                     android:layout_marginBottom="16dp"
                     android:background="@android:color/transparent"
                     android:hint="시간을 입력해주세요"
+                    android:fontFamily="@font/pretendard_regular"
                     android:textColorHint="@color/neutral_500"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="parent"

@@ -52,28 +52,15 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <TextView
-            android:id="@+id/tv_member_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/pretendard_regular"
-            android:text="N명"
-            android:layout_marginStart="10dp"
-            android:textColor="@color/secondary_700"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/cv_tema"
-            app:layout_constraintStart_toEndOf="@+id/cv_tema"
-            app:layout_constraintTop_toTopOf="@+id/cv_tema" />
-
         <ImageView
             android:id="@+id/tv_show_detail"
             android:layout_width="70dp"
             android:layout_height="26dp"
             android:layout_marginEnd="20dp"
             android:src="@drawable/img_show_detail"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_member_count"
+            app:layout_constraintBottom_toBottomOf="@+id/cv_tema"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_member_count" />
+            app:layout_constraintTop_toTopOf="@+id/cv_tema" />
 
         <TextView
             android:id="@+id/tv_title"

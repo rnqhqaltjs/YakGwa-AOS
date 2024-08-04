@@ -15,15 +15,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/iv_like"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="16dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_like" />
+
         <TextView
             android:id="@+id/tv_selected_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginStart="2dp"
             android:text="라트라비아타"
+            app:layout_goneMarginStart="20dp"
+            android:layout_marginTop="15dp"
             android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_like"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
