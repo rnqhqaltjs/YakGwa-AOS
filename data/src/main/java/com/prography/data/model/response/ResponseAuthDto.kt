@@ -7,10 +7,10 @@ import kotlinx.serialization.Serializable
 data class ResponseAuthDto(
     @SerialName("tokenSet")
     val tokenSet: TokenSet,
-    @SerialName("userId")
-    val userId: Int,
     @SerialName("isNew")
-    val isNew: Boolean
+    val isNew: Boolean,
+    @SerialName("role")
+    val role: String?
 ) {
     @Serializable
     data class TokenSet(

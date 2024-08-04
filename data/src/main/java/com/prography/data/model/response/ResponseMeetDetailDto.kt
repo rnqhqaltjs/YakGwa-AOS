@@ -15,6 +15,8 @@ data class ResponseMeetDetailDto(
     data class MeetInfo(
         @SerializedName("meetTitle")
         val meetTitle: String,
+        @SerializedName("description")
+        val description: String,
         @SerializedName("themeName")
         val themeName: String
     )
@@ -25,7 +27,7 @@ data class ResponseMeetDetailDto(
         val meetRole: String,
         @SerializedName("imageUrl")
         val imageUrl: String?,
-        @SerializedName("participantId")
-        val participantId: Int,
+        @SerializedName("name")
+        val name: String,
     )
 }
