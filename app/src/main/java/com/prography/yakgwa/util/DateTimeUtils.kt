@@ -5,6 +5,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 object DateTimeUtils {
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -14,7 +15,6 @@ object DateTimeUtils {
     private val koreanDateFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일")
     private val koreanTimeFormatter = DateTimeFormatter.ofPattern("a h시")
     private val isoDateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
-
 
     fun formatDateToString(year: Int, month: Int, day: Int): String {
         val date = LocalDate.of(year, month, day)
@@ -77,5 +77,20 @@ object DateTimeUtils {
     fun formatIsoDateTimeToKoreanTime(dateTimeString: String): String {
         val dateTime = LocalDateTime.parse(dateTimeString, isoDateTimeFormatter)
         return dateTime.format(koreanTimeFormatter)
+    }
+
+
+    fun calculateDDay(isoDateTimeString: String): String {
+        val eventDateTime = LocalDateTime.parse(isoDateTimeString, isoDateTimeFormatter)
+        val currentDateTime = LocalDateTime.now()
+
+        val daysDifference =
+            ChronoUnit.DAYS.between(currentDateTime.toLocalDate(), eventDateTime.toLocalDate())
+
+        return if (daysDifference > 0) {
+            "D - $daysDifference"
+        } else {
+            "D - 0"
+        }
     }
 }
