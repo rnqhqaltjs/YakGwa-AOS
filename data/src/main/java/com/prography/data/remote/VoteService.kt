@@ -9,6 +9,7 @@ import com.prography.data.model.response.BaseResponse
 import com.prography.data.model.response.ResponsePlaceCandidateDto
 import com.prography.data.model.response.ResponseTimeCandidateDto
 import com.prography.data.model.response.ResponseVotePlaceDto
+import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
@@ -17,43 +18,43 @@ import retrofit2.http.Path
 
 interface VoteService {
     @GET("/api/v1/meets/{meetId}/placeslots")
-    suspend fun getPlaceCandidate(@Path("meetId") meetId: Int): BaseResponse<ResponsePlaceCandidateDto>
+    suspend fun getPlaceCandidate(@Path("meetId") meetId: Int): ApiResponse<BaseResponse<ResponsePlaceCandidateDto>>
 
     @GET("/api/v1/meets/{meetId}/times")
-    suspend fun getTimeCandidate(@Path("meetId") meetId: Int): BaseResponse<ResponseTimeCandidateDto>
+    suspend fun getTimeCandidate(@Path("meetId") meetId: Int): ApiResponse<BaseResponse<ResponseTimeCandidateDto>>
 
     @POST("/api/v1/meets/{meetId}/times")
     suspend fun voteTime(
         @Path("meetId") meetId: Int,
         @Body requestVoteTimeDto: RequestVoteTimeDto
-    ): BaseResponse<Unit>
+    ): ApiResponse<Unit>
 
     @POST("/api/v1/meets/{meetId}/places")
     suspend fun votePlace(
         @Path("meetId") meetId: Int,
         @Body requestVoteTimeDto: RequestVotePlaceDto
-    ): BaseResponse<Unit>
+    ): ApiResponse<Unit>
 
     @GET("/api/v1/meets/{meetId}/places")
     suspend fun getVotePlace(
         @Path("meetId") meetId: Int
-    ): BaseResponse<ResponseVotePlaceDto>
+    ): ApiResponse<BaseResponse<ResponseVotePlaceDto>>
 
     @PATCH("/api/v1/meets/{meetId}/times/confirm")
     suspend fun confirmMeetTime(
         @Path("meetId") meetId: Int,
         @Body requestConfirmTimeDto: RequestConfirmTimeDto
-    ): BaseResponse<String>
+    ): ApiResponse<BaseResponse<String>>
 
     @PATCH("/api/v1/meets/{meetId}/places/confirm")
     suspend fun confirmMeetPlace(
         @Path("meetId") meetId: Int,
         @Body requestConfirmPlaceDto: RequestConfirmPlaceDto
-    ): BaseResponse<String>
+    ): ApiResponse<BaseResponse<String>>
 
     @POST("/api/v1/meets/{meetId}/placeslots")
     suspend fun addPlaceCandidate(
         @Path("meetId") meetId: Int,
         @Body requestPlaceCandidateDto: RequestPlaceCandidateDto
-    ): BaseResponse<Unit>
+    ): ApiResponse<Unit>
 }

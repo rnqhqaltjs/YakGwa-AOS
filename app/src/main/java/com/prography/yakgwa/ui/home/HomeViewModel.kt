@@ -2,9 +2,12 @@ package com.prography.yakgwa.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prography.data.ErrorResponse
 import com.prography.domain.model.response.MeetsResponseEntity
 import com.prography.domain.usecase.GetParticipantMeetListUseCase
 import com.prography.yakgwa.util.UiState
+import com.skydoves.sandwich.onSuccess
+import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,8 +37,9 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getParticipantMeetListUseCase()
                 .onSuccess {
-                    _meetsState.value = UiState.Success(it)
-                }.onFailure {
+                    _meetsState.value = UiState.Success(data)
+                }
+                .onErrorDeserialize<List<MeetsResponseEntity>, ErrorResponse> {
                     _meetsState.value = UiState.Failure(it.message)
                 }
         }

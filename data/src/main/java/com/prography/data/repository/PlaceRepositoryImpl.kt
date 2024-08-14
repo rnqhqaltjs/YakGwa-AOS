@@ -5,6 +5,8 @@ import com.prography.data.mapper.PlaceMapper
 import com.prography.domain.model.request.MyPlaceRequestEntity
 import com.prography.domain.model.response.LocationResponseEntity
 import com.prography.domain.repository.PlaceRepository
+import com.skydoves.sandwich.ApiResponse
+import com.skydoves.sandwich.mapSuccess
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -12,20 +14,22 @@ import javax.inject.Inject
 class PlaceRepositoryImpl @Inject constructor(
     private val placeRemoteDataSource: PlaceRemoteDataSource
 ) : PlaceRepository {
-    override suspend fun getLocations(search: String): Flow<List<LocationResponseEntity>> = flow {
-        val result = runCatching {
-            PlaceMapper.mapperToLocationResponseEntity(placeRemoteDataSource.getLocations(search).result)
-        }
+    override suspend fun getLocations(search: String): ApiResponse<Flow<List<LocationResponseEntity>>> {
+        val response = placeRemoteDataSource.getLocations(search)
 
-        emit(result.getOrThrow())
+        return response.mapSuccess {
+            flow {
+                emit(PlaceMapper.mapperToLocationResponseEntity(result))
+            }
+        }
     }
 
-    override suspend fun getMyPlace(): Result<List<LocationResponseEntity>> {
+    override suspend fun getMyPlace(): ApiResponse<List<LocationResponseEntity>> {
         val response = placeRemoteDataSource.getMyPlace()
 
-        return runCatching {
+        return response.mapSuccess {
             PlaceMapper.mapperToLocationResponseEntity(
-                response.result
+                this.result
             )
         }
     }
@@ -33,14 +37,13 @@ class PlaceRepositoryImpl @Inject constructor(
     override suspend fun myPlace(
         like: Boolean,
         myPlaceRequestEntity: MyPlaceRequestEntity
-    ): Result<Boolean> {
+    ): ApiResponse<Boolean> {
         val response = placeRemoteDataSource.myPlace(
             like,
             PlaceMapper.mapperToRequestMyPlaceDto(myPlaceRequestEntity)
         )
-
-        return runCatching {
-            response.result
+        return response.mapSuccess {
+            this.result
         }
     }
 }

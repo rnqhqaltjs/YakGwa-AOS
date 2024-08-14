@@ -73,8 +73,13 @@ dependencies {
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
-    // firebase
+    // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.messaging.ktx)
+
+    // Sandwich
+    implementation(libs.sandwich)
+    implementation(libs.sandwich.retrofit)
+    implementation(libs.sandwich.retrofit.serialization)
 }

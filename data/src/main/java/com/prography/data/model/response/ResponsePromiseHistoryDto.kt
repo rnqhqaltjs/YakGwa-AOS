@@ -24,9 +24,9 @@ data class ResponsePromiseHistoryDto(
         @SerializedName("meetThemeName")
         val meetThemeName: String,
         @SerializedName("meetDateTime")
-        val meetDateTime: String,
+        val meetDateTime: String?,
         @SerializedName("placeName")
-        val placeName: String,
+        val placeName: String?,
         @SerializedName("meetTitle")
         val meetTitle: String,
         @SerializedName("meetId")

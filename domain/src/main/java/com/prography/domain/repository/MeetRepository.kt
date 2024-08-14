@@ -7,12 +7,13 @@ import com.prography.domain.model.response.MeetsResponseEntity
 import com.prography.domain.model.response.ParticipantMeetResponseEntity
 import com.prography.domain.model.response.PromiseHistoryResponseEntity
 import com.prography.domain.model.response.ThemesResponseEntity
+import com.skydoves.sandwich.ApiResponse
 
 interface MeetRepository {
-    suspend fun getMeetThemes(): Result<List<ThemesResponseEntity>>
-    suspend fun createMeet(createMeetRequestEntity: CreateMeetRequestEntity): Result<CreateMeetResponseEntity>
-    suspend fun getParticipantMeets(): Result<List<MeetsResponseEntity>>
-    suspend fun getMeetInformationDetail(meetId: Int): Result<MeetDetailResponseEntity>
-    suspend fun participantMeet(meetId: Int): Result<ParticipantMeetResponseEntity>
-    suspend fun getPromiseHistory(): Result<List<PromiseHistoryResponseEntity>>
+    suspend fun getMeetThemes(): ApiResponse<List<ThemesResponseEntity>>
+    suspend fun createMeet(createMeetRequestEntity: CreateMeetRequestEntity): ApiResponse<CreateMeetResponseEntity>
+    suspend fun getParticipantMeets(): ApiResponse<List<MeetsResponseEntity>>
+    suspend fun getMeetInformationDetail(meetId: Int): ApiResponse<MeetDetailResponseEntity>
+    suspend fun participantMeet(meetId: Int): ApiResponse<ParticipantMeetResponseEntity>
+    suspend fun getPromiseHistory(): ApiResponse<List<PromiseHistoryResponseEntity>>
 }

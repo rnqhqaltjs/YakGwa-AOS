@@ -3,6 +3,7 @@ package com.prography.yakgwa.ui.invitation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prography.data.ErrorResponse
 import com.prography.domain.model.response.MeetDetailResponseEntity
 import com.prography.domain.model.response.MeetDetailResponseEntity.MeetInfo
 import com.prography.domain.model.response.ParticipantMeetResponseEntity
@@ -15,6 +16,8 @@ import com.prography.domain.usecase.GetUserVotePlaceListUseCase
 import com.prography.domain.usecase.GetVoteTimeCandidateInfoUseCase
 import com.prography.domain.usecase.PostParticipantMeetUseCase
 import com.prography.yakgwa.util.UiState
+import com.skydoves.sandwich.onSuccess
+import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -103,10 +106,10 @@ class InvitationViewModel @Inject constructor(
         viewModelScope.launch {
             getMeetInformationDetailUseCase(meetId)
                 .onSuccess {
-                    _meetInfoState.value = it.meetInfo
-                    _detailMeetState.value = UiState.Success(it)
+                    _meetInfoState.value = data.meetInfo
+                    _detailMeetState.value = UiState.Success(data)
                 }
-                .onFailure {
+                .onErrorDeserialize<MeetDetailResponseEntity, ErrorResponse> {
                     _detailMeetState.value = UiState.Failure(it.message)
                 }
         }
@@ -118,9 +121,9 @@ class InvitationViewModel @Inject constructor(
         viewModelScope.launch {
             postParticipantMeetUseCase(meetId)
                 .onSuccess {
-                    _participantMeetState.value = UiState.Success(it)
+                    _participantMeetState.value = UiState.Success(data)
                 }
-                .onFailure {
+                .onErrorDeserialize<ParticipantMeetResponseEntity, ErrorResponse> {
                     _participantMeetState.value = UiState.Failure(it.message)
                 }
         }
@@ -132,9 +135,9 @@ class InvitationViewModel @Inject constructor(
         viewModelScope.launch {
             getVoteTimeCandidateInfoUseCase(meetId)
                 .onSuccess {
-                    _timeCandidateState.value = UiState.Success(it)
+                    _timeCandidateState.value = UiState.Success(data)
                 }
-                .onFailure {
+                .onErrorDeserialize<TimeCandidateResponseEntity, ErrorResponse> {
                     _timeCandidateState.value = UiState.Failure(it.message)
                 }
         }
@@ -146,9 +149,9 @@ class InvitationViewModel @Inject constructor(
         viewModelScope.launch {
             getUserVoteInfoUseCase(meetId)
                 .onSuccess {
-                    _votePlaceInfoState.value = UiState.Success(it)
+                    _votePlaceInfoState.value = UiState.Success(data)
                 }
-                .onFailure {
+                .onErrorDeserialize<VotePlaceResponseEntity, ErrorResponse> {
                     _votePlaceInfoState.value = UiState.Failure(it.message)
                 }
         }
@@ -160,9 +163,9 @@ class InvitationViewModel @Inject constructor(
         viewModelScope.launch {
             getPlaceCandidateInfoUseCase(meetId)
                 .onSuccess {
-                    _placeCandidateState.value = UiState.Success(it)
+                    _placeCandidateState.value = UiState.Success(data)
                 }
-                .onFailure {
+                .onErrorDeserialize<List<PlaceCandidateResponseEntity>, ErrorResponse> {
                     _placeCandidateState.value = UiState.Failure(it.message)
                 }
         }

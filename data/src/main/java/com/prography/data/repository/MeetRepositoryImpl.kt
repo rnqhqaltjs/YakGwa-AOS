@@ -10,66 +10,64 @@ import com.prography.domain.model.response.ParticipantMeetResponseEntity
 import com.prography.domain.model.response.PromiseHistoryResponseEntity
 import com.prography.domain.model.response.ThemesResponseEntity
 import com.prography.domain.repository.MeetRepository
+import com.skydoves.sandwich.ApiResponse
+import com.skydoves.sandwich.mapSuccess
 import javax.inject.Inject
 
 class MeetRepositoryImpl @Inject constructor(
     private val meetRemoteDataSource: MeetRemoteDataSource
 ) : MeetRepository {
-    override suspend fun getMeetThemes(): Result<List<ThemesResponseEntity>> {
+    override suspend fun getMeetThemes(): ApiResponse<List<ThemesResponseEntity>> {
         val response = meetRemoteDataSource.getMeetThemes()
 
-        return runCatching {
-            MeetMapper.mapperToThemesResponseEntity(response.result)
+        return response.mapSuccess {
+            MeetMapper.mapperToThemesResponseEntity(this.result)
         }
     }
 
     override suspend fun createMeet(
         createMeetRequestEntity: CreateMeetRequestEntity
-    ): Result<CreateMeetResponseEntity> {
+    ): ApiResponse<CreateMeetResponseEntity> {
         val response = meetRemoteDataSource.createMeet(
             MeetMapper.mapperToRequestCreateMeetDto(createMeetRequestEntity)
         )
 
-        return runCatching {
-            MeetMapper.mapperToCreateMeetResponseEntity(response.result)
+        return response.mapSuccess {
+            MeetMapper.mapperToCreateMeetResponseEntity(this.result)
         }
     }
 
-    override suspend fun getParticipantMeets(): Result<List<MeetsResponseEntity>> {
+    override suspend fun getParticipantMeets(): ApiResponse<List<MeetsResponseEntity>> {
         val response = meetRemoteDataSource.getParticipantMeets()
 
-        return runCatching {
-            MeetMapper.mapperToMeetsResponseEntity(response.result)
+        return response.mapSuccess {
+            MeetMapper.mapperToMeetsResponseEntity(this.result)
         }
     }
 
     override suspend fun getMeetInformationDetail(
         meetId: Int
-    ): Result<MeetDetailResponseEntity> {
+    ): ApiResponse<MeetDetailResponseEntity> {
         val response = meetRemoteDataSource.getMeetInformationDetail(meetId)
 
-        return runCatching {
-            MeetMapper.mapperToMeetDetailResponseEntity(
-                response.result
-            )
+        return response.mapSuccess {
+            MeetMapper.mapperToMeetDetailResponseEntity(this.result)
         }
     }
 
-    override suspend fun participantMeet(meetId: Int): Result<ParticipantMeetResponseEntity> {
+    override suspend fun participantMeet(meetId: Int): ApiResponse<ParticipantMeetResponseEntity> {
         val response = meetRemoteDataSource.participantMeet(meetId)
 
-        return runCatching {
-            MeetMapper.mapperToParticipantMeetResponseEntity(
-                response.result
-            )
+        return response.mapSuccess {
+            MeetMapper.mapperToParticipantMeetResponseEntity(this.result)
         }
     }
 
-    override suspend fun getPromiseHistory(): Result<List<PromiseHistoryResponseEntity>> {
+    override suspend fun getPromiseHistory(): ApiResponse<List<PromiseHistoryResponseEntity>> {
         val response = meetRemoteDataSource.getPromiseHistory()
 
-        return runCatching {
-            MeetMapper.mapperToPromiseHistoryResponseEntity(response.result)
+        return response.mapSuccess {
+            MeetMapper.mapperToPromiseHistoryResponseEntity(this.result)
         }
     }
 }

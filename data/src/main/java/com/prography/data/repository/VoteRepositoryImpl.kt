@@ -11,102 +11,90 @@ import com.prography.domain.model.response.PlaceCandidateResponseEntity
 import com.prography.domain.model.response.TimeCandidateResponseEntity
 import com.prography.domain.model.response.VotePlaceResponseEntity
 import com.prography.domain.repository.VoteRepository
+import com.skydoves.sandwich.ApiResponse
+import com.skydoves.sandwich.mapSuccess
 import javax.inject.Inject
 
 class VoteRepositoryImpl @Inject constructor(
     private val voteRemoteDataSource: VoteRemoteDataSource
 ) : VoteRepository {
-    override suspend fun getPlaceCandidate(meetId: Int): Result<List<PlaceCandidateResponseEntity>> {
+    override suspend fun getPlaceCandidate(meetId: Int): ApiResponse<List<PlaceCandidateResponseEntity>> {
         val response = voteRemoteDataSource.getPlaceCandidate(meetId)
 
-        return runCatching {
-            VoteMapper.mapperToPlaceCandidateResponseEntity(response.result)
+        return response.mapSuccess {
+            VoteMapper.mapperToPlaceCandidateResponseEntity(this.result)
         }
     }
 
-    override suspend fun getTimeCandidate(meetId: Int): Result<TimeCandidateResponseEntity> {
+    override suspend fun getTimeCandidate(meetId: Int): ApiResponse<TimeCandidateResponseEntity> {
         val response = voteRemoteDataSource.getTimeCandidate(meetId)
 
-        return runCatching {
-            VoteMapper.mapperToTimeCandidateResponseEntity(response.result)
+        return response.mapSuccess {
+            VoteMapper.mapperToTimeCandidateResponseEntity(this.result)
         }
     }
 
     override suspend fun voteTime(
         meetId: Int,
         voteTimeRequestEntity: VoteTimeRequestEntity
-    ): Result<Unit> {
-        val response = voteRemoteDataSource.voteTime(
+    ): ApiResponse<Unit> {
+        return voteRemoteDataSource.voteTime(
             meetId,
             VoteMapper.mapperToRequestVoteTimeDto(voteTimeRequestEntity)
         )
-
-        return runCatching {
-            response.result
-        }
     }
 
     override suspend fun votePlace(
         meetId: Int,
         votePlaceRequestEntity: VotePlaceRequestEntity
-    ): Result<Unit> {
-        val response = voteRemoteDataSource.votePlace(
+    ): ApiResponse<Unit> {
+        return voteRemoteDataSource.votePlace(
             meetId,
             VoteMapper.mapperToRequestVotePlaceDto(votePlaceRequestEntity)
         )
-
-        return runCatching {
-            response.result
-        }
     }
 
     override suspend fun confirmMeetTime(
         meetId: Int,
         confirmTimeRequestEntity: ConfirmTimeRequestEntity
-    ): Result<String> {
+    ): ApiResponse<String> {
         val response = voteRemoteDataSource.confirmMeetTime(
             meetId,
             VoteMapper.mapperToRequestConfirmTimeDto(confirmTimeRequestEntity)
         )
-
-        return runCatching {
-            response.result
+        return response.mapSuccess {
+            this.result
         }
     }
 
     override suspend fun confirmMeetPlace(
         meetId: Int,
         confirmPlaceRequestEntity: ConfirmPlaceRequestEntity
-    ): Result<String> {
+    ): ApiResponse<String> {
         val response = voteRemoteDataSource.confirmMeetPlace(
             meetId,
             VoteMapper.mapperToRequestConfirmPlaceDto(confirmPlaceRequestEntity)
         )
-
-        return runCatching {
-            response.result
+        return response.mapSuccess {
+            this.result
         }
     }
 
     override suspend fun addPlaceCandidate(
         meetId: Int,
         placeCandidateRequestEntity: PlaceCandidateRequestEntity
-    ): Result<Unit> {
-        val response = voteRemoteDataSource.addPlaceCandidate(
+    ): ApiResponse<Unit> {
+        return voteRemoteDataSource.addPlaceCandidate(
             meetId,
             VoteMapper.mapperToRequestPlaceCandidateDto(placeCandidateRequestEntity)
         )
-
-        return runCatching {
-            response.result
-        }
     }
 
-    override suspend fun getVotePlace(meetId: Int): Result<VotePlaceResponseEntity> {
+    override suspend fun getVotePlace(meetId: Int): ApiResponse<VotePlaceResponseEntity> {
         val response = voteRemoteDataSource.getVotePlace(meetId)
 
-        return runCatching {
-            VoteMapper.mapperToVotePlaceResponseEntity(response.result)
+        return response.mapSuccess {
+            VoteMapper.mapperToVotePlaceResponseEntity(this.result)
         }
     }
 }

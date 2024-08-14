@@ -8,23 +8,24 @@ import com.prography.data.model.response.ResponseMeetsDto
 import com.prography.data.model.response.ResponseParticipantMeetDto
 import com.prography.data.model.response.ResponsePromiseHistoryDto
 import com.prography.data.model.response.ResponseThemesDto
+import com.skydoves.sandwich.ApiResponse
 
 interface MeetRemoteDataSource {
-    suspend fun getMeetThemes(): BaseResponse<List<ResponseThemesDto>>
+    suspend fun getMeetThemes(): ApiResponse<BaseResponse<List<ResponseThemesDto>>>
 
     suspend fun createMeet(
         requestCreateMeetDto: RequestCreateMeetDto
-    ): BaseResponse<ResponseCreateMeetDto>
+    ): ApiResponse<BaseResponse<ResponseCreateMeetDto>>
 
-    suspend fun getParticipantMeets(): BaseResponse<ResponseMeetsDto>
+    suspend fun getParticipantMeets(): ApiResponse<BaseResponse<ResponseMeetsDto>>
 
     suspend fun getMeetInformationDetail(
         meetId: Int
-    ): BaseResponse<ResponseMeetDetailDto>
+    ): ApiResponse<BaseResponse<ResponseMeetDetailDto>>
 
     suspend fun participantMeet(
         meetId: Int
-    ): BaseResponse<ResponseParticipantMeetDto>
+    ): ApiResponse<BaseResponse<ResponseParticipantMeetDto>>
 
-    suspend fun getPromiseHistory(): BaseResponse<ResponsePromiseHistoryDto>
+    suspend fun getPromiseHistory(): ApiResponse<BaseResponse<ResponsePromiseHistoryDto>>
 }

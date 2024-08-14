@@ -144,7 +144,9 @@ class InvitationLeaderFragment :
 
     private fun addListeners() {
         binding.ivInvitationBtn.setOnClickListener {
-            sendKakaoLink(viewModel.meetInfoState.value!!)
+            viewModel.meetInfoState.value?.let { meetInfo ->
+                sendKakaoLink(meetInfo)
+            }
         }
 
         binding.ivNavigateUpBtn.setOnClickListener {
@@ -162,6 +164,14 @@ class InvitationLeaderFragment :
         }
 
         binding.btnVotePlace.setOnClickListener {
+            navigateToVotePromisePlaceFragment()
+        }
+
+        binding.btnVoteTimeAgain.setOnClickListener {
+            navigateToVotePromiseTimeFragment()
+        }
+
+        binding.btnVotePlaceAgain.setOnClickListener {
             navigateToVotePromisePlaceFragment()
         }
     }
@@ -238,8 +248,7 @@ class InvitationLeaderFragment :
             Timber.e("디바이스에 설치된 인터넷 브라우저가 없습니다: $e")
         }
     }
-
-    @SuppressLint("SetTextI18n")
+    
     private fun showMeetDetails(meetInfo: MeetInfo) {
         with(binding) {
             tvTemaName.text = meetInfo.themeName

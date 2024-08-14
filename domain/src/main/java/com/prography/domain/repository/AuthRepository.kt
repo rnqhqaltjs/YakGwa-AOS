@@ -4,14 +4,15 @@ import android.net.Uri
 import com.prography.domain.model.request.AuthRequestEntity
 import com.prography.domain.model.response.AuthResponseEntity
 import com.prography.domain.model.response.UserInfoResponseEntity
+import com.skydoves.sandwich.ApiResponse
 
 interface AuthRepository {
     suspend fun postLogin(
         kakaoAccessToken: String,
         authRequestEntity: AuthRequestEntity
-    ): Result<AuthResponseEntity>
+    ): ApiResponse<AuthResponseEntity>
 
-    suspend fun logout(): Result<Unit>
-    suspend fun getUserInfo(): Result<UserInfoResponseEntity>
-    suspend fun updateUserImage(imageUri: Uri): Result<Unit>
+    suspend fun logout(): ApiResponse<Unit>
+    suspend fun getUserInfo(): ApiResponse<UserInfoResponseEntity>
+    suspend fun updateUserImage(imageUri: Uri): ApiResponse<Unit>
 }
