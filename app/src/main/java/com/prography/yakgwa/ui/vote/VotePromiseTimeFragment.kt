@@ -78,7 +78,7 @@ class VotePromiseTimeFragment :
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.timeVoteState.collectLatest {
                     when (it) {
                         is UiState.Loading -> {}

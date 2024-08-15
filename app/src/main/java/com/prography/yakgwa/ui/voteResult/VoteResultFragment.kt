@@ -135,12 +135,12 @@ class VoteResultFragment :
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.confirmPlaceState.collect {
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            Snackbar.make(requireView(), "장소가 확정되었습니다.", Snackbar.LENGTH_SHORT)
+                            Snackbar.make(requireView(), it.data, Snackbar.LENGTH_SHORT)
                                 .show()
                             viewModel.getUserVotePlace()
                         }
@@ -154,12 +154,12 @@ class VoteResultFragment :
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.confirmTimeState.collect {
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            Snackbar.make(requireView(), "시간이 확정되었습니다.", Snackbar.LENGTH_SHORT)
+                            Snackbar.make(requireView(), it.data, Snackbar.LENGTH_SHORT)
                                 .show()
                             viewModel.getVoteTimeCandidate()
                         }
@@ -214,10 +214,10 @@ class VoteResultFragment :
             MeetType.CONFIRM.name -> {
                 binding.cvPromiseTime.visibility = View.VISIBLE
                 binding.cvVoteTimeResult.visibility = View.GONE
-                binding.tvPromiseDate.text =
-                    formatDateTimeToKoreanDate(timeInfo.timeInfos!!.first().voteTime)
-                binding.tvPromiseTime.text =
-                    formatDateTimeToKoreanTime(timeInfo.timeInfos!!.first().voteTime)
+                timeInfo.timeInfos?.first()?.voteTime?.let { voteTime ->
+                    binding.tvPromiseDate.text = formatDateTimeToKoreanDate(voteTime)
+                    binding.tvPromiseTime.text = formatDateTimeToKoreanTime(voteTime)
+                }
             }
         }
     }
@@ -233,20 +233,20 @@ class VoteResultFragment :
                 binding.cvPromisePlace.visibility = View.VISIBLE
                 binding.cvVotePlaceResult.visibility = View.GONE
 
-                val placeInfo = voteInfo.placeInfos!!.first()
-                binding.tvTitle.text = placeInfo.title
-                binding.tvAddress.text = placeInfo.roadAddress
+                voteInfo.placeInfos?.first()?.let { placeInfo ->
+                    binding.tvTitle.text = placeInfo.title
+                    binding.tvAddress.text = placeInfo.roadAddress
 
-                val geocoder = geoCoding(placeInfo.roadAddress)
-                val mapUrl =
-                    "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster?w=760&h=300" +
-                            "&center=${geocoder.longitude},${geocoder.latitude}" +
-                            "&level=17" +
-                            "&markers=type:d|size:mid|pos:${geocoder.longitude}%20${geocoder.latitude}" +
-                            "&X-NCP-APIGW-API-KEY-ID=${NAVER_CLIENT_ID}" +
-                            "&X-NCP-APIGW-API-KEY=${NAVER_CLIENT_SECRET}"
-
-                binding.ivPromisePlaceMap.load(mapUrl)
+                    val geocoder = geoCoding(placeInfo.roadAddress)
+                    val mapUrl =
+                        "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster?w=760&h=300" +
+                                "&center=${geocoder.longitude},${geocoder.latitude}" +
+                                "&level=17" +
+                                "&markers=type:d|size:mid|pos:${geocoder.longitude}%20${geocoder.latitude}" +
+                                "&X-NCP-APIGW-API-KEY-ID=${NAVER_CLIENT_ID}" +
+                                "&X-NCP-APIGW-API-KEY=${NAVER_CLIENT_SECRET}"
+                    binding.ivPromisePlaceMap.load(mapUrl)
+                }
             }
         }
     }

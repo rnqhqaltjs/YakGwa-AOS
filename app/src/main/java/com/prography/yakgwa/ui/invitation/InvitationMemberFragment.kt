@@ -64,7 +64,7 @@ class InvitationMemberFragment :
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.participantMeetState.collect {
                     when (it) {
                         is UiState.Loading -> {}
