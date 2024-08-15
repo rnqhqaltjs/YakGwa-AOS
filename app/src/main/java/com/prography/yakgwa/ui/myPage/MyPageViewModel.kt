@@ -3,12 +3,16 @@ package com.prography.yakgwa.ui.myPage
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prography.data.ErrorResponse
 import com.prography.data.datasource.local.YakGwaLocalDataSource
 import com.prography.domain.model.response.UserInfoResponseEntity
 import com.prography.domain.repository.AuthRepository
 import com.prography.domain.usecase.GetUserInformationUseCase
 import com.prography.domain.usecase.PatchUpdateUserImageUseCase
 import com.prography.yakgwa.util.UiState
+import com.skydoves.sandwich.onSuccess
+import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
+import com.skydoves.sandwich.suspendOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -48,10 +52,11 @@ class MyPageViewModel @Inject constructor(
 
         viewModelScope.launch {
             authRepository.logout()
-                .onSuccess {
-                    _logoutState.value = UiState.Success(Unit)
+                .suspendOnSuccess {
+                    _logoutState.value = UiState.Success(data)
                     localStorage.clear()
-                }.onFailure {
+                }
+                .onErrorDeserialize<Unit, ErrorResponse> {
                     _logoutState.value = UiState.Failure(it.message)
                 }
         }
@@ -63,8 +68,9 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             getUserInformationUseCase()
                 .onSuccess {
-                    _userInfoState.value = UiState.Success(it)
-                }.onFailure {
+                    _userInfoState.value = UiState.Success(data)
+                }
+                .onErrorDeserialize<UserInfoResponseEntity, ErrorResponse> {
                     _userInfoState.value = UiState.Failure(it.message)
                 }
         }
@@ -76,8 +82,9 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             patchUpdateUserImageUseCase(imageUri)
                 .onSuccess {
-                    _userImageState.value = UiState.Success(it)
-                }.onFailure {
+                    _userImageState.value = UiState.Success(data)
+                }
+                .onErrorDeserialize<Unit, ErrorResponse> {
                     _userImageState.value = UiState.Failure(it.message)
                 }
         }

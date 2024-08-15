@@ -8,34 +8,35 @@ import com.prography.domain.model.request.VoteTimeRequestEntity
 import com.prography.domain.model.response.PlaceCandidateResponseEntity
 import com.prography.domain.model.response.TimeCandidateResponseEntity
 import com.prography.domain.model.response.VotePlaceResponseEntity
+import com.skydoves.sandwich.ApiResponse
 
 interface VoteRepository {
-    suspend fun getPlaceCandidate(meetId: Int): Result<List<PlaceCandidateResponseEntity>>
-    suspend fun getTimeCandidate(meetId: Int): Result<TimeCandidateResponseEntity>
-    suspend fun getVotePlace(meetId: Int): Result<VotePlaceResponseEntity>
+    suspend fun getPlaceCandidate(meetId: Int): ApiResponse<List<PlaceCandidateResponseEntity>>
+    suspend fun getTimeCandidate(meetId: Int): ApiResponse<TimeCandidateResponseEntity>
+    suspend fun getVotePlace(meetId: Int): ApiResponse<VotePlaceResponseEntity>
 
     suspend fun voteTime(
         meetId: Int,
         voteTimeRequestEntity: VoteTimeRequestEntity
-    ): Result<Unit>
+    ): ApiResponse<Unit>
 
     suspend fun votePlace(
         meetId: Int,
         votePlaceRequestEntity: VotePlaceRequestEntity
-    ): Result<Unit>
+    ): ApiResponse<Unit>
 
     suspend fun confirmMeetTime(
         meetId: Int,
         confirmTimeRequestEntity: ConfirmTimeRequestEntity
-    ): Result<String>
+    ): ApiResponse<String>
 
     suspend fun confirmMeetPlace(
         meetId: Int,
         confirmPlaceRequestEntity: ConfirmPlaceRequestEntity
-    ): Result<String>
+    ): ApiResponse<String>
 
     suspend fun addPlaceCandidate(
         meetId: Int,
         placeCandidateRequestEntity: PlaceCandidateRequestEntity
-    ): Result<Unit>
+    ): ApiResponse<Unit>
 }

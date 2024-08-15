@@ -18,8 +18,8 @@ android {
         applicationId = "com.prography.yakgwa"
         minSdk = 26
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 6
+        versionName = "1.0.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -121,4 +121,8 @@ dependencies {
 
     // TedPermission
     implementation(libs.tedpermission.normal)
+
+    // Sandwich
+    implementation(libs.sandwich.retrofit)
+    implementation(libs.sandwich.retrofit.serialization)
 }

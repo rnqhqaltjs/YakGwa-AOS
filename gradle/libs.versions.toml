@@ -26,6 +26,8 @@ annotation = "1.8.0"
 lifecycleLivedataKtx = "2.8.2"
 lifecycleViewmodelKtx = "2.8.2"
 roomRuntime = "2.6.1"
+sandwich = "2.0.8"
+sandwichVersion = "2.0.8"
 tedpermissionNormal = "3.3.0"
 timber = "5.0.1"
 v2Navi = "2.20.3"
@@ -67,6 +69,9 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converte
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+sandwich = { module = "com.github.skydoves:sandwich", version.ref = "sandwich" }
+sandwich-retrofit = { module = "com.github.skydoves:sandwich-retrofit", version.ref = "sandwich" }
+sandwich-retrofit-serialization = { module = "com.github.skydoves:sandwich-retrofit-serialization", version.ref = "sandwich" }
 tedpermission-normal = { module = "io.github.ParkSangGwon:tedpermission-normal", version.ref = "tedpermissionNormal" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 v2-navi = { module = "com.kakao.sdk:v2-navi", version.ref = "v2Navi" }

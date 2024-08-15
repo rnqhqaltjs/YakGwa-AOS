@@ -39,10 +39,11 @@ class PromiseHistoryListAdapter :
             binding.tvTitle.text = itemView.meetInfo.meetTitle
             binding.tvTemaName.text = itemView.meetInfo.meetThemeName
             binding.tvDescription.text = itemView.description
-            binding.tvDate.text = formatIsoDateTimeToKoreanDate(itemView.meetInfo.meetDateTime)
-            binding.tvTime.text = formatIsoDateTimeToKoreanTime(itemView.meetInfo.meetDateTime)
+            itemView.meetInfo.meetDateTime?.let { dateTime ->
+                binding.tvDate.text = formatIsoDateTimeToKoreanDate(dateTime)
+                binding.tvTime.text = formatIsoDateTimeToKoreanTime(dateTime)
+            }
             binding.tvPlace.text = itemView.meetInfo.placeName
-
             binding.tvShowDetail.setOnClickListener {
                 onItemClickListener?.invoke(itemView.meetInfo.meetId)
             }

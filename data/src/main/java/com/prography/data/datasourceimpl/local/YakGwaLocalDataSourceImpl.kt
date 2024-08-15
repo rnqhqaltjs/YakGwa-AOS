@@ -92,7 +92,9 @@ class YakGwaLocalDataSourceImpl @Inject constructor(
 
     override suspend fun clear() {
         dataStore.edit { preferences ->
-            preferences.clear()
+            preferences.remove(ACCESS_TOKEN_KEY)
+            preferences.remove(REFRESH_TOKEN_KEY)
+            preferences.remove(IS_LOGIN_KEY)
         }
     }
 

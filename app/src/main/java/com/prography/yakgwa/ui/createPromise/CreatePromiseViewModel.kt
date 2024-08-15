@@ -2,6 +2,7 @@ package com.prography.yakgwa.ui.createPromise
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prography.data.ErrorResponse
 import com.prography.domain.model.request.CreateMeetRequestEntity
 import com.prography.domain.model.response.CreateMeetResponseEntity
 import com.prography.domain.model.response.LocationResponseEntity
@@ -16,16 +17,20 @@ import com.prography.yakgwa.util.DateTimeUtils.formatTimeTo24Hour
 import com.prography.yakgwa.util.DateTimeUtils.formatTimeToString
 import com.prography.yakgwa.util.UiState
 import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.skydoves.sandwich.getOrElse
+import com.skydoves.sandwich.onSuccess
+import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
+import com.skydoves.sandwich.suspendOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -119,13 +124,13 @@ class CreatePromiseViewModel @Inject constructor(
 
         viewModelScope.launch {
             getThemeListUseCase()
-                .onSuccess { themeList ->
-                    _selectedThemeState.value = themeList.map { themeEntity ->
+                .onSuccess {
+                    _selectedThemeState.value = data.map { themeEntity ->
                         ThemeModel(themeEntity)
                     }
-                    _themesState.value = UiState.Success(themeList)
+                    _themesState.value = UiState.Success(data)
                 }
-                .onFailure {
+                .onErrorDeserialize<List<ThemesResponseEntity>, ErrorResponse> {
                     _themesState.value = UiState.Failure(it.message)
                 }
         }
@@ -153,11 +158,13 @@ class CreatePromiseViewModel @Inject constructor(
 
             val createMeetRequestEntity = buildCreateMeetRequestEntity()
             postNewMeetCreateUseCase(createMeetRequestEntity)
-                .onSuccess {
-                    _createMeetState.emit(UiState.Success(it))
+                .suspendOnSuccess {
+                    _createMeetState.emit(UiState.Success(data))
                 }
-                .onFailure {
-                    _createMeetState.emit(UiState.Failure(it.message))
+                .onErrorDeserialize<CreateMeetResponseEntity, ErrorResponse> {
+                    launch {
+                        _createMeetState.emit(UiState.Failure(it.message))
+                    }
                 }
         }
     }
@@ -225,8 +232,13 @@ class CreatePromiseViewModel @Inject constructor(
                         _directLocationState.emit(UiState.Loading)
 
                         getLocationListUseCase(query)
-                            .catch { e ->
-                                _directLocationState.emit(UiState.Failure(e.message))
+                            .onErrorDeserialize<Flow<List<LocationResponseEntity>>, ErrorResponse> { errorResponse ->
+                                launch {
+                                    _directLocationState.emit(UiState.Failure(errorResponse.message))
+                                }
+                            }
+                            .getOrElse {
+                                flowOf(emptyList())
                             }
                     } else {
                         flowOf(emptyList())
@@ -242,16 +254,20 @@ class CreatePromiseViewModel @Inject constructor(
         _candidateLocationState.value = UiState.Loading
 
         viewModelScope.launch {
-            runCatching {
-                getLocationListUseCase(query).collect {
-                    _selectedCandidateLocationDetailState.value = it.map { locationEntity ->
-                        SelectedLocationModel(locationEntity)
+            getLocationListUseCase(query)
+                .suspendOnSuccess {
+                    data.collect {
+                        _selectedCandidateLocationDetailState.value =
+                            it.map { locationEntity ->
+                                SelectedLocationModel(locationEntity)
+                            }
+                        _candidateLocationState.value = UiState.Success(it)
                     }
-                    _candidateLocationState.value = UiState.Success(it)
+
                 }
-            }.onFailure {
-                _candidateLocationState.value = UiState.Failure(it.message)
-            }
+                .onErrorDeserialize<Flow<List<LocationResponseEntity>>, ErrorResponse> {
+                    _candidateLocationState.value = UiState.Failure(it.message)
+                }
         }
     }
 

@@ -2,12 +2,17 @@ package com.prography.yakgwa.ui.myPlace
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prography.data.ErrorResponse
 import com.prography.domain.model.request.MyPlaceRequestEntity
 import com.prography.domain.model.response.LocationResponseEntity
 import com.prography.domain.usecase.GetLocationListUseCase
 import com.prography.domain.usecase.PostMyPlaceUseCase
 import com.prography.yakgwa.util.UiState
+import com.skydoves.sandwich.onSuccess
+import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
+import com.skydoves.sandwich.suspendOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -32,14 +37,15 @@ class MyPlaceViewModel @Inject constructor(
         _locationState.value = UiState.Loading
 
         viewModelScope.launch {
-            runCatching {
-                getLocationListUseCase(query).collect {
-                    _locationState.value = UiState.Success(it)
-                    _toggleState.value = it
+            getLocationListUseCase(query)
+                .suspendOnSuccess {
+                    data.collect {
+                        _locationState.value = UiState.Success(it)
+                        _toggleState.value = it
+                    }
+                }.onErrorDeserialize<Flow<List<LocationResponseEntity>>, ErrorResponse> {
+                    _locationState.value = UiState.Failure(it.message)
                 }
-            }.onFailure {
-                _locationState.value = UiState.Failure(it.message)
-            }
         }
     }
 
@@ -49,9 +55,10 @@ class MyPlaceViewModel @Inject constructor(
         viewModelScope.launch {
             postMyPlaceUseCase(like, myPlaceRequestEntity)
                 .onSuccess {
-                    _myPlaceState.value = UiState.Success(it)
+                    _myPlaceState.value = UiState.Success(data)
                     updateToggleState(myPlaceRequestEntity, like)
-                }.onFailure {
+                }
+                .onErrorDeserialize<Boolean, ErrorResponse> {
                     _myPlaceState.value = UiState.Failure(it.message)
                 }
         }

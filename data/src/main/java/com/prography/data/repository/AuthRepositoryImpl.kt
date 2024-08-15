@@ -10,6 +10,8 @@ import com.prography.domain.model.request.AuthRequestEntity
 import com.prography.domain.model.response.AuthResponseEntity
 import com.prography.domain.model.response.UserInfoResponseEntity
 import com.prography.domain.repository.AuthRepository
+import com.skydoves.sandwich.ApiResponse
+import com.skydoves.sandwich.mapSuccess
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -24,45 +26,37 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun postLogin(
         kakaoAccessToken: String,
         authRequestEntity: AuthRequestEntity
-    ): Result<AuthResponseEntity> {
+    ): ApiResponse<AuthResponseEntity> {
         val response = authRemoteDataSource.login(
             kakaoAccessToken,
             AuthMapper.mapperToRequestAuthDto(authRequestEntity)
         )
 
-        return runCatching {
-            AuthMapper.mapperToAuthResponseEntity(response.result)
+        return response.mapSuccess {
+            AuthMapper.mapperToAuthResponseEntity(this.result)
         }
     }
 
-    override suspend fun logout(): Result<Unit> {
-        val response = authRemoteDataSource.logout()
-
-        return runCatching {
-            response.result
-        }
+    override suspend fun logout(): ApiResponse<Unit> {
+        return authRemoteDataSource.logout()
     }
 
-    override suspend fun getUserInfo(): Result<UserInfoResponseEntity> {
+    override suspend fun getUserInfo(): ApiResponse<UserInfoResponseEntity> {
         val response = authRemoteDataSource.getUserInfo()
 
-        return runCatching {
-            AuthMapper.mapperToUserInfoResponseEntity(response.result)
+        return response.mapSuccess {
+            AuthMapper.mapperToUserInfoResponseEntity(this.result)
         }
     }
 
-    override suspend fun updateUserImage(imageUri: Uri): Result<Unit> {
-        val response = authRemoteDataSource.updateUserImage(
+    override suspend fun updateUserImage(imageUri: Uri): ApiResponse<Unit> {
+        return authRemoteDataSource.updateUserImage(
             MultipartBody.Part.createFormData(
                 "image",
                 makeImageFile(imageUri).name,
                 makeImageFile(imageUri).asRequestBody("image/jpeg".toMediaTypeOrNull())
             )
         )
-
-        return runCatching {
-            response.result
-        }
     }
 
     private fun makeImageFile(uri: Uri): File {

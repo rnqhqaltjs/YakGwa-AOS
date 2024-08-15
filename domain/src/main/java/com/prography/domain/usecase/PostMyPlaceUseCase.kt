@@ -2,6 +2,7 @@ package com.prography.domain.usecase
 
 import com.prography.domain.model.request.MyPlaceRequestEntity
 import com.prography.domain.repository.PlaceRepository
+import com.skydoves.sandwich.ApiResponse
 
 class PostMyPlaceUseCase(
     private val placeRepository: PlaceRepository
@@ -9,6 +10,6 @@ class PostMyPlaceUseCase(
     suspend operator fun invoke(
         like: Boolean,
         myPlaceRequestEntity: MyPlaceRequestEntity
-    ): Result<Boolean> =
+    ): ApiResponse<Boolean> =
         placeRepository.myPlace(like, myPlaceRequestEntity)
 }

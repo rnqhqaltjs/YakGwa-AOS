@@ -37,25 +37,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         binding.navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.createPromiseTitleFragment ||
-                destination.id == R.id.createPromiseThemeFragment ||
-                destination.id == R.id.createPromiseTimeFragment ||
-                destination.id == R.id.createPromisePlaceFragment ||
-                destination.id == R.id.invitationLeaderFragment ||
-                destination.id == R.id.invitationMemberFragment ||
-                destination.id == R.id.votePromiseTimeFragment ||
-                destination.id == R.id.votePromisePlaceFragment ||
-                destination.id == R.id.voteResultFragment ||
-                destination.id == R.id.exitDialogFragment ||
-                destination.id == R.id.addCandidatePlaceDetailFragment ||
-                destination.id == R.id.promiseHistoryFragment ||
-                destination.id == R.id.addCandidatePlaceVoteFragment ||
-                destination.id == R.id.myPlaceFragment ||
-                destination.id == R.id.participantMemberFragment
-            ) {
-                binding.navView.visibility = View.GONE
-            } else {
+            if (destination.id == R.id.homeFragment || destination.id == R.id.myPageFragment) {
                 binding.navView.visibility = View.VISIBLE
+            } else {
+                binding.navView.visibility = View.GONE
             }
         }
     }

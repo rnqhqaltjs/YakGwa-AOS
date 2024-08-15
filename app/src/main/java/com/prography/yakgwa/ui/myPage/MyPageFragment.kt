@@ -128,10 +128,10 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
 
     private val newPiker =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                Timber.tag("PhotoPicker").d("Selected URI: $uri")
-                viewModel.updateUserImage(uri)
-            } else {
+            uri?.let {
+                Timber.tag("PhotoPicker").d("Selected URI: $it")
+                viewModel.updateUserImage(it)
+            } ?: run {
                 Timber.tag("PhotoPicker").d("No media selected")
             }
         }

@@ -64,7 +64,7 @@ class VotePromisePlaceFragment :
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.placeVoteState.collect {
                     when (it) {
                         is UiState.Loading -> {}

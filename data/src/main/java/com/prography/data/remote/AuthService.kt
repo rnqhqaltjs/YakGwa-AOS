@@ -4,6 +4,7 @@ import com.prography.data.model.request.RequestAuthDto
 import com.prography.data.model.response.BaseResponse
 import com.prography.data.model.response.ResponseAuthDto
 import com.prography.data.model.response.ResponseUserInfoDto
+import com.skydoves.sandwich.ApiResponse
 import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -18,15 +19,15 @@ interface AuthService {
     suspend fun postLogin(
         @Header("Authorization") header: String,
         @Body requestAuthDto: RequestAuthDto
-    ): BaseResponse<ResponseAuthDto>
+    ): ApiResponse<BaseResponse<ResponseAuthDto>>
 
     @POST("/api/v1/auth/logout")
-    suspend fun logout(): BaseResponse<Unit>
+    suspend fun logout(): ApiResponse<Unit>
 
     @GET("/api/v1/user")
-    suspend fun getUserInfo(): BaseResponse<ResponseUserInfoDto>
+    suspend fun getUserInfo(): ApiResponse<BaseResponse<ResponseUserInfoDto>>
 
     @Multipart
     @PATCH("/api/v1/user/image")
-    suspend fun updateUserImage(@Part userImage: MultipartBody.Part): BaseResponse<Unit>
+    suspend fun updateUserImage(@Part userImage: MultipartBody.Part): ApiResponse<Unit>
 }

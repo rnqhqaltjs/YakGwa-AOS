@@ -3,6 +3,7 @@ package com.prography.yakgwa.di
 import com.prography.data.interceptor.AuthInterceptor
 import com.prography.yakgwa.BuildConfig.BASE_URL
 import com.prography.yakgwa.BuildConfig.NAVER_API_URL
+import com.skydoves.sandwich.retrofit.adapters.ApiResponseCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -69,6 +70,7 @@ class NetworkModule {
     fun provideRetrofit(@YAKGWA okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
             .client(okHttpClient)
             .baseUrl(BASE_URL)
             .build()

@@ -2,9 +2,12 @@ package com.prography.yakgwa.ui.promiseHistory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prography.data.ErrorResponse
 import com.prography.domain.model.response.PromiseHistoryResponseEntity
 import com.prography.domain.usecase.GetPromiseHistoryListUseCase
 import com.prography.yakgwa.util.UiState
+import com.skydoves.sandwich.onSuccess
+import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,8 +38,9 @@ class PromiseHistoryViewModel @Inject constructor(
         viewModelScope.launch {
             getPromiseHistoryListUseCase()
                 .onSuccess {
-                    _promiseHistoryState.value = UiState.Success(it)
-                }.onFailure {
+                    _promiseHistoryState.value = UiState.Success(data)
+                }
+                .onErrorDeserialize<List<PromiseHistoryResponseEntity>, ErrorResponse> {
                     _promiseHistoryState.value = UiState.Failure(it.message)
                 }
         }

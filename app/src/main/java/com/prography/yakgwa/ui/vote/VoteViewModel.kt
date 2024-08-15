@@ -3,6 +3,7 @@ package com.prography.yakgwa.ui.vote
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prography.data.ErrorResponse
 import com.prography.domain.model.request.PlaceCandidateRequestEntity
 import com.prography.domain.model.request.VotePlaceRequestEntity
 import com.prography.domain.model.request.VoteTimeRequestEntity
@@ -20,7 +21,11 @@ import com.prography.yakgwa.model.SelectedLocationModel
 import com.prography.yakgwa.model.TimeModel
 import com.prography.yakgwa.util.DateTimeUtils.formatLocalDateTimeToString
 import com.prography.yakgwa.util.UiState
+import com.skydoves.sandwich.onSuccess
+import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
+import com.skydoves.sandwich.suspendOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -112,12 +117,12 @@ class VoteViewModel @Inject constructor(
         viewModelScope.launch {
             getPlaceCandidateInfoUseCase(meetId)
                 .onSuccess {
-                    _selectedPlaceState.value = it.map { placeEntity ->
+                    _selectedPlaceState.value = data.map { placeEntity ->
                         PlaceModel(placeEntity)
                     }
-                    _placeCandidateState.value = UiState.Success(it)
+                    _placeCandidateState.value = UiState.Success(data)
                 }
-                .onFailure {
+                .onErrorDeserialize<List<PlaceCandidateResponseEntity>, ErrorResponse> {
                     _placeCandidateState.value = UiState.Failure(it.message)
                 }
         }
@@ -129,9 +134,9 @@ class VoteViewModel @Inject constructor(
         viewModelScope.launch {
             getVoteTimeCandidateInfoUseCase(meetId)
                 .onSuccess {
-                    _timeCandidateState.value = UiState.Success(it)
+                    _timeCandidateState.value = UiState.Success(data)
                 }
-                .onFailure {
+                .onErrorDeserialize<TimeCandidateResponseEntity, ErrorResponse> {
                     _timeCandidateState.value = UiState.Failure(it.message)
                 }
         }
@@ -207,9 +212,9 @@ class VoteViewModel @Inject constructor(
 
             postUserVoteTimeUseCase(meetId, voteTimeRequestEntity)
                 .onSuccess {
-                    _timeVoteState.value = UiState.Success(it)
+                    _timeVoteState.value = UiState.Success(data)
                 }
-                .onFailure {
+                .onErrorDeserialize<Unit, ErrorResponse> {
                     _timeVoteState.value = UiState.Failure(it.message)
                 }
         }
@@ -228,9 +233,9 @@ class VoteViewModel @Inject constructor(
 
             postUserVotePlaceUseCase(meetId, selectedPlaceIds)
                 .onSuccess {
-                    _placeVoteState.value = UiState.Success(it)
+                    _placeVoteState.value = UiState.Success(data)
                 }
-                .onFailure {
+                .onErrorDeserialize<Unit, ErrorResponse> {
                     _placeVoteState.value = UiState.Failure(it.message)
                 }
         }
@@ -258,16 +263,17 @@ class VoteViewModel @Inject constructor(
         _candidateLocationState.value = UiState.Loading
 
         viewModelScope.launch {
-            runCatching {
-                getLocationListUseCase(query).collect {
-                    _selectedCandidateLocationState.value = it.map { locationEntity ->
-                        SelectedLocationModel(locationEntity)
+            getLocationListUseCase(query)
+                .suspendOnSuccess {
+                    data.collect {
+                        _selectedCandidateLocationState.value = it.map { locationEntity ->
+                            SelectedLocationModel(locationEntity)
+                        }
+                        _candidateLocationState.value = UiState.Success(it)
                     }
-                    _candidateLocationState.value = UiState.Success(it)
+                }.onErrorDeserialize<Flow<List<LocationResponseEntity>>, ErrorResponse> {
+                    _candidateLocationState.value = UiState.Failure(it.message)
                 }
-            }.onFailure {
-                _candidateLocationState.value = UiState.Failure(it.message)
-            }
         }
     }
 
@@ -298,11 +304,13 @@ class VoteViewModel @Inject constructor(
                 _addPlaceState.emit(UiState.Loading)
 
                 postPlaceCandidateInfoUseCase(meetId, requestEntity)
-                    .onSuccess {
-                        _addPlaceState.emit(UiState.Success(it))
+                    .suspendOnSuccess {
+                        _addPlaceState.emit(UiState.Success(data))
                     }
-                    .onFailure {
-                        _addPlaceState.emit(UiState.Failure(it.message))
+                    .onErrorDeserialize<Unit, ErrorResponse> {
+                        launch {
+                            _addPlaceState.emit(UiState.Failure(it.message))
+                        }
                     }
             }
         }
