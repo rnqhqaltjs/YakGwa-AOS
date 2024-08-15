@@ -62,7 +62,7 @@
                 android:scaleType="centerCrop"
                 android:padding="5dp"
                 android:layout_marginTop="30dp"
-                app:srcCompat="@drawable/img_go_create_promise" />
+                app:srcCompat="@drawable/img_go_create_promise_history" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
