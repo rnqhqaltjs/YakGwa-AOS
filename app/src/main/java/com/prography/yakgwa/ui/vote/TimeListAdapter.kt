@@ -30,13 +30,14 @@ class TimeListAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(itemView: TimeModel) {
-            binding.cvTimeSlot.isSelected = itemView.isSelected
-            binding.tvVoteCount.isSelected = itemView.isSelected
-            binding.tvHour.text = "${itemView.time.hour}시"
-            binding.tvVoteCount.text = itemView.voteCount.toString()
-
-            binding.cvTimeSlot.setOnClickListener {
-                onItemClickListener?.invoke(adapterPosition)
+            with(binding) {
+                cvTimeSlot.isSelected = itemView.isSelected
+                tvVoteCount.isSelected = itemView.isSelected
+                tvHour.text = "${itemView.time.hour}시"
+                tvVoteCount.text = itemView.voteCount.toString()
+                cvTimeSlot.setOnClickListener {
+                    onItemClickListener?.invoke(adapterPosition)
+                }
             }
         }
     }

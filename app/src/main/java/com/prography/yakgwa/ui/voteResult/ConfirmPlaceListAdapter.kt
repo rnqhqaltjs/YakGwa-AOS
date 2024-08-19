@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.prography.domain.model.response.VotePlaceResponseEntity.PlaceInfos
 import com.prography.yakgwa.databinding.ItemConfirmPlaceListBinding
-import com.prography.yakgwa.model.ConfirmPlaceModel
 
 class ConfirmPlaceListAdapter :
-    ListAdapter<ConfirmPlaceModel, ConfirmPlaceListAdapter.ConfirmPlaceListViewHolder>(
+    ListAdapter<PlaceInfos, ConfirmPlaceListAdapter.ConfirmPlaceListViewHolder>(
         ConfirmDiffCallback
     ) {
 
@@ -27,12 +27,13 @@ class ConfirmPlaceListAdapter :
     inner class ConfirmPlaceListViewHolder(private val binding: ItemConfirmPlaceListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(itemView: ConfirmPlaceModel) {
-            binding.radioButton.isChecked = itemView.isSelected
-            binding.tvPlace.text = itemView.placeInfos.title
-
-            binding.cvConfirmPlace.setOnClickListener {
-                onItemClickListener?.invoke(adapterPosition)
+        fun bind(itemView: PlaceInfos) {
+            with(binding) {
+                radioButton.isChecked = itemView.isSelected
+                tvPlace.text = itemView.title
+                cvConfirmPlace.setOnClickListener {
+                    onItemClickListener?.invoke(adapterPosition)
+                }
             }
         }
     }
@@ -44,17 +45,17 @@ class ConfirmPlaceListAdapter :
 
     companion object {
         private val ConfirmDiffCallback =
-            object : DiffUtil.ItemCallback<ConfirmPlaceModel>() {
+            object : DiffUtil.ItemCallback<PlaceInfos>() {
                 override fun areItemsTheSame(
-                    oldItem: ConfirmPlaceModel,
-                    newItem: ConfirmPlaceModel
+                    oldItem: PlaceInfos,
+                    newItem: PlaceInfos
                 ): Boolean {
-                    return oldItem.placeInfos.placeSlotId == newItem.placeInfos.placeSlotId
+                    return oldItem.placeSlotId == newItem.placeSlotId
                 }
 
                 override fun areContentsTheSame(
-                    oldItem: ConfirmPlaceModel,
-                    newItem: ConfirmPlaceModel
+                    oldItem: PlaceInfos,
+                    newItem: PlaceInfos
                 ): Boolean {
                     return oldItem == newItem
                 }

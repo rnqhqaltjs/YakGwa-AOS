@@ -39,11 +39,13 @@ class ParticipantMemberEntireListAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(itemView: ParticipantInfo) {
-            binding.tvMemberName.text = itemView.name
-            binding.ivLeader.isVisible = itemView.meetRole == RoleType.LEADER.name
-            binding.ivParticipantMember.load(itemView.imageUrl) {
-                placeholder(R.drawable.ic_profile)
-                error(R.drawable.ic_profile)
+            with(binding) {
+                tvMemberName.text = itemView.name
+                ivLeader.isVisible = itemView.meetRole == RoleType.LEADER.name
+                ivParticipantMember.load(itemView.imageUrl) {
+                    placeholder(R.drawable.ic_profile)
+                    error(R.drawable.ic_profile)
+                }
             }
         }
     }

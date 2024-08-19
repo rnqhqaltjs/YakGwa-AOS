@@ -80,12 +80,13 @@ class ParticipantMeetListAdapter :
     inner class BeforeVoteViewHolder(private val binding: ItemBeforeVoteBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: MeetsResponseEntity) {
-            binding.tvInvitationTitle.text = itemView.meetInfo.meetTitle
-            binding.tvTemaName.text = itemView.meetInfo.meetThemeName
-            binding.tvInvitationDescription.text = itemView.meetInfo.description
-
-            binding.btnTimePlaceVote.setOnClickListener {
-                onItemClickListener?.invoke(itemView)
+            with(binding) {
+                tvInvitationTitle.text = itemView.meetInfo.meetTitle
+                tvTemaName.text = itemView.meetInfo.meetThemeName
+                tvInvitationDescription.text = itemView.meetInfo.description
+                btnTimePlaceVote.setOnClickListener {
+                    onItemClickListener?.invoke(itemView)
+                }
             }
         }
     }
@@ -93,12 +94,13 @@ class ParticipantMeetListAdapter :
     inner class VoteViewHolder(private val binding: ItemVoteBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: MeetsResponseEntity) {
-            binding.tvInvitationTitle.text = itemView.meetInfo.meetTitle
-            binding.tvTemaName.text = itemView.meetInfo.meetThemeName
-            binding.tvInvitationDescription.text = itemView.meetInfo.description
-
-            binding.btnMeetDetail.setOnClickListener {
-                onItemClickListener?.invoke(itemView)
+            with(binding) {
+                tvInvitationTitle.text = itemView.meetInfo.meetTitle
+                tvTemaName.text = itemView.meetInfo.meetThemeName
+                tvInvitationDescription.text = itemView.meetInfo.description
+                btnMeetDetail.setOnClickListener {
+                    onItemClickListener?.invoke(itemView)
+                }
             }
         }
     }
@@ -106,12 +108,13 @@ class ParticipantMeetListAdapter :
     inner class BeforeConfirmViewHolder(private val binding: ItemBeforeConfirmBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: MeetsResponseEntity) {
-            binding.tvInvitationTitle.text = itemView.meetInfo.meetTitle
-            binding.tvTemaName.text = itemView.meetInfo.meetThemeName
-            binding.tvInvitationDescription.text = itemView.meetInfo.description
-
-            binding.btnMeetDetail.setOnClickListener {
-                onItemClickListener?.invoke(itemView)
+            with(binding) {
+                tvInvitationTitle.text = itemView.meetInfo.meetTitle
+                tvTemaName.text = itemView.meetInfo.meetThemeName
+                tvInvitationDescription.text = itemView.meetInfo.description
+                btnMeetDetail.setOnClickListener {
+                    onItemClickListener?.invoke(itemView)
+                }
             }
         }
     }
@@ -119,16 +122,19 @@ class ParticipantMeetListAdapter :
     inner class ConfirmViewHolder(private val binding: ItemConfirmBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: MeetsResponseEntity) {
-            binding.tvInvitationTitle.text = itemView.meetInfo.meetTitle
-            binding.tvTemaName.text = itemView.meetInfo.meetThemeName
-            binding.tvInvitationDescription.text = itemView.meetInfo.description
-            binding.tvDDay.text = calculateDDay(itemView.meetInfo.meetDateTime!!)
-            binding.tvDate.text = formatIsoDateTimeToKoreanDate(itemView.meetInfo.meetDateTime!!)
-            binding.tvTime.text = formatIsoDateTimeToKoreanTime(itemView.meetInfo.meetDateTime!!)
-            binding.tvPlace.text = itemView.meetInfo.placeName
-
-            binding.btnMeetDetail.setOnClickListener {
-                onItemClickListener?.invoke(itemView)
+            with(binding) {
+                tvInvitationTitle.text = itemView.meetInfo.meetTitle
+                tvTemaName.text = itemView.meetInfo.meetThemeName
+                tvInvitationDescription.text = itemView.meetInfo.description
+                itemView.meetInfo.meetDateTime?.let {
+                    tvDDay.text = calculateDDay(it)
+                    tvDate.text = formatIsoDateTimeToKoreanDate(it)
+                    tvTime.text = formatIsoDateTimeToKoreanTime(it)
+                }
+                tvPlace.text = itemView.meetInfo.placeName
+                btnMeetDetail.setOnClickListener {
+                    onItemClickListener?.invoke(itemView)
+                }
             }
         }
     }

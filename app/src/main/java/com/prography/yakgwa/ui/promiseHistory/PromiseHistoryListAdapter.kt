@@ -36,16 +36,18 @@ class PromiseHistoryListAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(itemView: PromiseHistoryResponseEntity) {
-            binding.tvTitle.text = itemView.meetInfo.meetTitle
-            binding.tvTemaName.text = itemView.meetInfo.meetThemeName
-            binding.tvDescription.text = itemView.description
-            itemView.meetInfo.meetDateTime?.let { dateTime ->
-                binding.tvDate.text = formatIsoDateTimeToKoreanDate(dateTime)
-                binding.tvTime.text = formatIsoDateTimeToKoreanTime(dateTime)
-            }
-            binding.tvPlace.text = itemView.meetInfo.placeName
-            binding.tvShowDetail.setOnClickListener {
-                onItemClickListener?.invoke(itemView.meetInfo.meetId)
+            with(binding) {
+                tvTitle.text = itemView.meetInfo.meetTitle
+                tvTemaName.text = itemView.meetInfo.meetThemeName
+                tvDescription.text = itemView.description
+                itemView.meetInfo.meetDateTime?.let { dateTime ->
+                    tvDate.text = formatIsoDateTimeToKoreanDate(dateTime)
+                    tvTime.text = formatIsoDateTimeToKoreanTime(dateTime)
+                }
+                tvPlace.text = itemView.meetInfo.placeName
+                tvShowDetail.setOnClickListener {
+                    onItemClickListener?.invoke(itemView.meetInfo.meetId)
+                }
             }
         }
     }

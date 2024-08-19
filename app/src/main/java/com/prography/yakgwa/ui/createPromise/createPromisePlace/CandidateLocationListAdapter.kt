@@ -35,12 +35,13 @@ class CandidateLocationListAdapter :
     inner class CandidateLocationListViewHolder(private val binding: ItemCandidateLocationListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: LocationResponseEntity) {
-            binding.tvSelectedTitle.text = itemView.placeInfoEntity.title
-            binding.tvSelectedAddress.text = itemView.placeInfoEntity.roadAddress
-            binding.ivLike.isVisible = itemView.isUserLike
-
-            binding.ivRemoveBtn.setOnClickListener {
-                onRemoveClickListener?.invoke(itemView)
+            with(binding) {
+                tvSelectedTitle.text = itemView.placeInfoEntity.title
+                tvSelectedAddress.text = itemView.placeInfoEntity.roadAddress
+                ivLike.isVisible = itemView.isUserLike
+                ivRemoveBtn.setOnClickListener {
+                    onRemoveClickListener?.invoke(itemView)
+                }
             }
         }
     }

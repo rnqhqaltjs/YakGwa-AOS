@@ -6,11 +6,11 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.prography.domain.model.response.LocationResponseEntity
 import com.prography.yakgwa.databinding.ItemCandidateDetailLocationListBinding
-import com.prography.yakgwa.model.SelectedLocationModel
 
 class CandidateLocationDetailListAdapter :
-    ListAdapter<SelectedLocationModel, CandidateLocationDetailListAdapter.CandidateLocationDetailListViewHolder>(
+    ListAdapter<LocationResponseEntity, CandidateLocationDetailListAdapter.CandidateLocationDetailListViewHolder>(
         CandidateLocationDetailDiffCallback
     ) {
 
@@ -34,15 +34,15 @@ class CandidateLocationDetailListAdapter :
 
     inner class CandidateLocationDetailListViewHolder(private val binding: ItemCandidateDetailLocationListBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(itemView: SelectedLocationModel) {
-            binding.tvSelectedTitle.text = itemView.locationResponseEntity.placeInfoEntity.title
-            binding.tvSelectedAddress.text =
-                itemView.locationResponseEntity.placeInfoEntity.roadAddress
-            binding.cvSearchLocation.isSelected = itemView.isSelected
-            binding.ivLike.isVisible = itemView.locationResponseEntity.isUserLike
-
-            binding.cvSearchLocation.setOnClickListener {
-                onItemClickListener?.invoke(adapterPosition)
+        fun bind(itemView: LocationResponseEntity) {
+            with(binding) {
+                tvSelectedTitle.text = itemView.placeInfoEntity.title
+                tvSelectedAddress.text = itemView.placeInfoEntity.roadAddress
+                cvSearchLocation.isSelected = itemView.isSelected
+                ivLike.isVisible = itemView.isUserLike
+                cvSearchLocation.setOnClickListener {
+                    onItemClickListener?.invoke(adapterPosition)
+                }
             }
         }
     }
@@ -54,17 +54,17 @@ class CandidateLocationDetailListAdapter :
 
     companion object {
         private val CandidateLocationDetailDiffCallback =
-            object : DiffUtil.ItemCallback<SelectedLocationModel>() {
+            object : DiffUtil.ItemCallback<LocationResponseEntity>() {
                 override fun areItemsTheSame(
-                    oldItem: SelectedLocationModel,
-                    newItem: SelectedLocationModel
+                    oldItem: LocationResponseEntity,
+                    newItem: LocationResponseEntity
                 ): Boolean {
-                    return oldItem.locationResponseEntity.placeInfoEntity.address == newItem.locationResponseEntity.placeInfoEntity.address
+                    return oldItem.placeInfoEntity.address == newItem.placeInfoEntity.address
                 }
 
                 override fun areContentsTheSame(
-                    oldItem: SelectedLocationModel,
-                    newItem: SelectedLocationModel
+                    oldItem: LocationResponseEntity,
+                    newItem: LocationResponseEntity
                 ): Boolean {
                     return oldItem == newItem
                 }
