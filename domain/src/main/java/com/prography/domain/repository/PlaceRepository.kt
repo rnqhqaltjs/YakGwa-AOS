@@ -1,5 +1,6 @@
 package com.prography.domain.repository
 
+import android.location.Location
 import com.prography.domain.model.request.MyPlaceRequestEntity
 import com.prography.domain.model.response.LocationResponseEntity
 import com.skydoves.sandwich.ApiResponse
@@ -12,4 +13,6 @@ interface PlaceRepository {
         like: Boolean,
         myPlaceRequestEntity: MyPlaceRequestEntity
     ): ApiResponse<Boolean>
+
+    suspend fun geoCoding(address: String): Location
 }
