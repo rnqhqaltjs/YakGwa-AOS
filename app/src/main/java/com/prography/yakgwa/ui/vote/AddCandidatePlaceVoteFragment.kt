@@ -11,7 +11,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentAddCandidatePlaceVoteBinding
-import com.prography.yakgwa.model.SelectedLocationModel
 import com.prography.yakgwa.ui.createPromise.createPromisePlace.CandidateLocationDetailListAdapter
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
@@ -57,10 +56,7 @@ class AddCandidatePlaceVoteFragment :
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            candidateLocationDetailListAdapter.submitList(
-                                it.data.map { locationItem ->
-                                    SelectedLocationModel(locationItem)
-                                })
+                            candidateLocationDetailListAdapter.submitList(it.data)
                         }
 
                         is UiState.Failure -> {

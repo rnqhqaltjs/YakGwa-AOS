@@ -10,7 +10,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentVotePromisePlaceBinding
-import com.prography.yakgwa.model.PlaceModel
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
 import com.prography.yakgwa.util.extensions.getNavResult
@@ -48,11 +47,7 @@ class VotePromisePlaceFragment :
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            placeListAdapter.submitList(
-                                it.data.map { placeItem ->
-                                    PlaceModel(placeItem)
-                                }
-                            )
+                            placeListAdapter.submitList(it.data)
                         }
 
                         is UiState.Failure -> {

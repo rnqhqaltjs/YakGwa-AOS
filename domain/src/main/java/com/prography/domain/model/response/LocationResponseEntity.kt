@@ -2,7 +2,8 @@ package com.prography.domain.model.response
 
 data class LocationResponseEntity(
     val placeInfoEntity: PlaceInfoEntity,
-    val isUserLike: Boolean
+    val isUserLike: Boolean,
+    var isSelected: Boolean = false
 ) {
     data class PlaceInfoEntity(
         val title: String,

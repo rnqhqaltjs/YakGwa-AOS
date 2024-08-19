@@ -10,7 +10,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentCreatePromiseThemeBinding
-import com.prography.yakgwa.model.ThemeModel
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,11 +45,7 @@ class CreatePromiseThemeFragment :
                         is UiState.Loading -> {}
                         is UiState.Success -> {
                             if (viewModel.selectedThemeState.value.isEmpty()) {
-                                themeListAdapter.submitList(
-                                    it.data.map { themeItem ->
-                                        ThemeModel(themeItem)
-                                    }
-                                )
+                                themeListAdapter.submitList(it.data)
                             }
                         }
 
