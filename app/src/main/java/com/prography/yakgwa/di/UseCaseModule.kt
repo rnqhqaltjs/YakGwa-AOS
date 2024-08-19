@@ -2,6 +2,7 @@ package com.prography.yakgwa.di
 
 import com.prography.domain.repository.AuthRepository
 import com.prography.domain.repository.MeetRepository
+import com.prography.domain.repository.NaverRepository
 import com.prography.domain.repository.PlaceRepository
 import com.prography.domain.repository.PromiseRepository
 import com.prography.domain.repository.VoteRepository
@@ -12,6 +13,7 @@ import com.prography.domain.usecase.GetMyPlaceListUseCase
 import com.prography.domain.usecase.GetParticipantMeetListUseCase
 import com.prography.domain.usecase.GetPlaceCandidateInfoUseCase
 import com.prography.domain.usecase.GetPromiseHistoryListUseCase
+import com.prography.domain.usecase.GetStaticMapUseCase
 import com.prography.domain.usecase.GetThemeListUseCase
 import com.prography.domain.usecase.GetUserInformationUseCase
 import com.prography.domain.usecase.GetUserVotePlaceListUseCase
@@ -133,4 +135,9 @@ class UseCaseModule {
     @Singleton
     fun providesPostMyPlaceUseCase(placeRepository: PlaceRepository): PostMyPlaceUseCase =
         PostMyPlaceUseCase(placeRepository)
+
+    @Provides
+    @Singleton
+    fun providesGetStaticMapUseCase(naverRepository: NaverRepository): GetStaticMapUseCase =
+        GetStaticMapUseCase(naverRepository)
 }

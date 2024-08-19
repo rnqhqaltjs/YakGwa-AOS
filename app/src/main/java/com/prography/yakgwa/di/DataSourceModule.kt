@@ -3,11 +3,13 @@ package com.prography.yakgwa.di
 import com.prography.data.datasource.local.YakGwaLocalDataSource
 import com.prography.data.datasource.remote.AuthRemoteDataSource
 import com.prography.data.datasource.remote.MeetRemoteDataSource
+import com.prography.data.datasource.remote.NaverRemoteDataSource
 import com.prography.data.datasource.remote.PlaceRemoteDataSource
 import com.prography.data.datasource.remote.VoteRemoteDataSource
 import com.prography.data.datasourceimpl.local.YakGwaLocalDataSourceImpl
 import com.prography.data.datasourceimpl.remote.AuthRemoteDataSourceImpl
 import com.prography.data.datasourceimpl.remote.MeetRemoteDataSourceImpl
+import com.prography.data.datasourceimpl.remote.NaverRemoteDataSourceImpl
 import com.prography.data.datasourceimpl.remote.PlaceRemoteDataSourceImpl
 import com.prography.data.datasourceimpl.remote.VoteRemoteDataSourceImpl
 import dagger.Binds
@@ -39,4 +41,7 @@ abstract class DataSourceModule {
     @Singleton
     abstract fun bindsPlaceRemoteDataSource(placeRemoteDataSourceImpl: PlaceRemoteDataSourceImpl): PlaceRemoteDataSource
 
+    @Binds
+    @Singleton
+    abstract fun bindsNaverRemoteDataSource(naverRemoteDataSourceImpl: NaverRemoteDataSourceImpl): NaverRemoteDataSource
 }
