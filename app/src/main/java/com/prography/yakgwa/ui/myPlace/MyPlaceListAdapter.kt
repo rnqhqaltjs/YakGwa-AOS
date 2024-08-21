@@ -34,12 +34,13 @@ class MyPlaceListAdapter :
     inner class MyPlaceListViewHolder(private val binding: ItemMyPlaceListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(itemView: LocationResponseEntity) {
-            binding.tvSelectedTitle.text = itemView.placeInfoEntity.title
-            binding.tvSelectedAddress.text = itemView.placeInfoEntity.roadAddress
-            binding.ivLikeBtn.isSelected = itemView.isUserLike
-
-            binding.ivLikeBtn.setOnClickListener {
-                onToggleClickListener?.invoke(itemView.placeInfoEntity, !itemView.isUserLike)
+            with(binding) {
+                tvSelectedTitle.text = itemView.placeInfoEntity.title
+                tvSelectedAddress.text = itemView.placeInfoEntity.roadAddress
+                ivLikeBtn.isSelected = itemView.isUserLike
+                ivLikeBtn.setOnClickListener {
+                    onToggleClickListener?.invoke(itemView.placeInfoEntity, !itemView.isUserLike)
+                }
             }
         }
     }

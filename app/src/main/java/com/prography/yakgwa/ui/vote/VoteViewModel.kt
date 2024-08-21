@@ -16,8 +16,6 @@ import com.prography.domain.usecase.GetVoteTimeCandidateInfoUseCase
 import com.prography.domain.usecase.PostPlaceCandidateInfoUseCase
 import com.prography.domain.usecase.PostUserVotePlaceUseCase
 import com.prography.domain.usecase.PostUserVoteTimeUseCase
-import com.prography.yakgwa.model.PlaceModel
-import com.prography.yakgwa.model.SelectedLocationModel
 import com.prography.yakgwa.model.TimeModel
 import com.prography.yakgwa.util.DateTimeUtils.formatLocalDateTimeToString
 import com.prography.yakgwa.util.UiState
@@ -91,7 +89,8 @@ class VoteViewModel @Inject constructor(
     private val _endDate = MutableStateFlow<LocalDate?>(null)
     val endDate = _endDate
 
-    private val _selectedPlaceState = MutableStateFlow<List<PlaceModel>>(emptyList())
+    private val _selectedPlaceState =
+        MutableStateFlow<List<PlaceCandidateResponseEntity>>(emptyList())
     val selectedPlaceState = _selectedPlaceState
 
     private val _timeVoteState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
@@ -105,7 +104,7 @@ class VoteViewModel @Inject constructor(
     val candidateLocationState = _candidateLocationState.asStateFlow()
 
     private val _selectedCandidateLocationState =
-        MutableStateFlow<List<SelectedLocationModel>>(emptyList())
+        MutableStateFlow<List<LocationResponseEntity>>(emptyList())
     val selectedCandidateLocationState = _selectedCandidateLocationState
 
     private val _addPlaceState = MutableSharedFlow<UiState<Unit>>()
@@ -117,9 +116,7 @@ class VoteViewModel @Inject constructor(
         viewModelScope.launch {
             getPlaceCandidateInfoUseCase(meetId)
                 .onSuccess {
-                    _selectedPlaceState.value = data.map { placeEntity ->
-                        PlaceModel(placeEntity)
-                    }
+                    _selectedPlaceState.value = data
                     _placeCandidateState.value = UiState.Success(data)
                 }
                 .onErrorDeserialize<List<PlaceCandidateResponseEntity>, ErrorResponse> {
@@ -228,7 +225,7 @@ class VoteViewModel @Inject constructor(
                 VotePlaceRequestEntity(
                     _selectedPlaceState.value
                         .filter { it.isSelected }
-                        .map { it.placeItem.placeSlotId }
+                        .map { it.placeSlotId }
                 )
 
             postUserVotePlaceUseCase(meetId, selectedPlaceIds)
@@ -266,9 +263,7 @@ class VoteViewModel @Inject constructor(
             getLocationListUseCase(query)
                 .suspendOnSuccess {
                     data.collect {
-                        _selectedCandidateLocationState.value = it.map { locationEntity ->
-                            SelectedLocationModel(locationEntity)
-                        }
+                        _selectedCandidateLocationState.value = it
                         _candidateLocationState.value = UiState.Success(it)
                     }
                 }.onErrorDeserialize<Flow<List<LocationResponseEntity>>, ErrorResponse> {
@@ -286,7 +281,7 @@ class VoteViewModel @Inject constructor(
 
     fun addPlaceCandidate() {
         val selectedLocation =
-            _selectedCandidateLocationState.value.find { it.isSelected }?.locationResponseEntity
+            _selectedCandidateLocationState.value.find { it.isSelected }
         selectedLocation?.let {
             val requestEntity = PlaceCandidateRequestEntity(
                 it.placeInfoEntity.title,

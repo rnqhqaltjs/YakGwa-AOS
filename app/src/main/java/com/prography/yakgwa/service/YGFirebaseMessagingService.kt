@@ -1,4 +1,4 @@
-package com.prography.data.service
+package com.prography.yakgwa.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

@@ -2,7 +2,6 @@ package com.prography.yakgwa.ui.voteResult
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -22,12 +21,8 @@ import com.kakao.sdk.navi.model.NaviOption
 import com.prography.domain.model.response.MeetDetailResponseEntity.MeetInfo
 import com.prography.domain.model.response.TimeCandidateResponseEntity
 import com.prography.domain.model.response.VotePlaceResponseEntity
-import com.prography.yakgwa.BuildConfig.NAVER_CLIENT_ID
-import com.prography.yakgwa.BuildConfig.NAVER_CLIENT_SECRET
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentVoteResultBinding
-import com.prography.yakgwa.model.ConfirmPlaceModel
-import com.prography.yakgwa.model.ConfirmTimeModel
 import com.prography.yakgwa.model.NaviModel
 import com.prography.yakgwa.type.MeetType
 import com.prography.yakgwa.type.NaviType
@@ -40,7 +35,6 @@ import com.prography.yakgwa.util.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -78,11 +72,7 @@ class VoteResultFragment :
                         is UiState.Loading -> {}
                         is UiState.Success -> {
                             handleTimeCandidate(it.data)
-                            confirmTimeListAdapter.submitList(
-                                it.data.timeInfos?.map { timeInfo ->
-                                    ConfirmTimeModel(timeInfo)
-                                }
-                            )
+                            confirmTimeListAdapter.submitList(it.data.timeInfos)
                         }
 
                         is UiState.Failure -> {
@@ -100,11 +90,7 @@ class VoteResultFragment :
                         is UiState.Loading -> {}
                         is UiState.Success -> {
                             handleVotePlaceInfo(it.data)
-                            confirmPlaceListAdapter.submitList(
-                                it.data.placeInfos?.map { placeInfo ->
-                                    ConfirmPlaceModel(placeInfo)
-                                }
-                            )
+                            confirmPlaceListAdapter.submitList(it.data.placeInfos)
                         }
 
                         is UiState.Failure -> {
@@ -140,8 +126,7 @@ class VoteResultFragment :
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            Snackbar.make(requireView(), it.data, Snackbar.LENGTH_SHORT)
-                                .show()
+                            Snackbar.make(requireView(), it.data, Snackbar.LENGTH_SHORT).show()
                             viewModel.getUserVotePlace()
                         }
 
@@ -159,8 +144,7 @@ class VoteResultFragment :
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            Snackbar.make(requireView(), it.data, Snackbar.LENGTH_SHORT)
-                                .show()
+                            Snackbar.make(requireView(), it.data, Snackbar.LENGTH_SHORT).show()
                             viewModel.getVoteTimeCandidate()
                         }
 
@@ -178,6 +162,12 @@ class VoteResultFragment :
                     NaviType.NAVER_MAP -> handleNaverMap(it.second)
                     NaviType.KAKAO_MAP -> handleKakaoMap(it.second)
                 }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.staticMapState.collect {
+                binding.ivPromisePlaceMap.load(it)
             }
         }
     }
@@ -214,6 +204,7 @@ class VoteResultFragment :
             MeetType.CONFIRM.name -> {
                 binding.cvPromiseTime.visibility = View.VISIBLE
                 binding.cvVoteTimeResult.visibility = View.GONE
+
                 timeInfo.timeInfos?.first()?.voteTime?.let { voteTime ->
                     binding.tvPromiseDate.text = formatDateTimeToKoreanDate(voteTime)
                     binding.tvPromiseTime.text = formatDateTimeToKoreanTime(voteTime)
@@ -237,15 +228,17 @@ class VoteResultFragment :
                     binding.tvTitle.text = placeInfo.title
                     binding.tvAddress.text = placeInfo.roadAddress
 
-                    val geocoder = geoCoding(placeInfo.roadAddress)
-                    val mapUrl =
-                        "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster?w=760&h=300" +
-                                "&center=${geocoder.longitude},${geocoder.latitude}" +
-                                "&level=17" +
-                                "&markers=type:d|size:mid|pos:${geocoder.longitude}%20${geocoder.latitude}" +
-                                "&X-NCP-APIGW-API-KEY-ID=${NAVER_CLIENT_ID}" +
-                                "&X-NCP-APIGW-API-KEY=${NAVER_CLIENT_SECRET}"
-                    binding.ivPromisePlaceMap.load(mapUrl)
+                    lifecycleScope.launch {
+                        val location = viewModel.geoCoding(placeInfo.roadAddress)
+
+                        viewModel.getStaticMap(
+                            width = 760,
+                            height = 300,
+                            center = "${location.longitude},${location.latitude}",
+                            level = 17,
+                            markers = "type:d|size:mid|pos:${location.longitude}%20${location.latitude}"
+                        )
+                    }
                 }
             }
         }
@@ -253,16 +246,18 @@ class VoteResultFragment :
 
     private fun handleNaverMap(naviModel: NaviModel) {
         try {
-            val url =
-                "nmap://navigation?dlat=${geoCoding(naviModel.address).latitude}&dlng=${
-                    geoCoding(
-                        naviModel.address
-                    ).longitude
-                }&dname=${naviModel.address}&appname=com.prography.yakgwa"
+            lifecycleScope.launch {
+                val location = viewModel.geoCoding(naviModel.address)
+                val url =
+                    "nmap://navigation?dlat=${location.latitude}" +
+                            "&dlng=${location.longitude}" +
+                            "&dname=${naviModel.address}" +
+                            "&appname=com.prography.yakgwa"
 
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            intent.addCategory(Intent.CATEGORY_BROWSABLE)
-            startActivity(intent)
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                intent.addCategory(Intent.CATEGORY_BROWSABLE)
+                startActivity(intent)
+            }
         } catch (e: ActivityNotFoundException) {
             startActivity(
                 Intent(
@@ -275,16 +270,20 @@ class VoteResultFragment :
 
     private fun handleKakaoMap(naviModel: NaviModel) {
         if (NaviClient.instance.isKakaoNaviInstalled(requireContext())) {
-            startActivity(
-                NaviClient.instance.navigateIntent(
-                    Location(
-                        naviModel.address,
-                        geoCoding(naviModel.address).longitude.toString(),
-                        geoCoding(naviModel.address).latitude.toString()
-                    ),
-                    NaviOption(coordType = CoordType.WGS84)
+            lifecycleScope.launch {
+                val location = viewModel.geoCoding(naviModel.address)
+
+                startActivity(
+                    NaviClient.instance.navigateIntent(
+                        Location(
+                            naviModel.address,
+                            location.longitude.toString(),
+                            location.latitude.toString()
+                        ),
+                        NaviOption(coordType = CoordType.WGS84)
+                    )
                 )
-            )
+            }
         } else {
             startActivity(
                 Intent(
@@ -314,7 +313,7 @@ class VoteResultFragment :
             viewModel.onNaviAction(NaviType.NAVER_MAP)
         }
 
-        binding.ivKakoMapBtn.setOnClickListener {
+        binding.ivKakaoMapBtn.setOnClickListener {
             viewModel.onNaviAction(NaviType.KAKAO_MAP)
         }
 
@@ -329,23 +328,6 @@ class VoteResultFragment :
         }
 
         binding.ivSave.setOnClickListener {
-        }
-    }
-
-    private fun geoCoding(address: String): android.location.Location {
-        return try {
-            Geocoder(requireContext(), Locale.KOREA).getFromLocationName(address, 1)?.let {
-                android.location.Location("").apply {
-                    latitude = it[0].latitude
-                    longitude = it[0].longitude
-                }
-            } ?: android.location.Location("").apply {
-                latitude = 0.0
-                longitude = 0.0
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            geoCoding(address)
         }
     }
 

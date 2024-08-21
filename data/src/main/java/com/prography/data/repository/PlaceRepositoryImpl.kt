@@ -1,5 +1,8 @@
 package com.prography.data.repository
 
+import android.content.Context
+import android.location.Geocoder
+import android.location.Location
 import com.prography.data.datasource.remote.PlaceRemoteDataSource
 import com.prography.data.mapper.PlaceMapper
 import com.prography.domain.model.request.MyPlaceRequestEntity
@@ -7,12 +10,16 @@ import com.prography.domain.model.response.LocationResponseEntity
 import com.prography.domain.repository.PlaceRepository
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.mapSuccess
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
+import java.util.Locale
 import javax.inject.Inject
 
 class PlaceRepositoryImpl @Inject constructor(
-    private val placeRemoteDataSource: PlaceRemoteDataSource
+    private val placeRemoteDataSource: PlaceRemoteDataSource,
+    private val context: Context
 ) : PlaceRepository {
     override suspend fun getLocations(search: String): ApiResponse<Flow<List<LocationResponseEntity>>> {
         val response = placeRemoteDataSource.getLocations(search)
@@ -24,13 +31,13 @@ class PlaceRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMyPlace(): ApiResponse<List<LocationResponseEntity>> {
+    override suspend fun getMyPlace(): ApiResponse<Flow<List<LocationResponseEntity>>> {
         val response = placeRemoteDataSource.getMyPlace()
 
         return response.mapSuccess {
-            PlaceMapper.mapperToLocationResponseEntity(
-                this.result
-            )
+            flow {
+                emit(PlaceMapper.mapperToLocationResponseEntity(result))
+            }
         }
     }
 
@@ -44,6 +51,25 @@ class PlaceRepositoryImpl @Inject constructor(
         )
         return response.mapSuccess {
             this.result
+        }
+    }
+
+    override suspend fun geoCoding(address: String): Location {
+        return withContext(Dispatchers.IO) {
+            try {
+                Geocoder(context, Locale.KOREA).getFromLocationName(address, 1)?.let {
+                    Location("").apply {
+                        latitude = it[0].latitude
+                        longitude = it[0].longitude
+                    }
+                } ?: Location("").apply {
+                    latitude = 0.0
+                    longitude = 0.0
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                geoCoding(address)
+            }
         }
     }
 }

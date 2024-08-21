@@ -62,7 +62,7 @@
             android:launchMode="singleTask" />
 
         <service
-            android:name="com.prography.data.service.YGFirebaseMessagingService"
+            android:name=".service.YGFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

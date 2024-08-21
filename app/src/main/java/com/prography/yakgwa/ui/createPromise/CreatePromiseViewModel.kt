@@ -10,8 +10,6 @@ import com.prography.domain.model.response.ThemesResponseEntity
 import com.prography.domain.usecase.GetLocationListUseCase
 import com.prography.domain.usecase.GetThemeListUseCase
 import com.prography.domain.usecase.PostNewMeetCreateUseCase
-import com.prography.yakgwa.model.SelectedLocationModel
-import com.prography.yakgwa.model.ThemeModel
 import com.prography.yakgwa.util.DateTimeUtils.formatDateToString
 import com.prography.yakgwa.util.DateTimeUtils.formatTimeTo24Hour
 import com.prography.yakgwa.util.DateTimeUtils.formatTimeToString
@@ -92,7 +90,7 @@ class CreatePromiseViewModel @Inject constructor(
         MutableStateFlow<UiState<List<LocationResponseEntity>>>(UiState.Loading)
     val candidateLocationState = _candidateLocationState.asStateFlow()
 
-    private val _selectedThemeState = MutableStateFlow<List<ThemeModel>>(emptyList())
+    private val _selectedThemeState = MutableStateFlow<List<ThemesResponseEntity>>(emptyList())
     val selectedThemeState = _selectedThemeState
 
     private val _selectedDirectLocationState =
@@ -104,7 +102,7 @@ class CreatePromiseViewModel @Inject constructor(
     val selectedCandidateLocationState = _selectedCandidateLocationState
 
     private val _selectedCandidateLocationDetailState =
-        MutableStateFlow<List<SelectedLocationModel>>(emptyList())
+        MutableStateFlow<List<LocationResponseEntity>>(emptyList())
     val selectedCandidateLocationDetailState = _selectedCandidateLocationDetailState
 
     private val _selectedTabTimeIndex = MutableStateFlow(TAB_ADD_CANDIDATE)
@@ -125,9 +123,7 @@ class CreatePromiseViewModel @Inject constructor(
         viewModelScope.launch {
             getThemeListUseCase()
                 .onSuccess {
-                    _selectedThemeState.value = data.map { themeEntity ->
-                        ThemeModel(themeEntity)
-                    }
+                    _selectedThemeState.value = data
                     _themesState.value = UiState.Success(data)
                 }
                 .onErrorDeserialize<List<ThemesResponseEntity>, ErrorResponse> {
@@ -170,34 +166,33 @@ class CreatePromiseViewModel @Inject constructor(
     }
 
     private fun buildCreateMeetRequestEntity(): CreateMeetRequestEntity {
-        val placeInfoList = when (_selectedTabPlaceIndex.value) {
-            TAB_ADD_CANDIDATE -> _selectedCandidateLocationState.value
-            TAB_DIRECT_INPUT -> _selectedDirectLocationState.value
-            else -> emptyList()
-        }
-
-        val voteDate = _selectedCalendarDates.value.run {
-            if (_selectedTabTimeIndex.value == TAB_ADD_CANDIDATE) {
-                CreateMeetRequestEntity.VoteDate(
-                    startVoteDate = LocalDate.of(first().year, first().month + 1, first().day)
-                        .toString(),
-                    endVoteDate = LocalDate.of(last().year, last().month + 1, last().day).toString()
-                )
-            } else {
-                null
-            }
-        }
-
-        val meetTime = if (_selectedTabTimeIndex.value == TAB_DIRECT_INPUT) {
-            "${_selectedDirectDate.value} ${formatTimeTo24Hour(_selectedDirectTime.value)}"
+        val placeInfoList = if (_selectedTabPlaceIndex.value == TAB_ADD_CANDIDATE) {
+            _selectedCandidateLocationState.value
         } else {
-            null
+            _selectedDirectLocationState.value
         }
 
+        val voteDate = _selectedCalendarDates.value.takeIf {
+            _selectedTabTimeIndex.value == TAB_ADD_CANDIDATE
+        }?.let {
+            CreateMeetRequestEntity.VoteDate(
+                startVoteDate = LocalDate.of(it.first().year, it.first().month + 1, it.first().day)
+                    .toString(),
+                endVoteDate = LocalDate.of(it.last().year, it.last().month + 1, it.last().day)
+                    .toString()
+            )
+        }
+
+        val meetTime = _selectedTabTimeIndex.value.takeIf {
+            it == TAB_DIRECT_INPUT
+        }?.let {
+            "${_selectedDirectDate.value} ${formatTimeTo24Hour(_selectedDirectTime.value)}"
+        }
+        
         return CreateMeetRequestEntity(
             meetTitle = _textLength20State.value,
             description = _textLength80State.value,
-            meetThemeId = _selectedThemeState.value.find { it.isSelected }!!.themesResponseEntity.themeId,
+            meetThemeId = _selectedThemeState.value.find { it.isSelected }!!.themeId,
             confirmPlace = _selectedTabPlaceIndex.value == TAB_DIRECT_INPUT,
             placeInfo = placeInfoList.map {
                 CreateMeetRequestEntity.PlaceInfo(
@@ -257,10 +252,7 @@ class CreatePromiseViewModel @Inject constructor(
             getLocationListUseCase(query)
                 .suspendOnSuccess {
                     data.collect {
-                        _selectedCandidateLocationDetailState.value =
-                            it.map { locationEntity ->
-                                SelectedLocationModel(locationEntity)
-                            }
+                        _selectedCandidateLocationDetailState.value = it
                         _candidateLocationState.value = UiState.Success(it)
                     }
 
@@ -302,8 +294,7 @@ class CreatePromiseViewModel @Inject constructor(
 
     fun addCandidateLocation() {
         val currentList = _selectedCandidateLocationState.value
-        val selectedLocation =
-            _selectedCandidateLocationDetailState.value.find { it.isSelected }?.locationResponseEntity
+        val selectedLocation = _selectedCandidateLocationDetailState.value.find { it.isSelected }
 
         selectedLocation?.let {
             _selectedCandidateLocationState.value = currentList + it
@@ -353,6 +344,13 @@ class CreatePromiseViewModel @Inject constructor(
 
     fun onResetButtonClicked() {
         _isAddCandidateBtnClicked.value = false
+    }
+
+    fun resetSelectedCandidateLocations() {
+        _selectedCandidateLocationDetailState.value =
+            _selectedCandidateLocationDetailState.value.map {
+                it.copy(isSelected = false)
+            }
     }
 
     /*

@@ -36,7 +36,11 @@ class PromiseHistoryFragment :
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            promiseHistoryListAdapter.submitList(it.data)
+                            promiseHistoryListAdapter.submitList(
+                                it.data.sortedByDescending { promise ->
+                                    promise.meetInfo.meetDateTime
+                                }
+                            )
                             updateNoPromiseHistoryVisibility()
                         }
 

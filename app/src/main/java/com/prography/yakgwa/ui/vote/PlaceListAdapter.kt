@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.prography.domain.model.response.PlaceCandidateResponseEntity
 import com.prography.yakgwa.databinding.ItemPlaceListBinding
-import com.prography.yakgwa.model.PlaceModel
 
 class PlaceListAdapter :
-    ListAdapter<PlaceModel, PlaceListAdapter.PlaceListViewHolder>(
+    ListAdapter<PlaceCandidateResponseEntity, PlaceListAdapter.PlaceListViewHolder>(
         PlaceDiffCallback
     ) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceListViewHolder {
@@ -26,17 +26,19 @@ class PlaceListAdapter :
     inner class PlaceListViewHolder(private val binding: ItemPlaceListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(itemView: PlaceModel) {
-            binding.tvTitle.text = itemView.placeItem.placeName
-            binding.tvAddress.text = itemView.placeItem.placeAddress
-            binding.cvPlace.isSelected = itemView.isSelected
+        fun bind(itemView: PlaceCandidateResponseEntity) {
+            with(binding) {
+                tvTitle.text = itemView.placeName
+                tvAddress.text = itemView.placeAddress
+                cvPlace.isSelected = itemView.isSelected
 
-            val votePlaceMemberListAdapter = VotePlaceMemberListAdapter()
-            binding.rvParticipantMember.adapter = votePlaceMemberListAdapter
-            votePlaceMemberListAdapter.submitList(itemView.placeItem.userInfos)
+                val votePlaceMemberListAdapter = VotePlaceMemberListAdapter()
+                rvParticipantMember.adapter = votePlaceMemberListAdapter
+                votePlaceMemberListAdapter.submitList(itemView.userInfos)
 
-            binding.cvPlace.setOnClickListener {
-                onItemClickListener?.invoke(adapterPosition)
+                cvPlace.setOnClickListener {
+                    onItemClickListener?.invoke(adapterPosition)
+                }
             }
         }
     }
@@ -48,17 +50,17 @@ class PlaceListAdapter :
 
     companion object {
         private val PlaceDiffCallback =
-            object : DiffUtil.ItemCallback<PlaceModel>() {
+            object : DiffUtil.ItemCallback<PlaceCandidateResponseEntity>() {
                 override fun areItemsTheSame(
-                    oldItem: PlaceModel,
-                    newItem: PlaceModel
+                    oldItem: PlaceCandidateResponseEntity,
+                    newItem: PlaceCandidateResponseEntity
                 ): Boolean {
-                    return oldItem.placeItem.placeSlotId == newItem.placeItem.placeSlotId
+                    return oldItem.placeSlotId == newItem.placeSlotId
                 }
 
                 override fun areContentsTheSame(
-                    oldItem: PlaceModel,
-                    newItem: PlaceModel
+                    oldItem: PlaceCandidateResponseEntity,
+                    newItem: PlaceCandidateResponseEntity
                 ): Boolean {
                     return oldItem == newItem
                 }

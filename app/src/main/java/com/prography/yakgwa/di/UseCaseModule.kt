@@ -2,16 +2,17 @@ package com.prography.yakgwa.di
 
 import com.prography.domain.repository.AuthRepository
 import com.prography.domain.repository.MeetRepository
+import com.prography.domain.repository.NaverRepository
 import com.prography.domain.repository.PlaceRepository
 import com.prography.domain.repository.PromiseRepository
 import com.prography.domain.repository.VoteRepository
 import com.prography.domain.usecase.AddPromiseHistoryUseCase
 import com.prography.domain.usecase.GetLocationListUseCase
 import com.prography.domain.usecase.GetMeetInformationDetailUseCase
-import com.prography.domain.usecase.GetMyPlaceListUseCase
 import com.prography.domain.usecase.GetParticipantMeetListUseCase
 import com.prography.domain.usecase.GetPlaceCandidateInfoUseCase
 import com.prography.domain.usecase.GetPromiseHistoryListUseCase
+import com.prography.domain.usecase.GetStaticMapUseCase
 import com.prography.domain.usecase.GetThemeListUseCase
 import com.prography.domain.usecase.GetUserInformationUseCase
 import com.prography.domain.usecase.GetUserVotePlaceListUseCase
@@ -126,11 +127,11 @@ class UseCaseModule {
 
     @Provides
     @Singleton
-    fun providesGetMyPlaceListUseCase(placeRepository: PlaceRepository): GetMyPlaceListUseCase =
-        GetMyPlaceListUseCase(placeRepository)
+    fun providesPostMyPlaceUseCase(placeRepository: PlaceRepository): PostMyPlaceUseCase =
+        PostMyPlaceUseCase(placeRepository)
 
     @Provides
     @Singleton
-    fun providesPostMyPlaceUseCase(placeRepository: PlaceRepository): PostMyPlaceUseCase =
-        PostMyPlaceUseCase(placeRepository)
+    fun providesGetStaticMapUseCase(naverRepository: NaverRepository): GetStaticMapUseCase =
+        GetStaticMapUseCase(naverRepository)
 }

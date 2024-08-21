@@ -2,11 +2,13 @@ package com.prography.yakgwa.di
 
 import com.prography.data.repository.AuthRepositoryImpl
 import com.prography.data.repository.MeetRepositoryImpl
+import com.prography.data.repository.NaverRepositoryImpl
 import com.prography.data.repository.PlaceRepositoryImpl
 import com.prography.data.repository.PromiseRepositoryImpl
 import com.prography.data.repository.VoteRepositoryImpl
 import com.prography.domain.repository.AuthRepository
 import com.prography.domain.repository.MeetRepository
+import com.prography.domain.repository.NaverRepository
 import com.prography.domain.repository.PlaceRepository
 import com.prography.domain.repository.PromiseRepository
 import com.prography.domain.repository.VoteRepository
@@ -38,4 +40,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindsPromiseRepository(promiseRepositoryImpl: PromiseRepositoryImpl): PromiseRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsNaverRepository(naverRepositoryImpl: NaverRepositoryImpl): NaverRepository
 }

@@ -87,14 +87,7 @@ class InvitationViewModel @Inject constructor(
 
     private val _placeCandidateState =
         MutableStateFlow<UiState<List<PlaceCandidateResponseEntity>>>(UiState.Loading)
-    val placeCandidateState = _placeCandidateState
-        .onSubscription {
-            getVotePlaceCandidate()
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = UiState.Loading
-        )
+    val placeCandidateState = _placeCandidateState.asStateFlow()
 
     private val _participantInfo =
         MutableStateFlow<Array<MeetDetailResponseEntity.ParticipantInfo>>(emptyArray())
@@ -157,7 +150,7 @@ class InvitationViewModel @Inject constructor(
         }
     }
 
-    private fun getVotePlaceCandidate() {
+    fun getVotePlaceCandidate() {
         _placeCandidateState.value = UiState.Loading
 
         viewModelScope.launch {

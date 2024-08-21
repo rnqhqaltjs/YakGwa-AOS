@@ -63,7 +63,7 @@ class VoteRepositoryImpl @Inject constructor(
             VoteMapper.mapperToRequestConfirmTimeDto(confirmTimeRequestEntity)
         )
         return response.mapSuccess {
-            this.result
+            this.message
         }
     }
 
@@ -76,7 +76,7 @@ class VoteRepositoryImpl @Inject constructor(
             VoteMapper.mapperToRequestConfirmPlaceDto(confirmPlaceRequestEntity)
         )
         return response.mapSuccess {
-            this.result
+            this.message
         }
     }
 

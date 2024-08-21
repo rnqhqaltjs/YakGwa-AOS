@@ -1,5 +1,7 @@
 package com.prography.yakgwa.ui.voteResult
 
+import android.graphics.Bitmap
+import android.location.Location
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,14 +10,15 @@ import com.prography.domain.model.request.ConfirmPlaceRequestEntity
 import com.prography.domain.model.request.ConfirmTimeRequestEntity
 import com.prography.domain.model.response.MeetDetailResponseEntity
 import com.prography.domain.model.response.TimeCandidateResponseEntity
+import com.prography.domain.model.response.TimeCandidateResponseEntity.TimeInfo
 import com.prography.domain.model.response.VotePlaceResponseEntity
+import com.prography.domain.repository.PlaceRepository
 import com.prography.domain.usecase.GetMeetInformationDetailUseCase
+import com.prography.domain.usecase.GetStaticMapUseCase
 import com.prography.domain.usecase.GetUserVotePlaceListUseCase
 import com.prography.domain.usecase.GetVoteTimeCandidateInfoUseCase
 import com.prography.domain.usecase.PatchConfirmMeetPlaceUseCase
 import com.prography.domain.usecase.PatchConfirmMeetTimeUseCase
-import com.prography.yakgwa.model.ConfirmPlaceModel
-import com.prography.yakgwa.model.ConfirmTimeModel
 import com.prography.yakgwa.model.NaviModel
 import com.prography.yakgwa.type.NaviType
 import com.prography.yakgwa.util.UiState
@@ -40,6 +43,8 @@ class VoteResultViewModel @Inject constructor(
     private val getMeetInformationDetailUseCase: GetMeetInformationDetailUseCase,
     private val patchConfirmMeetTimeUseCase: PatchConfirmMeetTimeUseCase,
     private val patchConfirmMeetPlaceUseCase: PatchConfirmMeetPlaceUseCase,
+    private val getStaticMapUseCase: GetStaticMapUseCase,
+    private val placeRepository: PlaceRepository
 ) : ViewModel() {
     private var meetId = savedStateHandle.get<Int>(MEET_ID) ?: INVALID_MEET_ID
 
@@ -82,16 +87,20 @@ class VoteResultViewModel @Inject constructor(
     private val _confirmPlaceState = MutableStateFlow<UiState<String>>(UiState.Loading)
     val confirmPlaceState = _confirmPlaceState.asStateFlow()
 
-    private val _selectedConfirmPlaceState = MutableStateFlow<List<ConfirmPlaceModel>>(emptyList())
+    private val _selectedConfirmPlaceState =
+        MutableStateFlow<List<VotePlaceResponseEntity.PlaceInfos>>(emptyList())
     val selectedConfirmPlaceState = _selectedConfirmPlaceState
 
-    private val _selectedConfirmTimeState = MutableStateFlow<List<ConfirmTimeModel>>(emptyList())
+    private val _selectedConfirmTimeState = MutableStateFlow<List<TimeInfo>>(emptyList())
     val selectedConfirmTimeState = _selectedConfirmTimeState
 
     private val _naviInfoState = MutableStateFlow<NaviModel?>(null)
 
     private val _naviActionState = MutableSharedFlow<Pair<NaviType, NaviModel>>()
     val naviActionState = _naviActionState.asSharedFlow()
+
+    private val _staticMapState = MutableStateFlow<Bitmap?>(null)
+    val staticMapState = _staticMapState.asStateFlow()
 
     private val _participantInfo =
         MutableStateFlow<Array<MeetDetailResponseEntity.ParticipantInfo>>(emptyArray())
@@ -104,15 +113,7 @@ class VoteResultViewModel @Inject constructor(
             getVoteTimeCandidateInfoUseCase(meetId)
                 .onSuccess {
                     _timeCandidateState.value = UiState.Success(data)
-                    val confirmTimeModels = data.timeInfos?.mapIndexed { index, placeInfo ->
-                        ConfirmTimeModel(placeInfo).apply {
-                            if (index == 0) {
-                                isSelected = true
-                            }
-                        }
-                    } ?: emptyList()
-
-                    _selectedConfirmTimeState.value = confirmTimeModels
+                    _selectedConfirmTimeState.value = data.selectFirstTime()
                 }
                 .onErrorDeserialize<TimeCandidateResponseEntity, ErrorResponse> {
                     _timeCandidateState.value = UiState.Failure(it.message)
@@ -127,15 +128,7 @@ class VoteResultViewModel @Inject constructor(
             getUserVoteInfoUseCase(meetId)
                 .onSuccess {
                     _votePlaceInfoState.value = UiState.Success(data)
-                    val confirmPlaceModels = data.placeInfos?.mapIndexed { index, placeInfo ->
-                        ConfirmPlaceModel(placeInfo).apply {
-                            if (index == 0) {
-                                isSelected = true
-                            }
-                        }
-                    } ?: emptyList()
-
-                    _selectedConfirmPlaceState.value = confirmPlaceModels
+                    _selectedConfirmPlaceState.value = data.selectFirstPlace()
                     _naviInfoState.value = data.placeInfos?.firstOrNull()?.let { placeInfo ->
                         NaviModel(
                             placeInfo.mapX,
@@ -168,11 +161,7 @@ class VoteResultViewModel @Inject constructor(
         _confirmTimeState.value = UiState.Loading
 
         val confirmTimeRequestEntity =
-            ConfirmTimeRequestEntity(
-                _selectedConfirmTimeState.value
-                    .find { it.isSelected }!!
-                    .timeInfo.timeId
-            )
+            ConfirmTimeRequestEntity(_selectedConfirmTimeState.value.find { it.isSelected }!!.timeId)
 
         viewModelScope.launch {
             patchConfirmMeetTimeUseCase(meetId, confirmTimeRequestEntity)
@@ -189,11 +178,7 @@ class VoteResultViewModel @Inject constructor(
         _confirmPlaceState.value = UiState.Loading
 
         val confirmPlaceRequestEntity =
-            ConfirmPlaceRequestEntity(
-                _selectedConfirmPlaceState.value
-                    .find { it.isSelected }!!
-                    .placeInfos.placeSlotId
-            )
+            ConfirmPlaceRequestEntity(_selectedConfirmPlaceState.value.find { it.isSelected }!!.placeSlotId)
 
         viewModelScope.launch {
             patchConfirmMeetPlaceUseCase(meetId, confirmPlaceRequestEntity)
@@ -229,6 +214,27 @@ class VoteResultViewModel @Inject constructor(
 
     fun setParticipantInfo(participants: List<MeetDetailResponseEntity.ParticipantInfo>) {
         _participantInfo.value = participants.toTypedArray()
+    }
+
+    fun getStaticMap(width: Int, height: Int, center: String, level: Int, markers: String) {
+        viewModelScope.launch {
+            getStaticMapUseCase(width, height, center, level, markers)
+                .onSuccess {
+                    _staticMapState.value = it
+                }
+        }
+    }
+
+    suspend fun geoCoding(address: String): Location {
+        return try {
+            placeRepository.geoCoding(address)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Location("").apply {
+                latitude = 0.0
+                longitude = 0.0
+            }
+        }
     }
 
     companion object {

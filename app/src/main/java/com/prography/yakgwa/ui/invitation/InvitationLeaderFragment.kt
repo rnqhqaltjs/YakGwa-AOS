@@ -16,8 +16,6 @@ import com.kakao.sdk.share.WebSharerClient
 import com.kakao.sdk.template.model.Button
 import com.kakao.sdk.template.model.Content
 import com.kakao.sdk.template.model.FeedTemplate
-import com.kakao.sdk.template.model.ItemContent
-import com.kakao.sdk.template.model.ItemInfo
 import com.kakao.sdk.template.model.Link
 import com.prography.domain.model.response.MeetDetailResponseEntity.MeetInfo
 import com.prography.domain.model.response.TimeCandidateResponseEntity
@@ -201,12 +199,6 @@ class InvitationLeaderFragment :
                 imageUrl = "http://k.kakaocdn.net/dn/bp2Qmz/btsHbRn5Auu/I4MY1Ks8YoU2npkzSr7WT0/kakaolink40_original.png",
                 link = link
             ),
-            itemContent = ItemContent(
-                items = listOf(
-                    ItemInfo(item = "약속 시간: ", itemOp = "MM월 DD일 HH:MM"),
-                    ItemInfo(item = "약속 장소: ", itemOp = "{장소명}")
-                )
-            ),
             buttons = listOf(
                 Button(
                     "앱으로 보기",
@@ -248,7 +240,7 @@ class InvitationLeaderFragment :
             Timber.e("디바이스에 설치된 인터넷 브라우저가 없습니다: $e")
         }
     }
-    
+
     private fun showMeetDetails(meetInfo: MeetInfo) {
         with(binding) {
             tvTemaName.text = meetInfo.themeName
@@ -276,6 +268,7 @@ class InvitationLeaderFragment :
     private fun handleVotePlaceInfo(voteInfo: VotePlaceResponseEntity) {
         when (voteInfo.meetStatus) {
             MeetType.BEFORE_VOTE.name -> {
+                viewModel.getVotePlaceCandidate()
                 binding.cvPlaceVote.visibility = View.VISIBLE
                 binding.cvMyVotePlace.visibility = View.GONE
             }

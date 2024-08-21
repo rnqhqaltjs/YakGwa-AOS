@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.prography.domain.model.response.ThemesResponseEntity
 import com.prography.yakgwa.databinding.ItemThemeListBinding
-import com.prography.yakgwa.model.ThemeModel
 
 class ThemeListAdapter :
-    ListAdapter<ThemeModel, ThemeListAdapter.ThemeListViewHolder>(
+    ListAdapter<ThemesResponseEntity, ThemeListAdapter.ThemeListViewHolder>(
         ThemeDiffCallback
     ) {
 
@@ -26,12 +26,13 @@ class ThemeListAdapter :
 
     inner class ThemeListViewHolder(private val binding: ItemThemeListBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(itemView: ThemeModel) {
-            binding.tvThemeName.text = itemView.themesResponseEntity.themeName
-            binding.cvTheme.isSelected = itemView.isSelected
-
-            binding.cvTheme.setOnClickListener {
-                onItemClickListener?.invoke(adapterPosition)
+        fun bind(itemView: ThemesResponseEntity) {
+            with(binding) {
+                tvThemeName.text = itemView.themeName
+                cvTheme.isSelected = itemView.isSelected
+                cvTheme.setOnClickListener {
+                    onItemClickListener?.invoke(adapterPosition)
+                }
             }
         }
     }
@@ -43,17 +44,17 @@ class ThemeListAdapter :
 
     companion object {
         private val ThemeDiffCallback =
-            object : DiffUtil.ItemCallback<ThemeModel>() {
+            object : DiffUtil.ItemCallback<ThemesResponseEntity>() {
                 override fun areItemsTheSame(
-                    oldItem: ThemeModel,
-                    newItem: ThemeModel
+                    oldItem: ThemesResponseEntity,
+                    newItem: ThemesResponseEntity
                 ): Boolean {
-                    return oldItem.themesResponseEntity.themeId == newItem.themesResponseEntity.themeId
+                    return oldItem.themeId == newItem.themeId
                 }
 
                 override fun areContentsTheSame(
-                    oldItem: ThemeModel,
-                    newItem: ThemeModel
+                    oldItem: ThemesResponseEntity,
+                    newItem: ThemesResponseEntity
                 ): Boolean {
                     return oldItem == newItem
                 }

@@ -11,7 +11,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentAddCandidatePlaceDetailBinding
-import com.prography.yakgwa.model.SelectedLocationModel
 import com.prography.yakgwa.ui.createPromise.CreatePromiseViewModel
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
@@ -28,6 +27,7 @@ class AddCandidatePlaceDetailFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.resetSelectedCandidateLocations()
         setupRecyclerView()
         observer()
         addListeners()
@@ -56,10 +56,7 @@ class AddCandidatePlaceDetailFragment :
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            candidateLocationDetailListAdapter.submitList(
-                                it.data.map { locationItem ->
-                                    SelectedLocationModel(locationItem)
-                                })
+                            candidateLocationDetailListAdapter.submitList(it.data)
                         }
 
                         is UiState.Failure -> {
