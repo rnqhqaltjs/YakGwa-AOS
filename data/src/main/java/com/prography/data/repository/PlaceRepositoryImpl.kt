@@ -31,13 +31,13 @@ class PlaceRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMyPlace(): ApiResponse<List<LocationResponseEntity>> {
+    override suspend fun getMyPlace(): ApiResponse<Flow<List<LocationResponseEntity>>> {
         val response = placeRemoteDataSource.getMyPlace()
 
         return response.mapSuccess {
-            PlaceMapper.mapperToLocationResponseEntity(
-                this.result
-            )
+            flow {
+                emit(PlaceMapper.mapperToLocationResponseEntity(result))
+            }
         }
     }
 

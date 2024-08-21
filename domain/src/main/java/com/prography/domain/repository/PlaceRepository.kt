@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlaceRepository {
     suspend fun getLocations(search: String): ApiResponse<Flow<List<LocationResponseEntity>>>
-    suspend fun getMyPlace(): ApiResponse<List<LocationResponseEntity>>
+    suspend fun getMyPlace(): ApiResponse<Flow<List<LocationResponseEntity>>>
     suspend fun myPlace(
         like: Boolean,
         myPlaceRequestEntity: MyPlaceRequestEntity

@@ -9,7 +9,6 @@ import com.prography.domain.repository.VoteRepository
 import com.prography.domain.usecase.AddPromiseHistoryUseCase
 import com.prography.domain.usecase.GetLocationListUseCase
 import com.prography.domain.usecase.GetMeetInformationDetailUseCase
-import com.prography.domain.usecase.GetMyPlaceListUseCase
 import com.prography.domain.usecase.GetParticipantMeetListUseCase
 import com.prography.domain.usecase.GetPlaceCandidateInfoUseCase
 import com.prography.domain.usecase.GetPromiseHistoryListUseCase
@@ -125,11 +124,6 @@ class UseCaseModule {
     @Singleton
     fun providesPostPlaceCandidateInfoUseCase(voteRepository: VoteRepository): PostPlaceCandidateInfoUseCase =
         PostPlaceCandidateInfoUseCase(voteRepository)
-
-    @Provides
-    @Singleton
-    fun providesGetMyPlaceListUseCase(placeRepository: PlaceRepository): GetMyPlaceListUseCase =
-        GetMyPlaceListUseCase(placeRepository)
 
     @Provides
     @Singleton
