@@ -178,11 +178,7 @@ class VoteResultViewModel @Inject constructor(
         _confirmPlaceState.value = UiState.Loading
 
         val confirmPlaceRequestEntity =
-            ConfirmPlaceRequestEntity(
-                _selectedConfirmPlaceState.value
-                    .find { it.isSelected }!!
-                    .placeSlotId
-            )
+            ConfirmPlaceRequestEntity(_selectedConfirmPlaceState.value.find { it.isSelected }!!.placeSlotId)
 
         viewModelScope.launch {
             patchConfirmMeetPlaceUseCase(meetId, confirmPlaceRequestEntity)

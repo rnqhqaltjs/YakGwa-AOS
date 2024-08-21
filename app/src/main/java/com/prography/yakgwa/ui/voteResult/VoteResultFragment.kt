@@ -204,7 +204,7 @@ class VoteResultFragment :
             MeetType.CONFIRM.name -> {
                 binding.cvPromiseTime.visibility = View.VISIBLE
                 binding.cvVoteTimeResult.visibility = View.GONE
-                
+
                 timeInfo.timeInfos?.first()?.voteTime?.let { voteTime ->
                     binding.tvPromiseDate.text = formatDateTimeToKoreanDate(voteTime)
                     binding.tvPromiseTime.text = formatDateTimeToKoreanTime(voteTime)
@@ -250,7 +250,7 @@ class VoteResultFragment :
                 val location = viewModel.geoCoding(naviModel.address)
                 val url =
                     "nmap://navigation?dlat=${location.latitude}" +
-                            "&dlng=${location.latitude}" +
+                            "&dlng=${location.longitude}" +
                             "&dname=${naviModel.address}" +
                             "&appname=com.prography.yakgwa"
 
@@ -313,7 +313,7 @@ class VoteResultFragment :
             viewModel.onNaviAction(NaviType.NAVER_MAP)
         }
 
-        binding.ivKakoMapBtn.setOnClickListener {
+        binding.ivKakaoMapBtn.setOnClickListener {
             viewModel.onNaviAction(NaviType.KAKAO_MAP)
         }
 
