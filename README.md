@@ -1,6 +1,5 @@
 # 약과 - 약속 잡는 과정 
-![image](https://github.com/user-attachments/assets/867ccfff-a36c-4eaa-b50b-8f6610966f85) 
-
+<img src = "https://github.com/user-attachments/assets/867ccfff-a36c-4eaa-b50b-8f6610966f85" width="60%" height="60%"> 
 
 
 
