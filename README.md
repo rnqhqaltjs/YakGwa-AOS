@@ -12,4 +12,4 @@
 메인 화면은 Single Activity Architecture(SAA)로 구성
 
 ## 배운점
-[Clean Architecture에서 두 응답 List를 하나의 List로 합치기] (https://velog.io/@rnqhqaltjs/Clean-Architecture%EC%97%90%EC%84%9C-%EB%91%90-%EC%9D%91%EB%8B%B5-List%EB%A5%BC-%ED%95%98%EB%82%98%EC%9D%98-List%EB%A1%9C-%ED%95%A9%EC%B9%98%EA%B8%B0)
+[Clean Architecture에서 두 응답 List를 하나의 List로 합치기](https://velog.io/@rnqhqaltjs/Clean-Architecture%EC%97%90%EC%84%9C-%EB%91%90-%EC%9D%91%EB%8B%B5-List%EB%A5%BC-%ED%95%98%EB%82%98%EC%9D%98-List%EB%A1%9C-%ED%95%A9%EC%B9%98%EA%B8%B0)
