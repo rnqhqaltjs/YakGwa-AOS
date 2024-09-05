@@ -18,6 +18,8 @@ import com.prography.yakgwa.ui.createPromise.CreatePromiseViewModel.Companion.TA
 import com.prography.yakgwa.ui.createPromise.CreatePromiseViewModel.Companion.TAB_DIRECT_INPUT
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
+import com.prography.yakgwa.util.extensions.hide
+import com.prography.yakgwa.util.extensions.show
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -82,12 +84,17 @@ class CreatePromisePlaceFragment :
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.createMeetState.collect {
                     when (it) {
-                        is UiState.Loading -> {}
+                        is UiState.Loading -> {
+                            binding.progressBar.show(requireActivity())
+                        }
+
                         is UiState.Success -> {
+                            binding.progressBar.hide(requireActivity())
                             handleCreateMeet(it.data.meetId)
                         }
 
                         is UiState.Failure -> {
+                            binding.progressBar.hide(requireActivity())
                             Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
                         }
                     }
