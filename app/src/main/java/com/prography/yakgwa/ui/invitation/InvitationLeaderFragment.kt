@@ -23,7 +23,7 @@ import com.prography.domain.model.response.VotePlaceResponseEntity
 import com.prography.yakgwa.R
 import com.prography.yakgwa.databinding.FragmentInvitationLeaderBinding
 import com.prography.yakgwa.type.MeetType
-import com.prography.yakgwa.ui.invitation.InvitationViewModel.Companion.MEET_ID
+import com.prography.yakgwa.ui.invitation.InvitationViewModel.Companion.INVITE_ID
 import com.prography.yakgwa.util.OverlapDecoration
 import com.prography.yakgwa.util.UiState
 import com.prography.yakgwa.util.base.BaseFragment
@@ -186,7 +186,7 @@ class InvitationLeaderFragment :
 
     private fun createKakaoFeedTemplate(meetInfo: MeetInfo): FeedTemplate {
         val executionParams = mapOf(
-            MEET_ID to viewModel.meetId.toString()
+            INVITE_ID to viewModel.meetId.toString()
         )
         val link = Link(
             androidExecutionParams = executionParams,

@@ -169,6 +169,7 @@ class InvitationViewModel @Inject constructor(
     }
 
     companion object {
+        const val INVITE_ID = "inviteId"
         const val MEET_ID = "meetId"
         const val INVALID_MEET_ID = -1
     }
