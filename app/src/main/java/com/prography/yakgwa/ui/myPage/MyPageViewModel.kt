@@ -1,21 +1,24 @@
 package com.prography.yakgwa.ui.myPage
 
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prography.data.ErrorResponse
 import com.prography.data.datasource.local.YakGwaLocalDataSource
 import com.prography.domain.model.response.UserInfoResponseEntity
-import com.prography.domain.repository.AuthRepository
 import com.prography.domain.usecase.GetUserInformationUseCase
 import com.prography.domain.usecase.PatchUpdateUserImageUseCase
+import com.prography.domain.usecase.PostUserLogoutUseCase
 import com.prography.yakgwa.util.UiState
 import com.skydoves.sandwich.onSuccess
 import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
 import com.skydoves.sandwich.suspendOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.stateIn
@@ -24,14 +27,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    savedStateHandle: SavedStateHandle,
+    private val postUserLogoutUseCase: PostUserLogoutUseCase,
     private val localStorage: YakGwaLocalDataSource,
     private val getUserInformationUseCase: GetUserInformationUseCase,
     private val patchUpdateUserImageUseCase: PatchUpdateUserImageUseCase
 ) : ViewModel() {
+    val documentType = savedStateHandle.get<String>("documentType")
 
-    private val _logoutState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
-    val logoutState = _logoutState.asStateFlow()
+    private val _logoutState = MutableSharedFlow<UiState<Unit>>()
+    val logoutState = _logoutState.asSharedFlow()
 
     private val _userInfoState = MutableStateFlow<UiState<UserInfoResponseEntity>>(UiState.Loading)
     val userInfoState = _userInfoState
@@ -48,16 +53,18 @@ class MyPageViewModel @Inject constructor(
     val userImageState = _userImageState.asStateFlow()
 
     fun logout() {
-        _logoutState.value = UiState.Loading
-
         viewModelScope.launch {
-            authRepository.logout()
+            _logoutState.emit(UiState.Loading)
+
+            postUserLogoutUseCase()
                 .suspendOnSuccess {
-                    _logoutState.value = UiState.Success(data)
+                    _logoutState.emit(UiState.Success(data))
                     localStorage.clear()
                 }
                 .onErrorDeserialize<Unit, ErrorResponse> {
-                    _logoutState.value = UiState.Failure(it.message)
+                    launch {
+                        _logoutState.emit(UiState.Failure(it.message))
+                    }
                 }
         }
     }

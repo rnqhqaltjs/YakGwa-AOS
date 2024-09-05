@@ -69,6 +69,9 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_myPageFragment_to_policyFragment"
+            app:destination="@id/policyFragment" />
     </fragment>
     <fragment
         android:id="@+id/invitationLeaderFragment"
@@ -303,4 +306,13 @@
         android:name="com.prography.yakgwa.ui.myPlace.MyPlaceFragment"
         android:label="MyPlaceFragment"
         tools:layout="@layout/fragment_my_place" />
+    <fragment
+        android:id="@+id/policyFragment"
+        tools:layout="@layout/fragment_policy"
+        android:name="com.prography.yakgwa.ui.myPage.PolicyFragment"
+        android:label="policyFragment">
+        <argument
+            android:name="documentType"
+            app:argType="string" />
+    </fragment>
 </navigation>

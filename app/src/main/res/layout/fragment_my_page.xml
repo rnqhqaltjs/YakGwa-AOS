@@ -193,7 +193,7 @@
 
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cv_terms"
+            android:id="@+id/cv_policy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -245,7 +245,7 @@
             android:layout_marginTop="40dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cv_terms">
+            app:layout_constraintTop_toBottomOf="@+id/cv_policy">
 
             <TextView
                 android:id="@+id/tv_logout_btn"
