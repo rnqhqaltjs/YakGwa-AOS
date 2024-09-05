@@ -24,6 +24,8 @@ import com.prography.domain.usecase.PostMyPlaceUseCase
 import com.prography.domain.usecase.PostNewMeetCreateUseCase
 import com.prography.domain.usecase.PostParticipantMeetUseCase
 import com.prography.domain.usecase.PostPlaceCandidateInfoUseCase
+import com.prography.domain.usecase.PostUserLoginUseCase
+import com.prography.domain.usecase.PostUserLogoutUseCase
 import com.prography.domain.usecase.PostUserVotePlaceUseCase
 import com.prography.domain.usecase.PostUserVoteTimeUseCase
 import dagger.Module
@@ -35,6 +37,16 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class UseCaseModule {
+    @Provides
+    @Singleton
+    fun providesPostUserLoginUseCase(authRepository: AuthRepository): PostUserLoginUseCase =
+        PostUserLoginUseCase(authRepository)
+
+    @Provides
+    @Singleton
+    fun providesPostUserLogoutUseCase(authRepository: AuthRepository): PostUserLogoutUseCase =
+        PostUserLogoutUseCase(authRepository)
+
     @Provides
     @Singleton
     fun providesGetThemeListUseCase(meetRepository: MeetRepository): GetThemeListUseCase =

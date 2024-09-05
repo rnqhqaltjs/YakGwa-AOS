@@ -13,6 +13,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface AuthService {
     @POST("/api/v1/auth/login")
@@ -30,4 +31,7 @@ interface AuthService {
     @Multipart
     @PATCH("/api/v1/user/image")
     suspend fun updateUserImage(@Part userImage: MultipartBody.Part): ApiResponse<Unit>
+
+    @PATCH("/api/v1/user/fcm")
+    suspend fun updateFcmToken(@Query("newFcmToken") newFcmToken: String): ApiResponse<Unit>
 }

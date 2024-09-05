@@ -31,4 +31,8 @@ class AuthRemoteDataSourceImpl @Inject constructor(
     override suspend fun updateUserImage(userImage: MultipartBody.Part): ApiResponse<Unit> {
         return authService.updateUserImage(userImage)
     }
+
+    override suspend fun updateFcmToken(newFcmToken: String): ApiResponse<Unit> {
+        return authService.updateFcmToken(newFcmToken)
+    }
 }
