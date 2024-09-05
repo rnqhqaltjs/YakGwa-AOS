@@ -232,8 +232,8 @@ class VoteResultFragment :
                         val location = viewModel.geoCoding(placeInfo.roadAddress)
 
                         viewModel.getStaticMap(
-                            width = 760,
-                            height = 300,
+                            width = 600,
+                            height = 240,
                             center = "${location.longitude},${location.latitude}",
                             level = 17,
                             markers = "type:d|size:mid|pos:${location.longitude}%20${location.latitude}"
