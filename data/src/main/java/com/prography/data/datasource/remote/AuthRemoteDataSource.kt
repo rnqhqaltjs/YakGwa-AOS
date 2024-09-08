@@ -16,4 +16,5 @@ interface AuthRemoteDataSource {
     suspend fun logout(): ApiResponse<Unit>
     suspend fun getUserInfo(): ApiResponse<BaseResponse<ResponseUserInfoDto>>
     suspend fun updateUserImage(userImage: MultipartBody.Part): ApiResponse<Unit>
+    suspend fun updateFcmToken(newFcmToken: String): ApiResponse<Unit>
 }

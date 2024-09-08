@@ -6,15 +6,15 @@ import com.prography.data.ErrorResponse
 import com.prography.data.datasource.local.YakGwaLocalDataSource
 import com.prography.domain.model.request.AuthRequestEntity
 import com.prography.domain.model.response.AuthResponseEntity
-import com.prography.domain.repository.AuthRepository
+import com.prography.domain.usecase.PostUserLoginUseCase
 import com.prography.yakgwa.type.LoginType
 import com.prography.yakgwa.util.UiState
 import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
 import com.skydoves.sandwich.suspendOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -22,17 +22,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val postUserLoginUseCase: PostUserLoginUseCase,
     private val localStorage: YakGwaLocalDataSource
 ) : ViewModel() {
-    private val _loginState = MutableStateFlow<UiState<Unit>>(UiState.Loading)
-    val loginState = _loginState.asStateFlow()
+    private val _loginState = MutableSharedFlow<UiState<Unit>>()
+    val loginState = _loginState.asSharedFlow()
 
     fun login(kakaoAccessToken: String) {
-        _loginState.value = UiState.Loading
-
         viewModelScope.launch {
-            authRepository.postLogin(
+            _loginState.emit(UiState.Loading)
+
+            postUserLoginUseCase(
                 HEADER_BEARER + kakaoAccessToken,
                 AuthRequestEntity(LoginType.KAKAO.name, getDeviceToken())
             ).suspendOnSuccess {
@@ -41,9 +41,11 @@ class LoginViewModel @Inject constructor(
                     saveAccessToken(HEADER_BEARER + data.accessToken)
                     saveRefreshToken(HEADER_BEARER + data.refreshToken)
                 }
-                _loginState.value = UiState.Success(Unit)
+                _loginState.emit(UiState.Success(Unit))
             }.onErrorDeserialize<AuthResponseEntity, ErrorResponse> {
-                _loginState.value = UiState.Failure(it.message)
+                launch {
+                    _loginState.emit(UiState.Failure(it.message))
+                }
             }
         }
     }

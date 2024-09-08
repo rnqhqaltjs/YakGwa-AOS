@@ -105,6 +105,14 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
         binding.ivProfileEdit.setOnClickListener {
             launchNewPhotoPicker()
         }
+
+        binding.tvPrivacyPolicy.setOnClickListener {
+            navigateToPolicyFragment("privacy")
+        }
+
+        binding.tvTermsOfUse.setOnClickListener {
+            navigateToPolicyFragment("terms")
+        }
     }
 
     private fun navigateToAuth() {
@@ -122,6 +130,12 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
 
     private fun navigateToMyPlaceFragment() {
         MyPageFragmentDirections.actionMyPageFragmentToMyPlaceFragment().apply {
+            findNavController().navigate(this)
+        }
+    }
+
+    private fun navigateToPolicyFragment(documentType: String) {
+        MyPageFragmentDirections.actionMyPageFragmentToPolicyFragment(documentType).apply {
             findNavController().navigate(this)
         }
     }

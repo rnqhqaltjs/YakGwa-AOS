@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RequestVoteTimeDto(
-    @SerializedName("enableTImes")
+    @SerializedName("enableTimes")
     val enableTimes: List<EnableTimes>
 ) {
     @Serializable

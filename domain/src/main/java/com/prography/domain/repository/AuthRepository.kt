@@ -15,4 +15,5 @@ interface AuthRepository {
     suspend fun logout(): ApiResponse<Unit>
     suspend fun getUserInfo(): ApiResponse<UserInfoResponseEntity>
     suspend fun updateUserImage(imageUri: Uri): ApiResponse<Unit>
+    suspend fun updateFcmToken(newFcmToken: String): ApiResponse<Unit>
 }
