@@ -10,6 +10,7 @@ import com.prography.domain.model.response.UserInfoResponseEntity
 import com.prography.domain.usecase.GetUserInformationUseCase
 import com.prography.domain.usecase.PatchUpdateUserImageUseCase
 import com.prography.domain.usecase.PostUserLogoutUseCase
+import com.prography.domain.usecase.PostUserSignoutUseCase
 import com.prography.yakgwa.util.UiState
 import com.skydoves.sandwich.onSuccess
 import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
@@ -29,6 +30,7 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val postUserLogoutUseCase: PostUserLogoutUseCase,
+    private val postUserSignoutUseCase: PostUserSignoutUseCase,
     private val localStorage: YakGwaLocalDataSource,
     private val getUserInformationUseCase: GetUserInformationUseCase,
     private val patchUpdateUserImageUseCase: PatchUpdateUserImageUseCase
@@ -37,6 +39,9 @@ class MyPageViewModel @Inject constructor(
 
     private val _logoutState = MutableSharedFlow<UiState<Unit>>()
     val logoutState = _logoutState.asSharedFlow()
+
+    private val _signoutState = MutableSharedFlow<UiState<Unit>>()
+    val signoutState = _signoutState.asSharedFlow()
 
     private val _userInfoState = MutableStateFlow<UiState<UserInfoResponseEntity>>(UiState.Loading)
     val userInfoState = _userInfoState
@@ -64,6 +69,23 @@ class MyPageViewModel @Inject constructor(
                 .onErrorDeserialize<Unit, ErrorResponse> {
                     launch {
                         _logoutState.emit(UiState.Failure(it.message))
+                    }
+                }
+        }
+    }
+
+    fun signout() {
+        viewModelScope.launch {
+            _signoutState.emit(UiState.Loading)
+
+            postUserSignoutUseCase()
+                .suspendOnSuccess {
+                    _signoutState.emit(UiState.Success(data))
+                    localStorage.clear()
+                }
+                .onErrorDeserialize<Unit, ErrorResponse> {
+                    launch {
+                        _signoutState.emit(UiState.Failure(it.message))
                     }
                 }
         }

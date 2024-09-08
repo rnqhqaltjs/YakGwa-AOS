@@ -35,4 +35,8 @@ class AuthRemoteDataSourceImpl @Inject constructor(
     override suspend fun updateFcmToken(newFcmToken: String): ApiResponse<Unit> {
         return authService.updateFcmToken(newFcmToken)
     }
+
+    override suspend fun signout(): ApiResponse<Unit> {
+        return authService.signout()
+    }
 }

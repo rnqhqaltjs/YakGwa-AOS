@@ -73,6 +73,23 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.signoutState.collect {
+                    when (it) {
+                        is UiState.Loading -> {}
+                        is UiState.Success -> {
+                            navigateToAuth()
+                        }
+
+                        is UiState.Failure -> {
+                            Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.userImageState.collectLatest {
                     when (it) {
                         is UiState.Loading -> {}
@@ -92,6 +109,10 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
     private fun addListeners() {
         binding.tvLogoutBtn.setOnClickListener {
             viewModel.logout()
+        }
+
+        binding.tvWithdrawBtn.setOnClickListener {
+            viewModel.signout()
         }
 
         binding.cvPromiseHistory.setOnClickListener {

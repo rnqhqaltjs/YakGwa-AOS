@@ -26,6 +26,7 @@ import com.prography.domain.usecase.PostParticipantMeetUseCase
 import com.prography.domain.usecase.PostPlaceCandidateInfoUseCase
 import com.prography.domain.usecase.PostUserLoginUseCase
 import com.prography.domain.usecase.PostUserLogoutUseCase
+import com.prography.domain.usecase.PostUserSignoutUseCase
 import com.prography.domain.usecase.PostUserVotePlaceUseCase
 import com.prography.domain.usecase.PostUserVoteTimeUseCase
 import dagger.Module
@@ -146,4 +147,9 @@ class UseCaseModule {
     @Singleton
     fun providesGetStaticMapUseCase(naverRepository: NaverRepository): GetStaticMapUseCase =
         GetStaticMapUseCase(naverRepository)
+
+    @Provides
+    @Singleton
+    fun providesPostUserSignoutUseCase(authRepository: AuthRepository): PostUserSignoutUseCase =
+        PostUserSignoutUseCase(authRepository)
 }

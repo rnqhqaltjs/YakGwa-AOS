@@ -63,6 +63,10 @@ class AuthRepositoryImpl @Inject constructor(
         return authRemoteDataSource.updateFcmToken(newFcmToken)
     }
 
+    override suspend fun signout(): ApiResponse<Unit> {
+        return authRemoteDataSource.signout()
+    }
+
     private fun makeImageFile(uri: Uri): File {
         // 파일 스트림으로 uri로 접근해 비트맵을 디코딩
         val bitmap = context.contentResolver.openInputStream(uri).use {

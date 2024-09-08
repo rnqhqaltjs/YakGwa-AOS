@@ -34,4 +34,7 @@ interface AuthService {
 
     @PATCH("/api/v1/user/fcm")
     suspend fun updateFcmToken(@Query("newFcmToken") newFcmToken: String): ApiResponse<Unit>
+
+    @POST("/api/v1/auth/signout")
+    suspend fun signout(): ApiResponse<Unit>
 }
