@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:298809953555:android:340df0ef44015acd721ee6",
+        "mobilesdk_app_id": "1:298809953555:android:ef9fd75b61ac179e721ee6",
         "android_client_info": {
-          "package_name": "com.prography.yakgwa"
+          "package_name": "com.yomo.yakgwa"
         }
       },
       "oauth_client": [],

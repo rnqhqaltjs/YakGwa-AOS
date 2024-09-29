@@ -19,3 +19,37 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.kakao.sdk.**.model.* { <fields>; }
+-keep class * extends com.google.gson.TypeAdapter
+
+# https://github.com/square/okhttp/pull/6792
+-dontwarn org.bouncycastle.jsse.**
+-dontwarn org.conscrypt.*
+-dontwarn org.openjsse.**
+
+## Retrofit does reflection on generic parameters. InnerClasses is required to use Signature and
+## EnclosingMethod is required to use InnerClasses.
+#-keepattributes Signature, InnerClasses, EnclosingMethod
+#
+## Retrofit does reflection on method and parameter annotations.
+#-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+#
+## Keep annotation default values (e.g., retrofit2.http.Field.encoded).
+#-keepattributes AnnotationDefault
+
+# gson
+-keep class * extends com.google.gson.TypeAdapter
+
+# serialization
+-if @kotlinx.serialization.Serializable class **
+-keep class <1> {
+    *;
+}
+
+# fragment
+-keepnames class androidx.navigation.fragment.NavHostFragment
+-keep class * extends androidx.fragment.app.Fragment{}
+
+# domain model
+-keep class com.yomo.domain.model.response.** { *; }

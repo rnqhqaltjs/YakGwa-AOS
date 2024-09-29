@@ -11,28 +11,40 @@ plugins {
 }
 
 android {
-    namespace = "com.prography.yakgwa"
+    namespace = "com.yomo.yakgwa"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.prography.yakgwa"
+        applicationId = "com.yomo.yakgwa"
         minSdk = 26
         targetSdk = 34
-        versionCode = 8
-        versionName = "1.0.7"
+        versionCode = 1
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = File("C:/Users/rnqhq/YakGwa.jks")
+            storePassword = "rlatmddn!32"
+            keyAlias = "key0"
+            keyPassword = "rlatmddn!32"
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

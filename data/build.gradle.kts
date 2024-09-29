@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.prography.data"
+    namespace = "com.yomo.data"
     compileSdk = 34
 
     defaultConfig {
