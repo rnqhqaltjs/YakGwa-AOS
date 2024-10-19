@@ -1,8 +1,10 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("dagger.hilt.android.plugin")
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("androidx.navigation.safeargs.kotlin")
@@ -18,18 +20,20 @@ android {
         applicationId = "com.yomo.yakgwa"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 5
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    val properties = Properties()
+    properties.load(project.rootProject.file("local.properties").inputStream())
 
     signingConfigs {
         create("release") {
             storeFile = File("C:/Users/rnqhq/YakGwa.jks")
-            storePassword = "rlatmddn!32"
+            storePassword = properties["KEYSTORE_PASSWORD"] as String
             keyAlias = "key0"
-            keyPassword = "rlatmddn!32"
+            keyPassword = properties["KEY_ALIAS_PASSWORD"] as String
         }
     }
 
@@ -51,9 +55,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
-    }
-    kapt {
-        correctErrorTypes = true
     }
     buildFeatures {
         buildConfig = true
@@ -84,7 +85,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.fragment)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // Retrofit
     implementation(libs.retrofit)
@@ -123,7 +124,7 @@ dependencies {
 
     // Room DB
     implementation(libs.androidx.room.runtime)
-    kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
     // Firebase
