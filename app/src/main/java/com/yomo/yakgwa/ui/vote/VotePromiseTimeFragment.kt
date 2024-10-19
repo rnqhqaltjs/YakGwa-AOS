@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.yomo.yakgwa.R
 import com.yomo.yakgwa.databinding.FragmentVotePromiseTimeBinding
 import com.yomo.yakgwa.util.DateTimeUtils.toCalendarDay
@@ -18,9 +19,10 @@ import com.yomo.yakgwa.util.calendarUtils.MinMaxDecorator
 import com.yomo.yakgwa.util.calendarUtils.SelectDayDecorator
 import com.yomo.yakgwa.util.calendarUtils.TimeSelectedDecorator
 import com.yomo.yakgwa.util.calendarUtils.WeekDayColorFormatter
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -108,6 +110,13 @@ class VotePromiseTimeFragment :
                     it
                 )
                 binding.cvTimeSlot.visibility = View.VISIBLE
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.timeSlotsState.first().let {
+                delay(900)
+                binding.rvTime.smoothScrollToPosition(13)
             }
         }
     }
