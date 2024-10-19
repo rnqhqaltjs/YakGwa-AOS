@@ -10,7 +10,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.snackbar.Snackbar
-import com.yomo.domain.model.response.LocationResponseEntity
 import com.yomo.yakgwa.R
 import com.yomo.yakgwa.databinding.FragmentDirectInputPlaceBinding
 import com.yomo.yakgwa.ui.createPromise.CreatePromiseViewModel
@@ -68,22 +67,7 @@ class DirectInputPlaceFragment :
                     Snackbar.make(requireView(), "장소를 더 추가할 수 없어요.", Snackbar.LENGTH_SHORT).show()
                     binding.etSearchLocation.setText("")
                 } else {
-                    viewModel.addDirectLocation(
-                        LocationResponseEntity(
-                            LocationResponseEntity.PlaceInfoEntity(
-                                selectedLocation.placeInfoEntity.title,
-                                selectedLocation.placeInfoEntity.link,
-                                selectedLocation.placeInfoEntity.category,
-                                selectedLocation.placeInfoEntity.description,
-                                selectedLocation.placeInfoEntity.telephone,
-                                selectedLocation.placeInfoEntity.address,
-                                selectedLocation.placeInfoEntity.roadAddress,
-                                selectedLocation.placeInfoEntity.mapx,
-                                selectedLocation.placeInfoEntity.mapy
-                            ),
-                            selectedLocation.isUserLike
-                        )
-                    )
+                    viewModel.addDirectLocation(selectedLocation)
                     binding.etSearchLocation.setText("")
                 }
             }
