@@ -1,8 +1,10 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("dagger.hilt.android.plugin")
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("androidx.navigation.safeargs.kotlin")
@@ -11,37 +13,48 @@ plugins {
 }
 
 android {
-    namespace = "com.prography.yakgwa"
+    namespace = "com.yomo.yakgwa"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.prography.yakgwa"
+        applicationId = "com.yomo.yakgwa"
         minSdk = 26
         targetSdk = 34
-        versionCode = 8
-        versionName = "1.0.7"
+        versionCode = 5
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+    val properties = Properties()
+    properties.load(project.rootProject.file("local.properties").inputStream())
+
+    signingConfigs {
+        create("release") {
+            storeFile = File("C:/Users/rnqhq/YakGwa.jks")
+            storePassword = properties["KEYSTORE_PASSWORD"] as String
+            keyAlias = "key0"
+            keyPassword = properties["KEY_ALIAS_PASSWORD"] as String
+        }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
         jvmTarget = "17"
-    }
-    kapt {
-        correctErrorTypes = true
     }
     buildFeatures {
         buildConfig = true
@@ -72,7 +85,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.fragment)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // Retrofit
     implementation(libs.retrofit)
@@ -111,7 +124,7 @@ dependencies {
 
     // Room DB
     implementation(libs.androidx.room.runtime)
-    kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
     // Firebase

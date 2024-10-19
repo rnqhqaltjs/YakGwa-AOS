@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/addCandidatePlaceFragment"
-        android:name="com.prography.yakgwa.ui.createPromise.createPromisePlace.AddCandidatePlaceFragment"
+        android:name="com.yomo.yakgwa.ui.createPromise.createPromisePlace.AddCandidatePlaceFragment"
         android:label="AddCandidatePlaceFragment"
         tools:layout="@layout/fragment_add_candidate_place" />
     <fragment
         android:id="@+id/directInputPlaceFragment"
-        android:name="com.prography.yakgwa.ui.createPromise.createPromisePlace.DirectInputPlaceFragment"
+        android:name="com.yomo.yakgwa.ui.createPromise.createPromisePlace.DirectInputPlaceFragment"
         android:label="DirectInputPlaceFragment"
         tools:layout="@layout/fragment_create_promise_place" />
 </navigation>

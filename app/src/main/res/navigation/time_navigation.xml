@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/directInputTimeFragment"
-        android:name="com.prography.yakgwa.ui.createPromise.createPromiseTime.DirectInputTimeFragment"
+        android:name="com.yomo.yakgwa.ui.createPromise.createPromiseTime.DirectInputTimeFragment"
         android:label="DirectInputTimeFragment"
         tools:layout="@layout/fragment_direct_input_time" />
     <fragment
         android:id="@+id/addCandidateTimeFragment"
-        android:name="com.prography.yakgwa.ui.createPromise.createPromiseTime.AddCandidateTimeFragment"
+        android:name="com.yomo.yakgwa.ui.createPromise.createPromiseTime.AddCandidateTimeFragment"
         android:label="AddCandidateTimeFragment"
         tools:layout="@layout/fragment_add_candidate_time" />
 </navigation>

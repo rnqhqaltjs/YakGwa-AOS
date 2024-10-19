@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.prography.yakgwa.ui.home.HomeFragment"
+        android:name="com.yomo.yakgwa.ui.home.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home">
         <action
@@ -52,7 +52,7 @@
     </fragment>
     <fragment
         android:id="@+id/myPageFragment"
-        android:name="com.prography.yakgwa.ui.myPage.MyPageFragment"
+        android:name="com.yomo.yakgwa.ui.myPage.MyPageFragment"
         android:label="MyPageFragment"
         tools:layout="@layout/fragment_my_page">
         <action
@@ -75,7 +75,7 @@
     </fragment>
     <fragment
         android:id="@+id/invitationLeaderFragment"
-        android:name="com.prography.yakgwa.ui.invitation.InvitationLeaderFragment"
+        android:name="com.yomo.yakgwa.ui.invitation.InvitationLeaderFragment"
         android:label="InvitationLeaderFragment"
         tools:layout="@layout/fragment_invitation_leader">
         <action
@@ -101,7 +101,7 @@
     </fragment>
     <fragment
         android:id="@+id/invitationMemberFragment"
-        android:name="com.prography.yakgwa.ui.invitation.InvitationMemberFragment"
+        android:name="com.yomo.yakgwa.ui.invitation.InvitationMemberFragment"
         android:label="InvitationMemberFragment"
         tools:layout="@layout/fragment_invitation_member">
         <action
@@ -119,7 +119,7 @@
     </fragment>
     <fragment
         android:id="@+id/votePromiseTimeFragment"
-        android:name="com.prography.yakgwa.ui.vote.VotePromiseTimeFragment"
+        android:name="com.yomo.yakgwa.ui.vote.VotePromiseTimeFragment"
         android:label="VotePromiseTimeFragment"
         tools:layout="@layout/fragment_vote_promise_time">
         <argument
@@ -138,7 +138,7 @@
     </fragment>
     <fragment
         android:id="@+id/votePromisePlaceFragment"
-        android:name="com.prography.yakgwa.ui.vote.VotePromisePlaceFragment"
+        android:name="com.yomo.yakgwa.ui.vote.VotePromisePlaceFragment"
         android:label="VotePromisePlaceFragment"
         tools:layout="@layout/fragment_vote_promise_place">
         <argument
@@ -164,7 +164,7 @@
     </fragment>
     <fragment
         android:id="@+id/voteResultFragment"
-        android:name="com.prography.yakgwa.ui.voteResult.VoteResultFragment"
+        android:name="com.yomo.yakgwa.ui.voteResult.VoteResultFragment"
         android:label="VoteResultFragment"
         tools:layout="@layout/fragment_vote_result">
         <argument
@@ -177,7 +177,7 @@
 
     <fragment
         android:id="@+id/createPromiseTitleFragment"
-        android:name="com.prography.yakgwa.ui.createPromise.CreatePromiseTitleFragment"
+        android:name="com.yomo.yakgwa.ui.createPromise.CreatePromiseTitleFragment"
         android:label="CreatePromiseTitleFragment"
         tools:layout="@layout/fragment_create_promise_title">
         <action
@@ -190,7 +190,7 @@
     </fragment>
     <fragment
         android:id="@+id/createPromiseThemeFragment"
-        android:name="com.prography.yakgwa.ui.createPromise.CreatePromiseThemeFragment"
+        android:name="com.yomo.yakgwa.ui.createPromise.CreatePromiseThemeFragment"
         android:label="CreatePromiseThemeFragment"
         tools:layout="@layout/fragment_create_promise_theme">
         <action
@@ -203,7 +203,7 @@
     </fragment>
     <fragment
         android:id="@+id/createPromiseTimeFragment"
-        android:name="com.prography.yakgwa.ui.createPromise.createPromiseTime.CreatePromiseTimeFragment"
+        android:name="com.yomo.yakgwa.ui.createPromise.createPromiseTime.CreatePromiseTimeFragment"
         android:label="CreatePromiseTimeFragment"
         tools:layout="@layout/fragment_create_promise_time">
         <action
@@ -216,7 +216,7 @@
     </fragment>
     <fragment
         android:id="@+id/createPromisePlaceFragment"
-        android:name="com.prography.yakgwa.ui.createPromise.createPromisePlace.CreatePromisePlaceFragment"
+        android:name="com.yomo.yakgwa.ui.createPromise.createPromisePlace.CreatePromisePlaceFragment"
         android:label="CreatePromisePlaceFragment"
         tools:layout="@layout/fragment_create_promise_place">
         <action
@@ -247,13 +247,13 @@
     </fragment>
     <fragment
         android:id="@+id/addCandidatePlaceDetailFragment"
-        android:name="com.prography.yakgwa.ui.createPromise.createPromisePlace.AddCandidatePlaceDetailFragment"
+        android:name="com.yomo.yakgwa.ui.createPromise.createPromisePlace.AddCandidatePlaceDetailFragment"
         android:label="AddCandidatePlaceDetailFragment"
         tools:layout="@layout/fragment_add_candidate_place_detail" />
 
     <dialog
         android:id="@+id/exitDialogFragment"
-        android:name="com.prography.yakgwa.ui.createPromise.ExitDialogFragment"
+        android:name="com.yomo.yakgwa.ui.createPromise.ExitDialogFragment"
         android:label="ExitDialogFragment"
         tools:layout="@layout/dialog_exit_modal" />
     <action
@@ -265,7 +265,7 @@
         app:popExitAnim="@android:anim/slide_out_right" />
     <fragment
         android:id="@+id/promiseHistoryFragment"
-        android:name="com.prography.yakgwa.ui.promiseHistory.PromiseHistoryFragment"
+        android:name="com.yomo.yakgwa.ui.promiseHistory.PromiseHistoryFragment"
         android:label="PromiseHistoryFragment"
         tools:layout="@layout/fragment_promise_history">
         <action
@@ -285,7 +285,7 @@
     </fragment>
     <fragment
         android:id="@+id/addCandidatePlaceVoteFragment"
-        android:name="com.prography.yakgwa.ui.vote.AddCandidatePlaceVoteFragment"
+        android:name="com.yomo.yakgwa.ui.vote.AddCandidatePlaceVoteFragment"
         android:label="AddCandidatePlaceVoteFragment"
         tools:layout="@layout/fragment_add_candidate_place_vote">
         <argument
@@ -294,22 +294,22 @@
     </fragment>
     <dialog
         android:id="@+id/participantMemberFragment"
-        android:name="com.prography.yakgwa.ui.invitation.ParticipantMemberFragment"
+        android:name="com.yomo.yakgwa.ui.invitation.ParticipantMemberFragment"
         android:label="ParticipantMemberFragment"
         tools:layout="@layout/dialog_participant_member_modal">
         <argument
             android:name="participantInfo"
-            app:argType="com.prography.domain.model.response.MeetDetailResponseEntity$ParticipantInfo[]" />
+            app:argType="com.yomo.domain.model.response.MeetDetailResponseEntity$ParticipantInfo[]" />
     </dialog>
     <fragment
         android:id="@+id/myPlaceFragment"
-        android:name="com.prography.yakgwa.ui.myPlace.MyPlaceFragment"
+        android:name="com.yomo.yakgwa.ui.myPlace.MyPlaceFragment"
         android:label="MyPlaceFragment"
         tools:layout="@layout/fragment_my_place" />
     <fragment
         android:id="@+id/policyFragment"
         tools:layout="@layout/fragment_policy"
-        android:name="com.prography.yakgwa.ui.myPage.PolicyFragment"
+        android:name="com.yomo.yakgwa.ui.myPage.PolicyFragment"
         android:label="policyFragment">
         <argument
             android:name="documentType"
