@@ -42,8 +42,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     when (it) {
                         is UiState.Loading -> {}
                         is UiState.Success -> {
-                            participantMeetListAdapter.submitList(it.data.reversed())
-                            updateNoPromiseCardVisibility()
+                            participantMeetListAdapter.submitList(it.data.reversed()) {
+                                updateNoPromiseCardVisibility()
+                            }
                         }
 
                         is UiState.Failure -> {
