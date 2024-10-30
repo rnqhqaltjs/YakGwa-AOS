@@ -3,7 +3,11 @@ package com.yomo.yakgwa.ui.vote
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yomo.data.ErrorResponse
+import com.skydoves.sandwich.getOrElse
+import com.skydoves.sandwich.onSuccess
+import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
+import com.skydoves.sandwich.suspendOnSuccess
+import com.yomo.data.utils.ErrorResponse
 import com.yomo.domain.model.request.PlaceCandidateRequestEntity
 import com.yomo.domain.model.request.VotePlaceRequestEntity
 import com.yomo.domain.model.request.VoteTimeRequestEntity
@@ -17,19 +21,24 @@ import com.yomo.domain.usecase.PostPlaceCandidateInfoUseCase
 import com.yomo.domain.usecase.PostUserVotePlaceUseCase
 import com.yomo.domain.usecase.PostUserVoteTimeUseCase
 import com.yomo.yakgwa.model.TimeModel
+import com.yomo.yakgwa.ui.createPromise.CreatePromiseViewModel.Companion.SEARCH_QUERY_DEBOUNCE_DELAY
 import com.yomo.yakgwa.util.DateTimeUtils.formatLocalDateTimeToString
 import com.yomo.yakgwa.util.UiState
-import com.skydoves.sandwich.onSuccess
-import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
-import com.skydoves.sandwich.suspendOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -101,7 +110,13 @@ class VoteViewModel @Inject constructor(
 
     private val _candidateLocationState =
         MutableStateFlow<UiState<List<LocationResponseEntity>>>(UiState.Loading)
-    val candidateLocationState = _candidateLocationState.asStateFlow()
+    val candidateLocationState = _candidateLocationState
+        .onSubscription {
+            getCandidateLocations()
+        }.shareIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+        )
 
     private val _selectedCandidateLocationState =
         MutableStateFlow<List<LocationResponseEntity>>(emptyList())
@@ -109,6 +124,8 @@ class VoteViewModel @Inject constructor(
 
     private val _addPlaceState = MutableSharedFlow<UiState<Unit>>()
     val addPlaceState = _addPlaceState.asSharedFlow()
+
+    private val _searchQueryState = MutableStateFlow("")
 
     fun getVotePlaceCandidate() {
         _placeCandidateState.value = UiState.Loading
@@ -256,18 +273,36 @@ class VoteViewModel @Inject constructor(
         return VoteTimeRequestEntity(possibleSchedules)
     }
 
-    fun getCandidateLocations(query: String) {
-        _candidateLocationState.value = UiState.Loading
+    fun setSearchQuery(query: String) {
+        _searchQueryState.value = query
+    }
 
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    private fun getCandidateLocations() {
         viewModelScope.launch {
-            getLocationListUseCase(query)
-                .suspendOnSuccess {
-                    data.collect {
-                        _selectedCandidateLocationState.value = it
-                        _candidateLocationState.value = UiState.Success(it)
+            _searchQueryState
+                .debounce(SEARCH_QUERY_DEBOUNCE_DELAY)
+                .distinctUntilChanged()
+                .flatMapLatest { query ->
+                    if (query.isNotBlank()) {
+                        _candidateLocationState.emit(UiState.Loading)
+
+                        getLocationListUseCase(query)
+                            .onErrorDeserialize<Flow<List<LocationResponseEntity>>, ErrorResponse> { errorResponse ->
+                                launch {
+                                    _candidateLocationState.emit(UiState.Failure(errorResponse.message))
+                                }
+                            }
+                            .getOrElse {
+                                flowOf(emptyList())
+                            }
+                    } else {
+                        flowOf(emptyList())
                     }
-                }.onErrorDeserialize<Flow<List<LocationResponseEntity>>, ErrorResponse> {
-                    _candidateLocationState.value = UiState.Failure(it.message)
+                }
+                .collect { result ->
+                    _selectedCandidateLocationState.value = result
+                    _candidateLocationState.value = UiState.Success(result)
                 }
         }
     }
