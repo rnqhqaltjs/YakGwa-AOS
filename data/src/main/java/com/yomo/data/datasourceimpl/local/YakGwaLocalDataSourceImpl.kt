@@ -7,6 +7,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.yomo.data.datasource.local.YakGwaLocalDataSource
+import decrypt
+import encrypt
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -27,7 +29,7 @@ class YakGwaLocalDataSourceImpl @Inject constructor(
             }
         }
         .map { preferences ->
-            preferences[ACCESS_TOKEN_KEY] ?: ""
+            preferences[ACCESS_TOKEN_KEY]?.let { decrypt(it) } ?: ""
         }
 
     override val refreshToken: Flow<String> = dataStore.data
@@ -39,7 +41,7 @@ class YakGwaLocalDataSourceImpl @Inject constructor(
             }
         }
         .map { preferences ->
-            preferences[REFRESH_TOKEN_KEY] ?: ""
+            preferences[REFRESH_TOKEN_KEY]?.let { decrypt(it) } ?: ""
         }
 
     override val deviceToken: Flow<String> = dataStore.data
@@ -51,7 +53,7 @@ class YakGwaLocalDataSourceImpl @Inject constructor(
             }
         }
         .map { preferences ->
-            preferences[DEVICE_TOKEN_KEY] ?: ""
+            preferences[DEVICE_TOKEN_KEY]?.let { decrypt(it) } ?: ""
         }
 
     override val isLogin: Flow<Boolean> = dataStore.data
@@ -68,19 +70,19 @@ class YakGwaLocalDataSourceImpl @Inject constructor(
 
     override suspend fun saveAccessToken(accessToken: String) {
         dataStore.edit { preferences ->
-            preferences[ACCESS_TOKEN_KEY] = accessToken
+            preferences[ACCESS_TOKEN_KEY] = encrypt(accessToken)
         }
     }
 
     override suspend fun saveRefreshToken(refreshToken: String) {
         dataStore.edit { preferences ->
-            preferences[REFRESH_TOKEN_KEY] = refreshToken
+            preferences[REFRESH_TOKEN_KEY] = encrypt(refreshToken)
         }
     }
 
     override suspend fun saveDeviceToken(deviceToken: String) {
         dataStore.edit { preferences ->
-            preferences[DEVICE_TOKEN_KEY] = deviceToken
+            preferences[DEVICE_TOKEN_KEY] = encrypt(deviceToken)
         }
     }
 
