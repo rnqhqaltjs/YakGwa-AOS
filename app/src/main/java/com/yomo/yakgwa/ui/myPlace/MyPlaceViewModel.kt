@@ -2,15 +2,15 @@ package com.yomo.yakgwa.ui.myPlace
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yomo.data.ErrorResponse
+import com.skydoves.sandwich.onSuccess
+import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
+import com.skydoves.sandwich.suspendOnSuccess
+import com.yomo.data.utils.ErrorResponse
 import com.yomo.domain.model.request.MyPlaceRequestEntity
 import com.yomo.domain.model.response.LocationResponseEntity
 import com.yomo.domain.usecase.GetLocationListUseCase
 import com.yomo.domain.usecase.PostMyPlaceUseCase
 import com.yomo.yakgwa.util.UiState
-import com.skydoves.sandwich.onSuccess
-import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
-import com.skydoves.sandwich.suspendOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

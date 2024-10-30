@@ -1,4 +1,4 @@
-package com.yomo.data
+package com.yomo.data.utils
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

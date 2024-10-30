@@ -2,15 +2,15 @@ package com.yomo.yakgwa.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yomo.data.ErrorResponse
+import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
+import com.skydoves.sandwich.suspendOnSuccess
 import com.yomo.data.datasource.local.YakGwaLocalDataSource
+import com.yomo.data.utils.ErrorResponse
 import com.yomo.domain.model.request.AuthRequestEntity
 import com.yomo.domain.model.response.AuthResponseEntity
 import com.yomo.domain.usecase.PostUserLoginUseCase
 import com.yomo.yakgwa.type.LoginType
 import com.yomo.yakgwa.util.UiState
-import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
-import com.skydoves.sandwich.suspendOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow

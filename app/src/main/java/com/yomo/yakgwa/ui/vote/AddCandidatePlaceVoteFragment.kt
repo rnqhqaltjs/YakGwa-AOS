@@ -3,7 +3,7 @@ package com.yomo.yakgwa.ui.vote
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.widget.SearchView
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -87,16 +87,9 @@ class AddCandidatePlaceVoteFragment :
     }
 
     private fun addListeners() {
-        binding.svSearchLocation.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                viewModel.getCandidateLocations(query)
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return true
-            }
-        })
+        binding.etSearchLocation.addTextChangedListener { text ->
+            viewModel.setSearchQuery(text.toString())
+        }
 
         binding.btnConfirm.setOnClickListener {
             viewModel.addPlaceCandidate()
