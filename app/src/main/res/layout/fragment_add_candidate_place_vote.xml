@@ -48,28 +48,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <androidx.appcompat.widget.SearchView
-                    android:id="@+id/sv_search_location"
+                <EditText
+                    android:id="@+id/et_search_location"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
                     android:background="@android:color/transparent"
+                    android:ems="10"
+                    android:hint="장소나 주소를 검색해주세요"
                     android:inputType="text"
                     android:maxLength="20"
-                    android:layoutDirection="rtl"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginBottom="3dp"
-                    app:closeIcon="@null"
                     android:textColorHint="@color/neutral_500"
-                    android:theme="@style/CustomSearchView"
-                    app:iconifiedByDefault="false"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_search_location"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/iv_search_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:textColor="@color/neutral_600"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:queryBackground="@null"
-                    app:queryHint="장소나 주소를 검색해주세요"
-                    app:searchIcon="@drawable/ic_search" />
-
+                    app:srcCompat="@drawable/ic_search" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
