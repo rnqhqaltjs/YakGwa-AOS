@@ -7,7 +7,7 @@ import com.skydoves.sandwich.getOrElse
 import com.skydoves.sandwich.onSuccess
 import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
 import com.skydoves.sandwich.suspendOnSuccess
-import com.yomo.data.ErrorResponse
+import com.yomo.data.utils.ErrorResponse
 import com.yomo.domain.model.request.CreateMeetRequestEntity
 import com.yomo.domain.model.response.CreateMeetResponseEntity
 import com.yomo.domain.model.response.LocationResponseEntity

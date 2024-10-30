@@ -3,7 +3,9 @@ package com.yomo.yakgwa.ui.invitation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yomo.data.ErrorResponse
+import com.skydoves.sandwich.onSuccess
+import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
+import com.yomo.data.utils.ErrorResponse
 import com.yomo.domain.model.response.MeetDetailResponseEntity
 import com.yomo.domain.model.response.MeetDetailResponseEntity.MeetInfo
 import com.yomo.domain.model.response.ParticipantMeetResponseEntity
@@ -16,8 +18,6 @@ import com.yomo.domain.usecase.GetUserVotePlaceListUseCase
 import com.yomo.domain.usecase.GetVoteTimeCandidateInfoUseCase
 import com.yomo.domain.usecase.PostParticipantMeetUseCase
 import com.yomo.yakgwa.util.UiState
-import com.skydoves.sandwich.onSuccess
-import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

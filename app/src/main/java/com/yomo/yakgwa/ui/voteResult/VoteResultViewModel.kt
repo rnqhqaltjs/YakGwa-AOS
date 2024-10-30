@@ -5,7 +5,9 @@ import android.location.Location
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yomo.data.ErrorResponse
+import com.skydoves.sandwich.onSuccess
+import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
+import com.yomo.data.utils.ErrorResponse
 import com.yomo.domain.model.request.ConfirmPlaceRequestEntity
 import com.yomo.domain.model.request.ConfirmTimeRequestEntity
 import com.yomo.domain.model.response.MeetDetailResponseEntity
@@ -22,8 +24,6 @@ import com.yomo.domain.usecase.PatchConfirmMeetTimeUseCase
 import com.yomo.yakgwa.model.NaviModel
 import com.yomo.yakgwa.type.NaviType
 import com.yomo.yakgwa.util.UiState
-import com.skydoves.sandwich.onSuccess
-import com.skydoves.sandwich.retrofit.serialization.onErrorDeserialize
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
